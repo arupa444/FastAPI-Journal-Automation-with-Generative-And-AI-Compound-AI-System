@@ -395,6 +395,8 @@ async def search_articles(core_req: CoreRequest):
 
 
 
+import asyncio
+
 @app.post("/pipeline/journal-full-process")
 async def full_journal_pipeline(journal: PulsusInputStr):
     # Step 1: Save journal input
@@ -404,38 +406,62 @@ async def full_journal_pipeline(journal: PulsusInputStr):
     data[journal.id] = journal.model_dump(exclude=["id"])
     saveInpData(data)
 
-    # Step 2: Use the topic to search CORE articles
+    # Step 2: Search CORE articles with retry handling
     CORE_API_URL = "https://api.core.ac.uk/v3/search/works"
     headers = {
         "Authorization": f"Bearer {CORE_API_KEY}",
         "Content-Type": "application/json"
     }
-    data = {
-        "q": journal.topic,
-        "limit": 20
-    }
 
-    try:
-        async with httpx.AsyncClient(timeout=15.0) as client:  # set timeout explicitly
-            response = await client.post(CORE_API_URL, json=data, headers=headers)
-            response.raise_for_status()
+    max_retries = 3
+    backoff_seconds = 2
+    core_content_json = None
 
-            try:
-                results = response.json()
-            except Exception as json_err:
-                raise HTTPException(status_code=500, detail=f"Invalid JSON in response: {str(json_err)}")
+    for attempt in range(max_retries):
+        payload = {
+            "q": journal.topic,
+            "limit": 20 if attempt == 0 else 10  # Reduce limit on later retries
+        }
 
-            core_content_json = build_structured_content(results)
+        try:
+            async with httpx.AsyncClient(timeout=15.0) as client:
+                response = await client.post(CORE_API_URL, json=payload, headers=headers)
+                response.raise_for_status()
 
-    except httpx.HTTPStatusError as e:
-        raise HTTPException(status_code=e.response.status_code,
-                            detail=f"CORE API returned HTTP error: {e.response.text}")
+                try:
+                    results = response.json()
+                except Exception as json_err:
+                    raise HTTPException(status_code=500, detail=f"Invalid JSON in response: {str(json_err)}")
 
-    except httpx.RequestError as e:
-        raise HTTPException(status_code=500, detail=f"Request error: {str(e)}")
+                # Detect overload from CORE (Elasticsearch rejection)
+                if isinstance(results, dict) and "message" in results:
+                    msg = results["message"]
+                    if "es_rejected_execution_exception" in msg:
+                        if attempt < max_retries - 1:
+                            await asyncio.sleep(backoff_seconds * (2 ** attempt))
+                            continue
+                        else:
+                            raise HTTPException(status_code=503, detail="CORE API overloaded. Please try again later.")
 
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
+                # Build structured content from CORE results
+                core_content_json = build_structured_content(results)
+                break  # Success, exit loop
+
+        except httpx.HTTPStatusError as e:
+            if attempt < max_retries - 1:
+                await asyncio.sleep(backoff_seconds * (2 ** attempt))
+                continue
+            raise HTTPException(status_code=e.response.status_code,
+                                detail=f"CORE API returned HTTP error: {e.response.text}")
+
+        except httpx.RequestError as e:
+            if attempt < max_retries - 1:
+                await asyncio.sleep(backoff_seconds * (2 ** attempt))
+                continue
+            raise HTTPException(status_code=500, detail=f"Request error: {str(e)}")
+
+    if core_content_json is None:
+        raise HTTPException(status_code=500, detail="Failed to fetch data from CORE API after retries.")
 
     # Step 3: Create universal prompt
     prompt = f"""
@@ -487,15 +513,16 @@ async def full_journal_pipeline(journal: PulsusInputStr):
         groq_summary = f"Groq API failed: {str(e)}"
 
     # Step 6: Clean and parse JSON output from Gemini or Groq
-    raw_json = extract_json_from_markdown(gem_summary if "Gemini API failed" not in gem_summary else groq_summary)
+    raw_json = extract_json_from_markdown(
+        gem_summary if "Gemini API failed" not in gem_summary else groq_summary
+    )
 
     try:
         parsed = json.loads(raw_json)
         content_data = parsed["content"]
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to parse structured JSON from LLM output: {str(e)}")
-    
-    
+
     # Step 7: Conclusion content using Gemini
     prompt = f"""
     give me a brief summary of between 200 - 400 words from this given data: {core_content_json}
@@ -503,7 +530,7 @@ async def full_journal_pipeline(journal: PulsusInputStr):
     Summarize the following data. Do not include any introductory labels, brand names, or meta-commentary. Remove all special characters, escape sequences, and formatting symbols. Respond only with plain and clean text containing the summary. Respond without any introductory phrases, labels, brand mentions, or headings (e.g., 'Summary:', 'Gemini:', 'Groq:'). Do not include explanations of how you generated the answer unless explicitly asked.
     and also  remove all possible escape sequences like ( \\\\ | \\' | \\" | \\a | \\b | \\f | \\n | \\r | \\t | \\v | \\[0-7]{1,3} | \\x[0-9a-fA-F]{2} | \\u[0-9a-fA-F]{4} | \\U[0-9a-fA-F]{8} ).....
     more specific give a humanized response.
-"""
+    """
     try:
         gem_response = gemClient.models.generate_content(
             model="gemini-2.5-flash", contents=prompt
@@ -511,7 +538,6 @@ async def full_journal_pipeline(journal: PulsusInputStr):
         gem_conclusion = gem_response.text
     except Exception as e:
         gem_conclusion = f"Gemini API failed: {str(e)}"
-
 
     # Step 8: Title content using Gemini
     prompt = f"give me a 5 to 7 words title based on the generated summary {gem_summary}. use playoff method to generate 5,6 titles and choose the best one and give that title. no need to display background process. just give 1 title as a final response"
@@ -523,9 +549,6 @@ async def full_journal_pipeline(journal: PulsusInputStr):
         gem_title = gem_response.text
     except Exception as e:
         gem_title = f"Gemini API failed: {str(e)}"
-
-
-
 
     # Step 9: Final response
     final_output = {
@@ -549,10 +572,9 @@ async def full_journal_pipeline(journal: PulsusInputStr):
             "conclusion": gem_conclusion
         }
     }
-    
+
     data = fetchOutData()
     pulsus_output_instance = PulsusOutputStr(**final_output[journal.id])
     data[journal.id] = pulsus_output_instance.model_dump()
     saveOutData(data)
     return JSONResponse(status_code=200, content="Data Added successfully")
-
