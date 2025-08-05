@@ -1,0 +1,145 @@
+\documentclass{article}
+\usepackage[paperwidth=595pt, paperheight=841pt, margin=27.5pt, top=75pt, bottom=90pt]{geometry}
+\usepackage{amsmath}
+\usepackage{color,pxfonts,fix-cm}
+\usepackage{latexsym}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{pict2e}
+\usepackage{wasysym}
+\usepackage[english]{babel}
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\usepackage{fancyhdr}
+\usepackage{multicol}
+\usepackage{hyperref}
+\usepackage{framed}
+\usepackage{lettrine}
+
+% --- Color Definitions ---
+\definecolor{color_101230}{rgb}{0.286275,0.14902,0.423529}
+\definecolor{color_283006}{rgb}{1,1,1}
+\definecolor{color_100238}{rgb}{0.282353,0.145098,0.423529}
+\definecolor{color_29791}{rgb}{0,0,0}
+\definecolor{color_282974}{rgb}{1,0.996078,0.996078}
+
+% --- Hyperlink Setup ---
+\hypersetup{
+    colorlinks=true,
+    urlcolor=color_100238,
+    citecolor=color_100238,
+    linkcolor=color_100238
+}
+
+\fancypagestyle{firstpage}{
+\fancyhf{}
+    \fancyhead[C]{%
+        \begin{tikzpicture}[overlay, remember picture]
+            \fill[color_101230] ($(current page.north west)$) rectangle ($(current page.north east) - (0, 55pt)$);
+            \node at ($(current page.north) - (0, 40pt)$) [font=\fontsize{13.9999}{16.8}\selectfont, color=white] {\VAR{journal_title}};
+        \end{tikzpicture}%
+    }
+    \fancyfoot[L]{%
+        \begin{tikzpicture}
+            \fill[color_100238] (0,0) rectangle (76.56pt, -16.3pt);
+            \node[white, font=\fontsize{8}{9.6}\selectfont] at (38.28pt, -8.15pt) {Page \thepage\ of \VAR{total_pages}};
+        \end{tikzpicture}%
+    }
+}
+
+\fancypagestyle{subsequent}{
+    \fancyhf{}
+    \fancyhead[L]{\fontsize{8.5}{10}\selectfont\color{color_29791}\VAR{short_author}}
+    \fancyhead[R]{\fontsize{8.5}{10}\selectfont\color{color_29791}\VAR{journal_header}}
+    \renewcommand{\headrule}{%
+      \vbox to 0pt{\hbox to\headwidth{\color{color_100238}\leaders\hrule height 0.5pt\hfill}\vss}%
+    }
+    \fancyfoot[L]{%
+        \begin{tikzpicture}
+            \fill[color_100238] (0,0) rectangle (76.56pt, -16.3pt);
+            \node[white, font=\fontsize{8}{9.6}\selectfont] at (38.28pt, -8.15pt) {Page \thepage\ of \VAR{total_pages}};
+        \end{tikzpicture}%
+    }
+}
+
+\begin{document}
+\thispagestyle{firstpage}
+
+\begin{flushleft}
+    \fontsize{13.5}{10.2}\selectfont\color{color_29791}\VAR{article_type} \\
+    \fontsize{10}{10}\selectfont\color{color_29791}\VAR{volume_info}
+\end{flushleft}
+
+\vspace{0.8cm}
+
+\begin{center}
+    {\fontsize{20}{24}\selectfont\color{color_29791}
+    \textbf{\VAR{article_title}}\par
+    }
+    \vspace{0.2cm}
+    \color{color_100238}\rule{0.9\textwidth}{0.5pt}
+    \vspace{0.3cm}
+\end{center}
+
+\begin{center}
+    \fontsize{11}{13.2}\selectfont\color{color_29791}\VAR{author}*\par
+    \vspace{0.1cm}
+    \fontsize{9}{10.8}\selectfont\color{color_29791}\VAR{affiliation}\par
+    \vspace{0.2cm}
+    \color{color_100238}\rule{0.4\textwidth}{1pt}
+\end{center}
+
+\begin{multicols}{2}
+\fontsize{9}{10.8}\selectfont\color{color_29791}
+
+\section*{\color{color_100238}Introduction}
+\VAR{introduction}
+
+\section*{\color{color_100238}Main Content}
+\VAR{main_content}
+
+\section*{\color{color_100238}Conclusion}
+\VAR{conclusion}
+
+\section*{\color{color_100238}Acknowledgement}
+\VAR{acknowledgement}
+
+\section*{\color{color_100238}Conflict of Interest}
+\VAR{conflict_of_interest}
+
+\begin{framed}
+\noindent\fontsize{8.5}{10.2}\selectfont
+\textbf{How to cite this article:} \VAR{citation}
+\end{framed}
+
+\section*{\color{color_100238}References}
+\fontsize{8}{9.6}\selectfont
+\begin{enumerate}
+\BLOCK{for ref in references}
+    \item \VAR{ref}
+\BLOCK{endfor}
+\end{enumerate}
+\end{multicols}
+
+\vfill
+\noindent
+\hspace*{0pt}\color{color_100238}\rule{\textwidth}{1pt}
+\par\vspace{0.3cm}
+
+\fontsize{8.5}{10.2}\selectfont
+\color{color_100238}\textbf{*Address for Correspondence:} 
+\color{color_29791}\VAR{author}, \VAR{affiliation}, 
+E-mail: \href{mailto:\VAR{email}}{\VAR{email}} \\
+
+\color{color_100238}\textbf{Copyright:} 
+\color{color_29791}© \VAR{year} \VAR{short_author}. This is an open-access article distributed under the terms of the Creative Commons Attribution License. \\
+
+\vspace{0.1cm}
+\color{color_29791}\textbf{Received:} \VAR{received}, 
+\textbf{Editor assigned:} \VAR{editor_assigned}, 
+\textbf{Reviewed:} \VAR{reviewed}, 
+\textbf{Revised:} \VAR{revised}, 
+\textbf{Published:} \VAR{published}, 
+DOI: \href{\VAR{doi}}{\VAR{doi}}
+
+\end{document}
