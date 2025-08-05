@@ -127,7 +127,7 @@ with JSON body:
 
 ## 📄 License
 
-**Open for everyone** – Free to use and modify.
+**Open for everyone** – Free to use and modify. and as this is free made for you all. So don't forget to live a star on my repo.
 
 ---
 
