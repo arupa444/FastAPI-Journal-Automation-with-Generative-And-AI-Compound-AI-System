@@ -136,5 +136,5 @@ with JSON body:
 For queries or contributions:
 
 * **Author:** Arupa Nanda Swain
-* **GitHub:** \[Your Profile Link]https://github.com/arupa444
-* **Email:** \[Your Email]arupaswain7735@gmail.com
+* **GitHub:** https://github.com/arupa444
+* **Email:** arupaswain7735@gmail.com
