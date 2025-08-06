@@ -2,6 +2,7 @@
 \usepackage[paperwidth=595pt, paperheight=841pt, margin=27.5pt, top=75pt, bottom=90pt]{geometry}
 \usepackage{amsmath}
 \usepackage{color,pxfonts,fix-cm}
+\usepackage{titlesec}
 \usepackage{latexsym}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
@@ -15,6 +16,9 @@
 \usepackage{hyperref}
 \usepackage{framed}
 \usepackage{lettrine}
+\usepackage{zref-abspage} % Better than lastpage for this case
+\usepackage{refcount}     % To get reference values easily
+
 
 % --- Color Definitions ---
 \definecolor{color_101230}{rgb}{0.286275,0.14902,0.423529} % Dark Purple
@@ -30,6 +34,7 @@
     citecolor=color_100238,
     linkcolor=color_100238
 }
+
 
 \fancypagestyle{firstpage}{
     \fancyhf{} % clear header/footer
@@ -64,6 +69,15 @@
             at ($(current page.north east) + (-10pt,-85pt)$) {Open Access};
     \end{tikzpicture}%
     }
+    \fancyfoot[L]{%
+    \begin{tikzpicture}[baseline=(text.base)]
+        \fill[color_100238] (0,0) rectangle (76.56pt, -16.3pt);
+        \node[white, font=\fontsize{8}{9.6}\selectfont] (text)
+            at (38.28pt, -8.15pt) 
+            {Page \thepage\ of \getpagerefnumber{TotPages}};
+    \end{tikzpicture}%
+}
+
 }
 
 
@@ -81,16 +95,26 @@
     % }
     % Footer
     \fancyfoot[L]{%
-        \begin{tikzpicture}
-            \fill[color_100238] (0,0) rectangle (76.56pt, -16.3pt);
-            \node[white, font=\fontsize{8}{9.6}\selectfont] at (38.28pt, -8.15pt) {Page \thepage\ of 2};
-        \end{tikzpicture}%
-    }
+    \begin{tikzpicture}[baseline=(text.base)]
+        \fill[color_100238] (0,0) rectangle (76.56pt, -16.3pt);
+        \node[white, font=\fontsize{8}{9.6}\selectfont] (text)
+            at (38.28pt, -8.15pt) 
+            {Page \thepage\ of \getpagerefnumber{TotPages}};
+    \end{tikzpicture}%
+}
 }
 
 % --- Apply styles ---
 \pagestyle{subsequent}   % Default for all pages
 \thispagestyle{firstpage} % First page special style
+
+% === Automatic rule under every section heading ===
+\titleformat{\section}[block]%
+  {\normalfont\fontsize{13}{10.8}\selectfont\color{color_100238}}% style for heading
+  {}% label (empty for no numbering)
+  {0pt}% separation between label and title
+  {}% nothing before title text (titlesec inserts title text automatically)
+  [\vspace{-0.1cm}\noindent\color{color_100238}\rule{\linewidth}{0.5pt}] % after heading: rule
 
 
 % --- Main Document ---
@@ -99,30 +123,31 @@
 % Push heading below ISSN/Open Access bar
 \vspace*{1cm} % adjust this value until it clears the purple bar
 
-\begin{center}
+\begin{flushleft}
     {\fontsize{16}{22}\selectfont\color{color_29791}
     \textbf{Understanding Vocal Communication Patterns in Bottlenose Dolphins}\par
     }
     \vspace{0cm}
     \color{color_100238}\rule{0.97\textwidth}{0.5pt}
     \vspace{0.1cm}
-\end{center}
+\end{flushleft}
 
 
-\begin{center}
+\begin{flushleft}
 \vspace*{-0.5cm}
     \fontsize{11}{13.2}\selectfont\color{color_29791}Jhump James*\par
     \vspace{0cm}
     \fontsize{9}{10.8}\selectfont\color{color_29791}Department of Psychiatry, The University of Mostaganem, Algeria, Africa\par
     \vspace{0.1cm}
     \color{color_100238}\rule{0.6\textwidth}{1pt}
-\end{center}
+\end{flushleft}
 
 \begin{multicols}{2}
 \fontsize{9}{10.8}\selectfont\color{color_29791}
 
-\section*{\color{color_100238}Introduction}
-\lettrine[lines=2, findent=3pt, nindent=0pt]{C}{ommunication} among marine mammals, particularly dolphins, has long fascinated researchers and enthusiasts alike. Among these creatures, the bottlenose dolphin (\textit{Tursiops truncatus}) stands out not only for its intelligence and social behavior but also for its complex vocal communication system. Studying how dolphins communicate vocally provides insights into their social dynamics, cognitive abilities and evolutionary adaptations [1]. This delves into the intricacies of vocal communication in bottlenose dolphins, exploring the types of vocalizations, their functions and the methods used to study them.
+\section*{Introduction}
+% \section*{\color{color_100238}Introduction}
+Communication among marine mammals, particularly dolphins, has long fascinated researchers and enthusiasts alike. Among these creatures, the bottlenose dolphin (\textit{Tursiops truncatus}) stands out not only for its intelligence and social behavior but also for its complex vocal communication system. Studying how dolphins communicate vocally provides insights into their social dynamics, cognitive abilities and evolutionary adaptations [1]. This delves into the intricacies of vocal communication in bottlenose dolphins, exploring the types of vocalizations, their functions and the methods used to study them.
 
 Bottlenose dolphins are highly social animals, living in groups called pods that vary in size from a few individuals to over a hundred members. Within these pods, individuals establish and maintain complex social relationships, often relying heavily on vocalizations to convey information and maintain cohesion. The study of dolphin vocalizations began in earnest in the 1960s, with pioneering work by researchers such as John C. Lilly, who used innovative techniques to record and analyze dolphin sounds. The vocal repertoire of bottlenose dolphins is extensive and diverse, consisting of both whistles and clicks. Whistles are tonal sounds produced in the nasal sacs and are often associated with individual recognition and social communication. Clicks, on the other hand, are short broadband sounds used primarily for echolocation, a technique dolphins use to navigate and locate prey in their underwater environment [2]. While these two categories broadly classify dolphin vocalizations, researchers have identified a range of variations and complexities within each type.
 
@@ -132,19 +157,21 @@ Furthermore, whistles are not limited to social contexts; they also play a role 
 
 The study of dolphin clicks has provided valuable insights into the sensory physiology and acoustic ecology of these marine mammals. Researchers have used hydrophones and other underwater recording devices to capture and analyze click sequences, revealing the complex patterns and strategies dolphins employ in echolocation. By studying these click sequences, scientists can infer details about dolphin behavior, such as hunting techniques, prey preferences and social interactions.
 
-\section*{\color{color_100238}Description}
+\section*{Description}
+
 Dolphins also exhibit a remarkable ability to communicate over long distances using their vocalizations. The propagation of sound in water differs significantly from air, presenting challenges and opportunities for underwater communication. Dolphins have evolved adaptations to maximize the effectiveness of their vocal signals, including adjusting the frequency and amplitude of their calls to enhance transmission and reception. These adaptations enable dolphins to maintain contact with individuals over distances of several kilometers, even in the vast expanses of the ocean. Social context plays a crucial role in shaping dolphin vocal behavior. Observations of wild dolphin populations have revealed that vocalizations vary depending on the activities and interactions taking place within the group [4]. For example, dolphins may produce specific vocalizations during feeding, traveling, or socializing, each serving a distinct communicative purpose. The ability to adapt vocal behavior to different social contexts highlights the sophistication and flexibility of dolphin communication systems.
 
 Moreover, the study of dolphin vocalizations extends beyond naturalistic observations to include experimental research and controlled studies. Researchers have conducted playback experiments, where recorded dolphin vocalizations are played back to individuals or groups to observe their behavioral responses. These experiments help elucidate the function and meaning of different vocalizations, providing empirical evidence for hypotheses about dolphin communication. Advancements in technology have revolutionized the study of dolphin vocalizations, allowing researchers to capture, analyze and interpret acoustic data with unprecedented precision. Digital recording equipment, underwater cameras and sophisticated computer software have enabled detailed acoustic analyses of dolphin vocalizations, revealing intricate patterns and structures that were previously inaccessible. These technological innovations continue to expand our understanding of dolphin communication, offering new avenues for research and discovery.
 
 In addition to their scientific significance, dolphin vocalizations hold cultural and conservation value. Indigenous cultures that have coexisted with dolphins for centuries often have rich oral traditions and stories about these marine mammals, reflecting the deep cultural connections between humans and dolphins. Furthermore, the conservation of dolphin populations relies in part on understanding their communication behaviors and how these behaviors may be impacted by human activities such as noise pollution, habitat degradation and climate change [5]. Efforts to protect and conserve dolphin populations are increasingly informed by knowledge of their vocal communication patterns and social structures. Conservation biologists collaborate with acoustic researchers to monitor dolphin populations using passive acoustic monitoring techniques, which involve deploying underwater microphones (hydrophones) to listen for and record dolphin vocalizations. These acoustic monitoring efforts provide valuable data for assessing population trends, habitat use and the impacts of human activities on dolphin behavior.
 
-\section*{\color{color_100238}Conclusion}
+
+\section*{Conclusion}
 In conclusion, the study of vocal communication in bottlenose dolphins offers a fascinating glimpse into the complexity of non-human communication systems. From signature whistles to echolocation clicks, dolphins employ a diverse array of vocalizations to navigate their social and ecological worlds. Advances in technology and interdisciplinary research continue to enhance our understanding of dolphin communication, shedding light on the cognitive abilities, social dynamics and evolutionary adaptations of these remarkable marine mammals. By unraveling the mysteries of dolphin vocalizations, scientists deepen their appreciation of the natural world and contribute to efforts aimed at conserving and protecting dolphin populations for future generations.
 
-\section*{\color{color_100238}Acknowledgement}
+\section*{Acknowledgement}
 None.
-\section*{\color{color_100238}Conflict of Interest}
+\section*{Conflict of Interest}
 None.
 
 \begin{framed}
@@ -152,7 +179,7 @@ None.
 \textbf{How to cite this article:} James, Jhump. “Understanding Vocal Communication Patterns in Bottlenose Dolphins.” \textit{J Anim Health Behav Sci} 8 (2024): 252.
 \end{framed}
 
-\section*{\color{color_100238}References}
+\section*{References}
 \fontsize{8}{9.6}\selectfont
 \begin{enumerate}
     \item Picciulin, Marta, Enrico Armelloni, Raffaela Falkner and Nikolina Rako-Gospić, et al. "Characterization of the underwater noise produced by recreational and small fishing boats (<14 m) in the shallow-water of the Cres-Lošinj Natura 2000 SCI." \textit{Mar Pollut. Bull} 183 (2022): 114050.
@@ -184,5 +211,5 @@ E-mail: \href{mailto:jhumpjames1@gmail.com}{jhumpjames1@gmail.com} \\
 \textbf{Published:} 29 April, 2024, 
 DOI: \href{https://doi.org/10.37421/2952-8097.2024.8.252}{10.37421/2952-8097.2024.8.252}
 
-
+\label{TotPages}
 \end{document}
