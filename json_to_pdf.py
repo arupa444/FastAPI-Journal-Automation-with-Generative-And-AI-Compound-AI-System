@@ -4,7 +4,7 @@ from pathlib import Path
 from jinja2 import Environment, FileSystemLoader
 
 # Load JSON
-with open("data.json", "r", encoding="utf-8") as f:
+with open("journalDBOutput.json", "r", encoding="utf-8") as f:
     data = json.load(f)
 
 # Jinja2 environment setup
@@ -21,7 +21,7 @@ env = Environment(
 )
 
 # Load LaTeX template
-template = env.get_template("journal_template.tex")
+template = env.get_template("Journal Format/Journal_format_type1.tex")
 
 # Render LaTeX with JSON data
 rendered_tex = template.render(**data)
