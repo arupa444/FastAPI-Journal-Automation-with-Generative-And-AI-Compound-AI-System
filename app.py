@@ -10,9 +10,6 @@ import os
 import httpx
 import re
 from dotenv import load_dotenv
-
-import uvicorn 
-
 load_dotenv()
 
 # API section
@@ -146,6 +143,8 @@ class PulsusOutputStr(BaseModel):
     authorsDepartment : Annotated[str, Field(..., title="ID of the Input Journal", description="Enter the id for this journal input....")]
     citation : Annotated[str, Field(..., title="ID of the Input Journal", description="Enter the id for this journal input....")]
     journalYearVolumeIssue : Annotated[str, Field(..., title="ID of the Input Journal", description="Enter the id for this journal input....")]
+    introduction : Annotated[str, Field(..., title="ID of the Input Journal", description="Enter the id for this journal input....")]
+    description : Annotated[str, Field(..., title="ID of the Input Journal", description="Enter the id for this journal input....")]
     content : Annotated[Dict[str, Dict], Field(..., title="ID of the Input Journal", description="Enter the id for this journal input....")] 
     doi : Annotated[str, Field(..., title="ID of the Input Journal", description="Enter the id for this journal input....")] 
     received : Annotated[str, Field(..., title="ID of the Input Journal", description="Enter the id for this journal input....")] 
@@ -371,7 +370,7 @@ async def search_articles(core_req: CoreRequest):
     }
 
     try:
-        async with httpx.AsyncClient(timeout=30.0) as client:  # set timeout explicitly
+        async with httpx.AsyncClient(timeout=15.0) as client:  # set timeout explicitly
             response = await client.post(CORE_API_URL, json=data, headers=headers)
             response.raise_for_status()
 
@@ -395,8 +394,6 @@ async def search_articles(core_req: CoreRequest):
 
 
 
-import asyncio
-
 @app.post("/pipeline/journal-full-process")
 async def full_journal_pipeline(journal: PulsusInputStr):
     # Step 1: Save journal input
@@ -406,81 +403,61 @@ async def full_journal_pipeline(journal: PulsusInputStr):
     data[journal.id] = journal.model_dump(exclude=["id"])
     saveInpData(data)
 
-    # Step 2: Search CORE articles with retry handling
-    CORE_API_URL = "https://api.core.ac.uk/v3/search/works"
-    headers = {
-        "Authorization": f"Bearer {CORE_API_KEY}",
-        "Content-Type": "application/json"
-    }
+    # # Step 2: Use the topic to search CORE articles
+    # CORE_API_URL = "https://api.core.ac.uk/v3/search/works"
+    # headers = {
+    #     "Authorization": f"Bearer {CORE_API_KEY}",
+    #     "Content-Type": "application/json"
+    # }
+    # data = {
+    #     "q": journal.topic,
+    #     "limit": 1000
+    # }
 
-    max_retries = 3
-    backoff_seconds = 2
-    core_content_json = None
+    # try:
+    #     async with httpx.AsyncClient(timeout=15.0) as client:  # set timeout explicitly
+    #         response = await client.post(CORE_API_URL, json=data, headers=headers)
+    #         response.raise_for_status()
 
-    for attempt in range(max_retries):
-        payload = {
-            "q": journal.topic,
-            "limit": 20 if attempt == 0 else 10  # Reduce limit on later retries
-        }
+    #         try:
+    #             results = response.json()
+    #         except Exception as json_err:
+    #             raise HTTPException(status_code=500, detail=f"Invalid JSON in response: {str(json_err)}")
 
-        try:
-            async with httpx.AsyncClient(timeout=15.0) as client:
-                response = await client.post(CORE_API_URL, json=payload, headers=headers)
-                response.raise_for_status()
+    #         core_content_json = build_structured_content(results)
 
-                try:
-                    results = response.json()
-                except Exception as json_err:
-                    raise HTTPException(status_code=500, detail=f"Invalid JSON in response: {str(json_err)}")
+    # except httpx.HTTPStatusError as e:
+    #     raise HTTPException(status_code=e.response.status_code,
+    #                         detail=f"CORE API returned HTTP error: {e.response.text}")
 
-                # Detect overload from CORE (Elasticsearch rejection)
-                if isinstance(results, dict) and "message" in results:
-                    msg = results["message"]
-                    if "es_rejected_execution_exception" in msg:
-                        if attempt < max_retries - 1:
-                            await asyncio.sleep(backoff_seconds * (2 ** attempt))
-                            continue
-                        else:
-                            raise HTTPException(status_code=503, detail="CORE API overloaded. Please try again later.")
+    # except httpx.RequestError as e:
+    #     raise HTTPException(status_code=500, detail=f"Request error: {str(e)}")
 
-                # Build structured content from CORE results
-                core_content_json = build_structured_content(results)
-                break  # Success, exit loop
-
-        except httpx.HTTPStatusError as e:
-            if attempt < max_retries - 1:
-                await asyncio.sleep(backoff_seconds * (2 ** attempt))
-                continue
-            raise HTTPException(status_code=e.response.status_code,
-                                detail=f"CORE API returned HTTP error: {e.response.text}")
-
-        except httpx.RequestError as e:
-            if attempt < max_retries - 1:
-                await asyncio.sleep(backoff_seconds * (2 ** attempt))
-                continue
-            raise HTTPException(status_code=500, detail=f"Request error: {str(e)}")
-
-    if core_content_json is None:
-        raise HTTPException(status_code=500, detail="Failed to fetch data from CORE API after retries.")
+    # except Exception as e:
+    #     raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
     # Step 3: Create universal prompt
     prompt = f"""
-    You are provided with structured article data extracted from CORE:
-    {core_content_json}
+    You are provided by a topic:
+    topic : "{journal.topic}"
 
-    Using this data, 'paraphase it' where that contains only "subContent" and "references" (citation-style reference).
+
+    Using this data, generate a summarized structure that contains only "subContent" (summary of key insights from the article) and "references" (citation-style reference).
+
 
     The final structure should look like:
     "content": {{
       "C001": {{
         "subContent": "...",
-        "references": "..."
-      }},
+        "references": "...",
+        "parentLink": "..." #parent link is the link where we can find the article or the journal
+      }}, # try to achieve as much as possible but maximum will be 15(C015) and the minimum will be 10(C010)
       ...
     }}
 
-    Ensure that everything is extracted from the provided article data. 
-    Focus on creating references from title, authors, year, and DOI if available, if not then don't replace that with any null or static data, just left it blank.
+
+    Ensure the summaries are meaningful and extracted from the provided article data.
+    Focus on creating references from title, authors, year, and DOI if available.
     And also if possible add some more important ("article" and "journal") data on that topic from your side and merge it with the same thing.
     the most important the whole data will be copied out and used so give me clean information only the structured data no other thing not even a symbol or dot.
     note: Write like a confident, clear thinking human speaking to another smart human.
@@ -488,9 +465,7 @@ async def full_journal_pipeline(journal: PulsusInputStr):
         'furthermore.
         Skip unnecessary dashes (-), quotation marks (''), and corporate buzzwords like 'cutting-edge', 'robust', or 'seamless experience. No Al tone. No fluff. No filler.
         Use natural transitions like 'here's the thing', ‘let's break it down; or ‘what this really means is’ Keep sentences varied in length and rhythm, like how real people speak or write. Prioritize clarity, personality, and usefulness.
-        Every sentence should feel intentional, not generated.
-        and also  remove all possible escape sequences like ( \\\\ | \\' | \\" | \\a | \\b | \\f | \\n | \\r | \\t | \\v | \\[0-7]{1,3} | \\x[0-9a-fA-F]{2} | \\u[0-9a-fA-F]{4} | \\U[0-9a-fA-F]{8} ).....
-        more specific give a humanized response.
+        Every sentence should feel intentional, not generated
     """
 
     # Step 4: Ask Gemini
@@ -513,9 +488,7 @@ async def full_journal_pipeline(journal: PulsusInputStr):
         groq_summary = f"Groq API failed: {str(e)}"
 
     # Step 6: Clean and parse JSON output from Gemini or Groq
-    raw_json = extract_json_from_markdown(
-        gem_summary if "Gemini API failed" not in gem_summary else groq_summary
-    )
+    raw_json = extract_json_from_markdown(gem_summary if "Gemini API failed" not in gem_summary else groq_summary)
 
     try:
         parsed = json.loads(raw_json)
@@ -523,24 +496,54 @@ async def full_journal_pipeline(journal: PulsusInputStr):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to parse structured JSON from LLM output: {str(e)}")
 
+
     # Step 7: Conclusion content using Gemini
     prompt = f"""
-    give me a brief summary of between 200 - 400 words from this given data: {core_content_json}
+    This is the given data : "{content_data}"
+    i want to you to process this data and give me some output:
+    1: Give me a brief summary from the given data where the word count lies in between 200 - 400.
+    2: Give me a brief introduction from the given data where it will contain the citation markers as well, and you have to take in this way: the "C001" will be 1, "C002": 2......, where the word count lies in between 600 - 800.
+    3: Give me a brief description from the given data where it will contain the citation markers as well, and you have to take in this way: the "C001" will be 1, "C002": 2......, where the word count lies in between 600 - 800.
 
-    Summarize the following data. Do not include any introductory labels, brand names, or meta-commentary. Remove all special characters, escape sequences, and formatting symbols. Respond only with plain and clean text containing the summary. Respond without any introductory phrases, labels, brand mentions, or headings (e.g., 'Summary:', 'Gemini:', 'Groq:'). Do not include explanations of how you generated the answer unless explicitly asked.
-    and also  remove all possible escape sequences like ( \\\\ | \\' | \\" | \\a | \\b | \\f | \\n | \\r | \\t | \\v | \\[0-7]{1,3} | \\x[0-9a-fA-F]{2} | \\u[0-9a-fA-F]{4} | \\U[0-9a-fA-F]{8} ).....
-    more specific give a humanized response.
-    """
+    The final structure should look like:
+    "content": {{
+      "introduction": '''...''',
+      "description" : '''...''',
+      "summary" : '''...'''
+      ...
+    }}
+    
+
+    note: Do not include any introductory labels, brand names, or meta-commentary. Remove all special characters, escape sequences, and formatting symbols. Respond only with plain and clean text containing the summary. Respond without any introductory phrases, labels, brand mentions, or headings (e.g., 'Summary:', 'Gemini:', 'Groq:'). Do not include explanations of how you generated the answer unless explicitly asked.
+        Write like a confident, clear thinking human speaking to another smart human.
+        Avoid robotic phrases like 'in today's fast-paced world', 'leveraging synergies', or
+        'furthermore.
+        Skip unnecessary dashes (-), quotation marks (''), and corporate buzzwords like 'cutting-edge', 'robust', or 'seamless experience. No Al tone. No fluff. No filler.
+        Use natural transitions like 'here's the thing', ‘let's break it down; or ‘what this really means is’ Keep sentences varied in length and rhythm, like how real people speak or write. Prioritize clarity, personality, and usefulness.
+        Every sentence should feel intentional, not generated
+"""
     try:
         gem_response = gemClient.models.generate_content(
             model="gemini-2.5-flash", contents=prompt
         )
-        gem_conclusion = gem_response.text
+        gem_info = gem_response.text
     except Exception as e:
-        gem_conclusion = f"Gemini API failed: {str(e)}"
+        gem_info = f"Gemini API failed: {str(e)}"
+
+    # Step 7.5: Clean and parse JSON output from Gemini or Groq
+    raw_json = extract_json_from_markdown(gem_info)
+
+    try:
+        parsed = json.loads(raw_json)
+        gem_info = parsed["content"]
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to parse structured JSON from LLM output: {str(e)}")
+
+
+
 
     # Step 8: Title content using Gemini
-    prompt = f"give me a 5 to 7 words title based on the generated summary {gem_summary}. use playoff method to generate 5,6 titles and choose the best one and give that title. no need to display background process. just give 1 title as a final response"
+    prompt = f"give me a 5 to 7 words title based on the generated summary {content_data}. use playoff method to generate 5,6 titles and choose the best one and give that title. no need to display background process. just give 1 title as a final response"
 
     try:
         gem_response = gemClient.models.generate_content(
@@ -549,6 +552,9 @@ async def full_journal_pipeline(journal: PulsusInputStr):
         gem_title = gem_response.text
     except Exception as e:
         gem_title = f"Gemini API failed: {str(e)}"
+
+
+
 
     # Step 9: Final response
     final_output = {
@@ -560,6 +566,8 @@ async def full_journal_pipeline(journal: PulsusInputStr):
             "authorsDepartment": "Department of Biochemistry and Nutrition, Ludwig Maximilian University of Munich, Germany",
             "citation": f"Brown D. How {journal.topic.lower()} shapes personalized nutrition. {journal.generalName}. {journal.published[-4:]};{journal.volume}({journal.issues}):240",
             "journalYearVolumeIssue": f"{journal.generalName} {journal.published} Volume {journal.volume} Issue {journal.issues}",
+            "introduction": gem_info["introduction"] ,
+            "description": gem_info["description"] ,
             "content": content_data,
             "doi": "10.5219/736",
             "received": journal.received,
@@ -569,10 +577,10 @@ async def full_journal_pipeline(journal: PulsusInputStr):
             "published": journal.published,
             "manuscriptNo": f"AAAFN-{journal.published[-4:]}-{journal.pdfNo}",
             "parentLink": str(journal.parentLink),
-            "conclusion": gem_conclusion
+            "conclusion": gem_info["summary"]
         }
     }
-
+    
     data = fetchOutData()
     pulsus_output_instance = PulsusOutputStr(**final_output[journal.id])
     data[journal.id] = pulsus_output_instance.model_dump()
