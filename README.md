@@ -279,38 +279,38 @@ with JSON body:
     "ISSN": "2952-8097",
     "parentLink": "https://www.alliedacademies.org/archives-food-nutrition/"
 }
-```
 
 {
-    "title": gem_title,
-    "journalName" : journal.journalName,
-    "type": journal.type,
-    "authors": journal.author,
-    "email": journal.email,
-    "authorsDepartment": journal.authorsDepartment,
-    "citation": journal.citation,
-    "journalYearVolumeIssue": f"{journal.journalName} {journal.published.split('-')[-1]} Volume {journal.volume} Issue {journal.issues}",
-    "introduction": gem_info["introduction"] ,
-    "description": gem_info["description"] ,
-    "content": content_data,
-    "doi": journal.doi,
-    "received": journal.received,
-    "editorAssigned": journal.editorAssigned,
-    "reviewed": journal.reviewed,
-    "revised": journal.revised,
-    "published": journal.published,
-    "year" : int(journal.published.split('-')[-1]),
-    "manuscriptNo": journal.manuscriptNo,
-    "QCNo": f"Q-{journal.manuscriptNo.split('-')[-1]}",
-    "preQCNo": f"P-{journal.manuscriptNo.split('-')[-1]}",
-    "RManuNo" : f"R-{journal.manuscriptNo.split('-')[-1]}",
-    "volume" : journal.volume,
-    "issues" : journal.issues,
-    "ISSN" : journal.ISSN,
-    "parentLink": str(journal.parentLink),
-    "conclusion": gem_info["summary"]
+    #"title": gem_title,
+    #"journalName" : journal.journalName,
+    #"type": journal.type,
+    #"authors": journal.author,
+    #"email": journal.email,
+    #"authorsDepartment": journal.authorsDepartment,
+    #"citation": journal.citation,
+    #"journalYearVolumeIssue": f"{journal.journalName} {journal.published.split('-')[-1]} Volume {journal.volume} Issue {journal.issues}",
+    #"introduction": gem_info["introduction"] ,
+    #"description": gem_info["description"] ,
+    #"content": content_data,
+    #"doi": journal.doi,
+    #"received": journal.received,
+    #"editorAssigned": journal.editorAssigned,
+    #"reviewed": journal.reviewed,
+    #"revised": journal.revised,
+    #"published": journal.published,
+    #"year" : int(journal.published.split('-')[-1]),
+    #"manuscriptNo": journal.manuscriptNo,
+    #"QCNo": f"Q-{journal.manuscriptNo.split('-')[-1]}",
+    #"preQCNo": f"P-{journal.manuscriptNo.split('-')[-1]}",
+    #"RManuNo" : f"R-{journal.manuscriptNo.split('-')[-1]}",
+    #"volume" : journal.volume,
+    #"issues" : journal.issues,
+    #"ISSN" : journal.ISSN,
+    #"parentLink": str(journal.parentLink),
+    #"conclusion": gem_info["summary"]
 }
 
+```
 
 ## 📄 License
 
