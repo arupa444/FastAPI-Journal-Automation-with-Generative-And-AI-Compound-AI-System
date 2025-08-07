@@ -3,5 +3,5 @@ pydantic
 google-generativeai
 groq
 python-dotenv
-uvicorn[standard]
+uvicorn
 httpx
