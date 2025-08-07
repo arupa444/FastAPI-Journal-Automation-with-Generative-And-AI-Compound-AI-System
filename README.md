@@ -99,21 +99,58 @@ with JSON body:
 
 ```json
 {
-  "id": "P001",
-  "topic": "Nutrigenomics",
-  "type": "Research Article",
-  "author": "Dr. Jane Doe",
-  "received": "01-Jan-2024",
-  "editorAssigned": "05-Jan-2024",
-  "reviewed": "15-Jan-2024",
-  "revised": "25-Jan-2024",
-  "published": "10-Feb-2024",
-  "generalName": "Journal of Nutritional Science",
-  "keyword": ["genetics", "nutrition", "personalized medicine"],
-  "volume": 12,
-  "issues": 2,
-  "pdfNo": 101,
-  "parentLink": "http://example.com/journal"
+    "id": "L003",
+    "topic": "Vocal Communication Patterns in Bottlenose Dolphins",
+    "journalName": "Journal of Animal Health and Behavioural Science",
+    "type": "Short Communication",
+    "citation": " James, Jhump. “Understanding Vocal Communication Patterns in Bottlenose Dolphins.” J Anim Health Behav Sci 8 (2024): 252.",
+    "author": "Jhump James",
+    "email": "jhumpjames1@gmail.com",
+    "authorsDepartment": "Department of Psychiatry, The University of Mostaganem, Algeria, Africa",
+    "received": "01-Apr-2024",
+    "editorAssigned": "03-Dec-2024",
+    "reviewed": "24-Dec-2024",
+    "revised": "24-Dec-2024",
+    "published": "31-Dec-2024",
+    "manuscriptNo": "ahbs-24-140508",
+    "volume": 8,
+    "issues": 2,
+    "pdfNo": 444,
+    "doi": "10.37421/2952-8097.2024.8.252",
+    "ISSN": "2952-8097",
+    "parentLink": "https://www.alliedacademies.org/archives-food-nutrition/"
+}
+```
+
+```json output str of journalDBOutput.json
+{
+    "title": gem_title,
+    "journalName" : journal.journalName,
+    "type": journal.type,
+    "authors": journal.author,
+    "email": journal.email,
+    "authorsDepartment": journal.authorsDepartment,
+    "citation": journal.citation,
+    "journalYearVolumeIssue": f"{journal.journalName} {journal.published.split('-')[-1]} Volume {journal.volume} Issue {journal.issues}",
+    "introduction": gem_info["introduction"] ,
+    "description": gem_info["description"] ,
+    "content": content_data,
+    "doi": journal.doi,
+    "received": journal.received,
+    "editorAssigned": journal.editorAssigned,
+    "reviewed": journal.reviewed,
+    "revised": journal.revised,
+    "published": journal.published,
+    "year" : int(journal.published.split('-')[-1]),
+    "manuscriptNo": journal.manuscriptNo,
+    "QCNo": f"Q-{journal.manuscriptNo.split('-')[-1]}",
+    "preQCNo": f"P-{journal.manuscriptNo.split('-')[-1]}",
+    "RManuNo" : f"R-{journal.manuscriptNo.split('-')[-1]}",
+    "volume" : journal.volume,
+    "issues" : journal.issues,
+    "ISSN" : journal.ISSN,
+    "parentLink": str(journal.parentLink),
+    "conclusion": gem_info["summary"]
 }
 ```
 
