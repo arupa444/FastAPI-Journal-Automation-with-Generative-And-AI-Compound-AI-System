@@ -1,4 +1,4 @@
-# 📚 Compound AI System for Journals – Automation API
+# 📚FastAPI Journal Automation with Generative AI(Compound AI System for Journals – Automation API)
 
 A **FastAPI-based** application designed to **automate the creation, enrichment, and management of journal articles**.  
 This system integrates **Large Language Models (LLMs)** such as **Google Gemini** and **Groq’s LLaMA**, combined with the **CORE (Connecting Repositories) API**, to process and enhance journal data.
