@@ -3,7 +3,9 @@ from fastapi.responses import JSONResponse
 import json
 from pydantic import BaseModel, Field, field_validator, computed_field, AnyUrl, EmailStr
 from typing import Annotated, Literal, Optional, List, Dict
-
+import subprocess
+from pathlib import Path as pathOfPathLib
+from jinja2 import Environment, FileSystemLoader
 from google import genai
 from groq import Groq
 import os
@@ -46,33 +48,38 @@ class CoreRequest(BaseModel):
 
 
 
-class ContentItem(BaseModel):
-    subContent: str
-    references: str
+# class ContentItem(BaseModel):
+#     subContent: str
+#     references: str
 
 
-class ContentBlock(BaseModel):
-    content: dict[str, ContentItem]
+# class ContentBlock(BaseModel):
+#     content: dict[str, ContentItem]
 
-class PulsusOutputStr(BaseModel):
-    content:  Annotated[ContentBlock,Field(..., title="This is the content block", description="Enter the stacks in the content blocks....")]
+# class PulsusOutputStr(BaseModel):
+#     content:  Annotated[ContentBlock,Field(..., title="This is the content block", description="Enter the stacks in the content blocks....")]
 
 
 class PulsusInputStr(BaseModel):
     id: Annotated[str, Field(..., title="ID of the Input Journal", description="Enter the id for this journal input....")]
     topic: Annotated[str, Field(..., title="Name of the topic", description="Enter the topic....")]
-    type: Annotated[str, Field(..., title="type of the topic", description="Enter the type....")]
+    journalName : Annotated[str, Field(..., title="Name of the journal where it belongs to.", description="Enter the journal where it belongs from...")]
+    type: Annotated[str, Field(..., title="Name of the type(journal)", description="Enter the type of journal....")]
+    citation : Annotated[str, Field(..., title="The citation of the journal", description="Enter the citation for this journal....")]
     author: Annotated[str, Field(..., title="Name of the author", description="Enter the author....")]
+    email : Annotated[EmailStr, Field(..., title="Email of the author", description="Enter the autors email....")]
+    authorsDepartment : Annotated[str, Field(..., title="Department of the authour", description="Enter the department of the author....")]
     received: Annotated[str, Field(..., title="The receiving date", description="Enter the receiving date in DD-Mon format....")]
     editorAssigned: Annotated[str, Field(..., title="The Editor Assigned date", description="Enter the editor assigned date in DD-Mon format....")]
     reviewed: Annotated[str, Field(..., title="The journal review date", description="Enter the journal review date in DD-Mon format....")]
     revised: Annotated[str, Field(..., title="The journal revised date", description="Enter the journal revised date in DD-Mon format....")]
     published: Annotated[str, Field(..., title="The publishing date of journal", description="Enter the publishing date of the journal in DD-Mon format....")]
-    generalName: Annotated[str, Field(..., title="The general name of volume", description="Enter the general name of the volume....")]
-    keyword: Annotated[List, Field(..., title="The keywords for this issues", description="Enter the keywords for this issues....")]
+    manuscriptNo : Annotated[str, Field(..., title="The manuscriptNo of this journal", description="Enter the manuscriptNo for this journal....")]
     volume: Annotated[int, Field(..., title="The volume for the issue", description="Enter the Volume of the issue...", gt=0)]
     issues: Annotated[int, Field(..., title="The issue no. of the volume", description="Enter the issue no. of the volume...",gt=0)]
     pdfNo: Annotated[int, Field(..., title="The pdf number", description="Enter the pdf number....",gt=0)]
+    doi : Annotated[str, Field(..., title="DOI for this journal", description="Enter DOI for this Journal....")]
+    ISSN : Annotated[str, Field(..., title="ISSN number of this journal", description="Enter the ISSN number for the journal....")]
     parentLink : Annotated[AnyUrl, Field(..., title="The url for the centralized link", description="Enter the link which will led to the centralized page....")]
 
 
@@ -102,23 +109,27 @@ class PulsusInputStr(BaseModel):
                 raise ValueError(f'Change the pdf page no. it is similar to the pdf artical name{i['topic']}')
         return value
 
-
 class UpdateInputPartJournal(BaseModel):
+    id: Annotated[Optional[str], Field(default=None, title="ID of the Input Journal", description="Enter the id for this journal input....")]
     topic: Annotated[Optional[str], Field(default=None, title="Name of the topic", description="Enter the topic....")]
-    type: Annotated[Optional[str], Field(default=None, title="type of the topic", description="Enter the type....")]
+    journalName : Annotated[Optional[str], Field(default=None, title="Name of the journal where it belongs to.", description="Enter the journal where it belongs from...")]
+    type: Annotated[Optional[str], Field(default=None, title="Name of the type(journal)", description="Enter the type of journal....")]
+    citation : Annotated[Optional[str], Field(default=None, title="The citation of the journal", description="Enter the citation for this journal....")]
     author: Annotated[Optional[str], Field(default=None, title="Name of the author", description="Enter the author....")]
+    email : Annotated[Optional[EmailStr], Field(default=None, title="Email of the author", description="Enter the autors email....")]
+    authorsDepartment : Annotated[Optional[str], Field(default=None, title="Department of the authour", description="Enter the department of the author....")]
     received: Annotated[Optional[str], Field(default=None, title="The receiving date", description="Enter the receiving date in DD-Mon format....")]
     editorAssigned: Annotated[Optional[str], Field(default=None, title="The Editor Assigned date", description="Enter the editor assigned date in DD-Mon format....")]
     reviewed: Annotated[Optional[str], Field(default=None, title="The journal review date", description="Enter the journal review date in DD-Mon format....")]
     revised: Annotated[Optional[str], Field(default=None, title="The journal revised date", description="Enter the journal revised date in DD-Mon format....")]
     published: Annotated[Optional[str], Field(default=None, title="The publishing date of journal", description="Enter the publishing date of the journal in DD-Mon format....")]
-    generalName: Annotated[Optional[str], Field(default=None, title="The general name of volume", description="Enter the general name of the volume....")]
-    keyword: Annotated[Optional[List], Field(..., title="The keywords for this issues", description="Enter the keywords for this issues....")]
-    volume: Annotated[Optional[int], Field(default=None, title="The volume for the issue", description="Enter the Volume of the issue...")]
-    issues: Annotated[Optional[int], Field(default=None, title="The issue no. of the volume", description="Enter the issue no. of the volume...")]
-    pdfNo: Annotated[Optional[int], Field(default=None, title="The pdf number", description="Enter the pdf number....")]
+    manuscriptNo : Annotated[Optional[str], Field(default=None, title="The manuscriptNo of this journal", description="Enter the manuscriptNo for this journal....")]
+    volume: Annotated[Optional[int], Field(default=None, title="The volume for the issue", description="Enter the Volume of the issue...", gt=0)]
+    issues: Annotated[Optional[int], Field(default=None, title="The issue no. of the volume", description="Enter the issue no. of the volume...",gt=0)]
+    pdfNo: Annotated[Optional[int], Field(default=None, title="The pdf number", description="Enter the pdf number....",gt=0)]
+    doi : Annotated[Optional[str], Field(default=None, title="DOI for this journal", description="Enter DOI for this Journal....")]
+    ISSN : Annotated[Optional[str], Field(default=None, title="ISSN number of this journal", description="Enter the ISSN number for the journal....")]
     parentLink : Annotated[Optional[AnyUrl], Field(default=None, title="The url for the centralized link", description="Enter the link which will led to the centralized page....")]
-
 
 
 
@@ -135,8 +146,11 @@ class ArticleItem(BaseModel):
 
 
 
+
+
 class PulsusOutputStr(BaseModel):
     title :  Annotated[str, Field(..., title="ID of the Input Journal", description="Enter the id for this journal input....")]
+    journalName : Annotated[str, Field(..., title="ID of the Input Journal", description="Enter the id for this journal input....")]
     type :  Annotated[str, Field(..., title="ID of the Input Journal", description="Enter the id for this journal input....")]
     authors : Annotated[str, Field(..., title="ID of the Input Journal", description="Enter the id for this journal input....")]
     email : Annotated[EmailStr, Field(..., title="ID of the Input Journal", description="Enter the id for this journal input....")]
@@ -152,8 +166,15 @@ class PulsusOutputStr(BaseModel):
     reviewed : Annotated[str, Field(..., title="ID of the Input Journal", description="Enter the id for this journal input....")] 
     revised : Annotated[str, Field(..., title="ID of the Input Journal", description="Enter the id for this journal input....")] 
     published : Annotated[str, Field(..., title="ID of the Input Journal", description="Enter the id for this journal input....")] 
+    year : Annotated[int, Field(..., title="Yes of publishing", description="Enter the journal publising year...")]
     manuscriptNo : Annotated[str, Field(..., title="ID of the Input Journal", description="Enter the id for this journal input....")] 
-    parentLink : Annotated[str, Field(..., title="ID of the Input Journal", description="Enter the id for this journal input....")] 
+    QCNo : Annotated[str, Field(..., title="The QC number", description="Enter the QC number....")]
+    preQCNo : Annotated[str, Field(..., title="The preQC number", description="Enter the preQC number....")]
+    RManuNo : Annotated[str, Field(..., title="The RManuNo number", description="Enter the RManuNo number....")]
+    volume: Annotated[int, Field(..., title="The volume for the issue", description="Enter the Volume of the issue...", gt=0)]
+    issues: Annotated[int, Field(..., title="The issue no. of the volume", description="Enter the issue no. of the volume...",gt=0)]
+    ISSN : Annotated[str, Field(..., title="ISSN Number", description="Enter the ISSN Number....")]
+    parentLink : Annotated[AnyUrl, Field(..., title="ID of the Input Journal", description="Enter the id for this journal input....")] 
     conclusion : Annotated[str, Field(..., title="ID of the Input Journal", description="Enter the id for this journal input....")] 
 
     @field_validator('content')
@@ -230,7 +251,7 @@ def viewTheData():
 
 
 @app.get("/journalInputData/{JournalInputID}")
-def fetchOneP(JournalInputID: str = Path(..., description='Enter your journal input index here....', example="P001",max_length=4)):
+def fetchOneP(JournalInputID: str = Path(..., description='Enter your journal input index here....', example="J001",max_length=4)):
     data = fetchInpData()
     if JournalInputID in data:
         return data[JournalInputID]
@@ -401,7 +422,6 @@ async def full_journal_pipeline(journal: PulsusInputStr):
     if journal.id in data:
         raise HTTPException(status_code=400, detail="Journal ID already exists.")
     data[journal.id] = journal.model_dump(exclude=["id"])
-    saveInpData(data)
 
     # # Step 2: Use the topic to search CORE articles
     # CORE_API_URL = "https://api.core.ac.uk/v3/search/works"
@@ -490,6 +510,7 @@ async def full_journal_pipeline(journal: PulsusInputStr):
     # Step 6: Clean and parse JSON output from Gemini or Groq
     raw_json = extract_json_from_markdown(gem_summary if "Gemini API failed" not in gem_summary else groq_summary)
 
+
     try:
         parsed = json.loads(raw_json)
         content_data = parsed["content"]
@@ -516,8 +537,7 @@ async def full_journal_pipeline(journal: PulsusInputStr):
 
     note: Do not include any introductory labels, brand names, or meta-commentary. Remove all special characters, escape sequences, and formatting symbols. Respond only with plain and clean text containing the summary. Respond without any introductory phrases, labels, brand mentions, or headings (e.g., 'Summary:', 'Gemini:', 'Groq:'). Do not include explanations of how you generated the answer unless explicitly asked.
         Write like a confident, clear thinking human speaking to another smart human.
-        Avoid robotic phrases like 'in today's fast-paced world', 'leveraging synergies', or
-        'furthermore.
+        Avoid robotic phrases like 'in today's fast-paced world', 'leveraging synergies', 'furthermore'.....
         Skip unnecessary dashes (-), quotation marks (''), and corporate buzzwords like 'cutting-edge', 'robust', or 'seamless experience. No Al tone. No fluff. No filler.
         Use natural transitions like 'here's the thing', ‘let's break it down; or ‘what this really means is’ Keep sentences varied in length and rhythm, like how real people speak or write. Prioritize clarity, personality, and usefulness.
         Every sentence should feel intentional, not generated
@@ -560,29 +580,68 @@ async def full_journal_pipeline(journal: PulsusInputStr):
     final_output = {
         journal.id: {
             "title": gem_title,
+            "journalName" : journal.journalName,
             "type": journal.type,
             "authors": journal.author,
-            "email": "xyz@gmail.com",
-            "authorsDepartment": "Department of Biochemistry and Nutrition, Ludwig Maximilian University of Munich, Germany",
-            "citation": f"Brown D. How {journal.topic.lower()} shapes personalized nutrition. {journal.generalName}. {journal.published[-4:]};{journal.volume}({journal.issues}):240",
-            "journalYearVolumeIssue": f"{journal.generalName} {journal.published} Volume {journal.volume} Issue {journal.issues}",
+            "email": journal.email,
+            "authorsDepartment": journal.authorsDepartment,
+            "citation": journal.citation,
+            "journalYearVolumeIssue": f"{journal.journalName} {journal.published.split('-')[-1]} Volume {journal.volume} Issue {journal.issues}",
             "introduction": gem_info["introduction"] ,
             "description": gem_info["description"] ,
             "content": content_data,
-            "doi": "10.5219/736",
+            "doi": journal.doi,
             "received": journal.received,
             "editorAssigned": journal.editorAssigned,
             "reviewed": journal.reviewed,
             "revised": journal.revised,
             "published": journal.published,
-            "manuscriptNo": f"AAAFN-{journal.published[-4:]}-{journal.pdfNo}",
+            "year" : int(journal.published.split('-')[-1]),
+            "manuscriptNo": journal.manuscriptNo,
+            "QCNo": f"Q-{journal.manuscriptNo.split('-')[-1]}",
+            "preQCNo": f"P-{journal.manuscriptNo.split('-')[-1]}",
+            "RManuNo" : f"R-{journal.manuscriptNo.split('-')[-1]}",
+            "volume" : journal.volume,
+            "issues" : journal.issues,
+            "ISSN" : journal.ISSN,
             "parentLink": str(journal.parentLink),
             "conclusion": gem_info["summary"]
         }
     }
     
+    saveInpData(data)
+    
     data = fetchOutData()
     pulsus_output_instance = PulsusOutputStr(**final_output[journal.id])
     data[journal.id] = pulsus_output_instance.model_dump()
     saveOutData(data)
-    return JSONResponse(status_code=200, content="Data Added successfully")
+
+    # ===== Load Jinja2 Template =====
+    env = Environment(
+        block_start_string=r'\BLOCK{',
+        block_end_string='}',
+        variable_start_string=r'\VAR{',
+        variable_end_string='}',
+        comment_start_string=r'\#{',
+        comment_end_string='}',
+        line_statement_prefix='%%',
+        line_comment_prefix='%#',
+        trim_blocks=True,
+        autoescape=False,
+        loader=FileSystemLoader(pathOfPathLib("."))  # current folder
+    )
+
+    template = env.get_template("finalFormate.tex")
+
+    # ===== Render LaTeX =====
+    rendered_latex = template.render(**data[journal.id])
+    outputFileName = f"{journal.id}.tex"
+
+    # ===== Save LaTeX to file =====
+    tex_file = pathOfPathLib(outputFileName)
+    tex_file.write_text(rendered_latex, encoding="utf-8")
+
+    # ===== Compile LaTeX to PDF =====
+    subprocess.run(["pdflatex", "-interaction=nonstopmode", str(tex_file)], check=True)
+
+    return JSONResponse(status_code=200, content="Data Added successfull and generated PDF successfully✅.")
