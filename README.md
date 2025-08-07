@@ -281,7 +281,6 @@ with JSON body:
 }
 ```
 
-```json output str of journalDBOutput.json
 {
     "title": gem_title,
     "journalName" : journal.journalName,
@@ -311,7 +310,6 @@ with JSON body:
     "parentLink": str(journal.parentLink),
     "conclusion": gem_info["summary"]
 }
-```
 
 
 ## 📄 License
