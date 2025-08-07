@@ -1,7 +1,13 @@
 fastapi
+uvicorn
 pydantic
-google-generativeai
+pydantic-settings
+jinja2
+google-genai
 groq
 python-dotenv
-uvicorn
 httpx
+pdflatex
+python-multipart
+reportlab
+pydantic[email]
