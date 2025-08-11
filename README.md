@@ -54,6 +54,12 @@ venv\Scripts\activate          # Windows
 ```bash
 pip install -r requirements.txt
 ```
+
+### 4️⃣ Install Software and Font
+1. Download and Install MikTex software
+2. Download and Install Archivo Narrow font to your device
+
+
 ## 🔑 Configuration
 
 This application requires API keys for **Gemini**, **Groq**, and **CORE**.
