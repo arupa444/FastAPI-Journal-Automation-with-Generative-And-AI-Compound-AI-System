@@ -3,7 +3,10 @@
 % === PACKAGES ===
 \usepackage[margin=35pt, top=75pt, bottom=90pt]{geometry}
 \usepackage{fontspec}
-\usepackage{Archivo Narrow}
+\setmainfont{ArchivoNarrow-Regular}[
+    Path = ./Fonts/, % folder containing the font
+    UprightFont = * , % since the file is ArchivoNarrow-Regular.ttf
+]
 \usepackage{titlesec} % for heading sizes
 \usepackage{latexsym}
 \usepackage[utf8]{inputenc}
