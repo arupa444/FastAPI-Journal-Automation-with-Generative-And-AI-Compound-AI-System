@@ -1,10 +1,11 @@
-\documentclass{article}
-\usepackage[paperwidth=595pt, paperheight=841pt, margin=27.5pt, top=75pt, bottom=90pt]{geometry}
-\usepackage{amsmath}
-\usepackage{color,pxfonts,fix-cm}
-\usepackage{titlesec}
+\documentclass[10pt]{article} % body text 10pt globally
+
+% === PACKAGES ===
+\usepackage[paperwidth=595pt, paperheight=841pt, margin=45pt, top=75pt, bottom=90pt]{geometry}
+\usepackage{fontspec}
+\usepackage{Archivo Narrow}
+\usepackage{titlesec} % for heading sizes
 \usepackage{latexsym}
-\usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage{pict2e}
 \usepackage{wasysym}
@@ -16,24 +17,38 @@
 \usepackage{hyperref}
 \usepackage{framed}
 \usepackage{lettrine}
-\usepackage{zref-abspage} % Better than lastpage for this case
-\usepackage{refcount}     % To get reference values easily
+\usepackage{zref-abspage}
+\usepackage{refcount}
 
+% === COLORS ===
+\definecolor{color_101230}{rgb}{0.286275,0.14902,0.423529}
+\definecolor{color_283006}{rgb}{1,1,1}
+\definecolor{color_100238}{rgb}{0.282353,0.145098,0.423529}
+\definecolor{color_29791}{rgb}{0,0,0}
+\definecolor{color_282974}{rgb}{1,0.996078,0.996078}
 
-% --- Color Definitions ---
-\definecolor{color_101230}{rgb}{0.286275,0.14902,0.423529} % Dark Purple
-\definecolor{color_283006}{rgb}{1,1,1} % White
-\definecolor{color_100238}{rgb}{0.282353,0.145098,0.423529} % Slightly different Purple for text
-\definecolor{color_29791}{rgb}{0,0,0} % Black
-\definecolor{color_282974}{rgb}{1,0.996078,0.996078} % Off-white
-
-% --- Hyperlink Setup ---
+% === LINK COLORS ===
 \hypersetup{
     colorlinks=true,
-    urlcolor=black,
-    citecolor=black,
-    linkcolor=black
+    urlcolor=color_100238,
+    citecolor=color_100238,
+    linkcolor=color_100238
 }
+
+% === TITLE & SECTION FONT SIZES ===
+% Section headings (15pt)
+\titleformat{name=\section,numberless}[block]%
+  {\bfseries\fontsize{15}{17}\selectfont\color{color_100238}} % 15pt section
+  {} % no numbering
+  {0pt}
+  {}
+  [\vspace{-0.4cm}\noindent\color{color_100238}\rule{\linewidth}{1pt}]
+
+% === TITLE STYLE ===
+\newcommand{\articletitle}[1]{%
+    {\fontsize{20}{22}\selectfont\color{color_29791}\textbf{#1}}\par
+}
+
 
 \fancypagestyle{firstpage}{
     \fancyhf{} % clear header/footer
@@ -44,7 +59,7 @@
         \fontsize{10}{12}\selectfont\color{color_29791}Volume 0\VAR{volume}:0\VAR{issues}, \VAR{year}
     }
     \fancyhead[R]{%
-        \fontsize{13.9999}{16.8}\selectfont\color{color_100238}\VAR{journalName}
+        \fontsize{13.9999}{16.8}\selectfont\color{color_100238}\textbf{\VAR{journalName}}
     }
 
     % Second header row (full-width purple bar with ISSN & Open Access)
@@ -80,9 +95,6 @@
 }
 
 
-
-
-
 % --- Header and Footer for all subsequent pages ---
 \fancypagestyle{subsequent}{
     \fancyhf{}
@@ -107,14 +119,6 @@
 \pagestyle{subsequent}   % Default for all pages
 \thispagestyle{firstpage} % First page special style
 
-% === Automatic rule under every section heading ===
-\titleformat{\section}[block]%
-  {\normalfont\fontsize{13}{10.8}\selectfont\color{color_100238}}% style for heading
-  {}% label (empty for no numbering)
-  {0pt}% separation between label and title
-  {}% nothing before title text (titlesec inserts title text automatically)
-  [\vspace{-0.1cm}\noindent\color{color_100238}\rule{\linewidth}{0.5pt}] % after heading: rule
-
 
 % --- Main Document ---
 \begin{document}
@@ -134,11 +138,14 @@
 
 \begin{flushleft}
 \vspace*{-0.5cm}
-    \fontsize{11}{13.2}\selectfont\color{color_29791}\VAR{authors}\par
+    \fontsize{11}{13.2}\selectfont\color{color_29791}\textbf{\VAR{authors}}\par
     \vspace{0cm}
     \fontsize{9}{10.8}\selectfont\color{color_29791}\VAR{authorsDepartment}\par
     \vspace{0.1cm}
-    \color{color_100238}\rule{0.6\textwidth}{1pt}
+    % Measure the width of the department text
+    \settowidth{\dimen0}{\fontsize{9}{10.8}\selectfont\color{color_29791}\VAR{authorsDepartment}}%
+    % Draw a rule with that width
+    \color{color_100238}\rule{\dimen0}{1pt}
 \end{flushleft}
 
 \begin{multicols}{2}
