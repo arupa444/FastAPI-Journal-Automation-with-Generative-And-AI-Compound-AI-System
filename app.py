@@ -642,6 +642,6 @@ async def full_journal_pipeline(journal: PulsusInputStr):
     tex_file.write_text(rendered_latex, encoding="utf-8")
 
     # ===== Compile LaTeX to PDF =====
-    subprocess.run(["pdflatex", "-interaction=nonstopmode", str(tex_file)], check=True)
+    subprocess.run(["xelatex", "-interaction=nonstopmode", str(tex_file)], check=True)
 
     return JSONResponse(status_code=200, content="Data Added successfull and generated PDF successfully✅.")
