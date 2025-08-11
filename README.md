@@ -55,9 +55,10 @@ venv\Scripts\activate          # Windows
 pip install -r requirements.txt
 ```
 
-### 4️⃣ Install Software and font
+### 4️⃣ Install Software and Font
 1. Download and Install MikTex software
-2. Download and Install Archivo Narrow font from google font
+2. Download and Install Archivo Narrow font to your device
+
 
 ## 🔑 Configuration
 
