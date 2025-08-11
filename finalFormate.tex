@@ -1,7 +1,7 @@
 \documentclass[10pt]{article} % body text 10pt globally
 
 % === PACKAGES ===
-\usepackage[paperwidth=595pt, paperheight=841pt, margin=45pt, top=75pt, bottom=90pt]{geometry}
+\usepackage[margin=35pt, top=75pt, bottom=90pt]{geometry}
 \usepackage{fontspec}
 \usepackage{Archivo Narrow}
 \usepackage{titlesec} % for heading sizes
@@ -52,46 +52,46 @@
 
 \fancypagestyle{firstpage}{
     \fancyhf{} % clear header/footer
-
+    \fancyheadoffset[L]{0pt}
+    \fancyheadoffset[R]{0pt}
+    \renewcommand{\headrulewidth}{0pt}
+    
     % Main header row
     \fancyhead[L]{%
-        \fontsize{13.5}{15}\selectfont\color{color_29791}\VAR{type}\\
+        \fontsize{12}{15}\selectfont\color{color_29791}\textbf{\VAR{type}}\\
         \fontsize{10}{12}\selectfont\color{color_29791}Volume 0\VAR{volume}:0\VAR{issues}, \VAR{year}
     }
     \fancyhead[R]{%
-        \fontsize{13.9999}{16.8}\selectfont\color{color_100238}\textbf{\VAR{journalName}}
+        \fontsize{15}{16.8}\selectfont\color{color_100238}\textbf{\VAR{journalName}}
     }
 
-    % Second header row (full-width purple bar with ISSN & Open Access)
-    \fancyheadoffset[L]{0pt} % ensure full width coverage
-    \fancyheadoffset[R]{0pt}
-    \renewcommand{\headrulewidth}{0pt} % remove default rule
+    % === Second row: Purple bar with ISSN & Open Access ===
     \fancyhead[C]{%
     \begin{tikzpicture}[overlay, remember picture]
-        % Purple bar (shifted lower)
+        % Purple bar
         \fill[color_100238] 
             ($(current page.north west) + (0,-74pt)$) 
             rectangle 
             ($(current page.north east) + (0,-95pt)$);
 
-        % ISSN on left
+        % ISSN - shifted to match left margin
         \node[anchor=west, font=\fontsize{9}{11}\selectfont, text=white] 
-            at ($(current page.north west) + (10pt,-85pt)$) {ISSN: \VAR{ISSN}};
+            at ($(current page.north west) + (\dimexpr\oddsidemargin+0.97in\relax,-85pt)$) \textbf{ISSN: \VAR{ISSN}};
 
-        % Open Access on right
+        % Open Access - shifted to match right margin
         \node[anchor=east, font=\fontsize{9}{11}\selectfont, text=white] 
-            at ($(current page.north east) + (-10pt,-85pt)$) {Open Access};
+            at ($(current page.north east) + (-\dimexpr\oddsidemargin+1in\relax,-85pt)$) \textbf{Open Access};
     \end{tikzpicture}%
     }
+
+    % Footer stays same
     \fancyfoot[L]{%
     \begin{tikzpicture}[baseline=(text.base)]
         \fill[color_100238] (0,0) rectangle (76.56pt, -16.3pt);
         \node[white, font=\fontsize{8}{9.6}\selectfont] (text)
-            at (38.28pt, -8.15pt) 
-            {Page~\thepage~of~\getpagerefnumber{TotPages}};
+            at (38.28pt, -8.15pt) {Page~\thepage~of~\getpagerefnumber{TotPages}};
     \end{tikzpicture}%
-}
-
+    }
 }
 
 
