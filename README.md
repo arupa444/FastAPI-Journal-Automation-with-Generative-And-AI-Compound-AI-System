@@ -56,7 +56,7 @@ pip install -r requirements.txt
 ```
 
 ### 4️⃣ Install Software and Font
-1. Download and Install MikTex software
+1. Download and Install MikTex software to your device
 2. Download and Install Archivo Narrow font to your device
 
 
