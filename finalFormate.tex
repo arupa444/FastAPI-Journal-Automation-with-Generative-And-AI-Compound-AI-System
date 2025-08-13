@@ -1,15 +1,17 @@
 \documentclass[10pt]{article} % body text 10pt globally
 
 % === PACKAGES ===
-\usepackage[margin=35pt, top=75pt, bottom=90pt]{geometry}
+\usepackage[margin=35pt, top=69pt, bottom=90pt]{geometry}
 \usepackage{fontspec}
-\setmainfont{ArchivoNarrow-Regular}[
-    Path = ./Fonts/, % folder containing the font
-    UprightFont = * , % since the file is ArchivoNarrow-Regular.ttf
+\setmainfont{ArchivoNarrow}[
+    Path=./Fonts/,
+    UprightFont = *-Regular,
+    BoldFont = *-Bold,
+    ItalicFont = *-Italic,
+    BoldItalicFont = *-BoldItalic
 ]
 \usepackage{titlesec} % for heading sizes
 \usepackage{latexsym}
-\usepackage[utf8]{inputenc}
 \usepackage{pict2e}
 \usepackage{wasysym}
 \usepackage[english]{babel}
@@ -33,7 +35,7 @@
 % === LINK COLORS ===
 \hypersetup{
     colorlinks=true,
-    urlcolor=color_100238,
+    urlcolor=color_29791,
     citecolor=color_100238,
     linkcolor=color_100238
 }
@@ -49,7 +51,7 @@
 
 % === TITLE STYLE ===
 \newcommand{\articletitle}[1]{%
-    {\fontsize{20}{22}\selectfont\color{color_29791}\textbf{#1}}\par
+    {\fontsize{24}{22}\selectfont\color{color_29791}\textbf{#1}}\par
 }
 
 
@@ -78,12 +80,12 @@
             ($(current page.north east) + (0,-95pt)$);
 
         % ISSN - shifted to match left margin
-        \node[anchor=west, font=\fontsize{9}{11}\selectfont, text=white] 
-            at ($(current page.north west) + (\dimexpr\oddsidemargin+0.97in\relax,-85pt)$) \textbf{ISSN: \VAR{ISSN}};
+        \node[anchor=west, font=\fontsize{9}{11}\selectfont\bfseries, text=white] 
+            at ($(current page.north west) + (\dimexpr\oddsidemargin+1in\relax,-85pt)$) {ISSN: \VAR{ISSN}};
 
         % Open Access - shifted to match right margin
-        \node[anchor=east, font=\fontsize{9}{11}\selectfont, text=white] 
-            at ($(current page.north east) + (-\dimexpr\oddsidemargin+1in\relax,-85pt)$) \textbf{Open Access};
+        \node[anchor=east, font=\fontsize{9}{11}\selectfont\bfseries, text=white] 
+            at ($(current page.north east) + (-\dimexpr\oddsidemargin+1in\relax,-85pt)$) {Open Access};
     \end{tikzpicture}%
     }
 
@@ -102,7 +104,7 @@
 \fancypagestyle{subsequent}{
     \fancyhf{}
     % Header
-    \fancyhead[L]{\fontsize{8.5}{10}\selectfont\color{color_29791}\VAR{authors}}
+    \fancyhead[L]{\fontsize{8.5}{10}\selectfont\color{color_29791}\VAR{authors | latex_escape}}
     \fancyhead[R]{\fontsize{8.5}{10}\selectfont\color{color_29791}\VAR{journalYearVolumeIssue}}
     % \renewcommand{\headrule}{%
     %   \vbox to 0pt{\hbox to\headwidth{\color{color_100238}\leaders\hrule height 0.5pt\hfill}\vss}%
@@ -117,6 +119,7 @@
     \end{tikzpicture}%
 }
 }
+\setlength{\headheight}{28pt}  % Fix fancyhdr warning & allow purple bar display
 
 % --- Apply styles ---
 \pagestyle{subsequent}   % Default for all pages
@@ -130,20 +133,17 @@
 \vspace*{1cm} % adjust this value until it clears the purple bar
 
 \begin{flushleft}
-    {\fontsize{16}{22}\selectfont\color{color_29791}
-    \textbf{\VAR{title}}\par
-    }
-    \vspace{0cm}
-    \color{color_100238}\rule{0.97\textwidth}{0.5pt}
+    \articletitle{\VAR{title | latex_escape}}
+    \color{color_100238}\rule{0.97\textwidth}{1pt}
     \vspace{0.1cm}
 \end{flushleft}
 
 
 \begin{flushleft}
 \vspace*{-0.5cm}
-    \fontsize{11}{13.2}\selectfont\color{color_29791}\textbf{\VAR{authors}}\par
+    \fontsize{11}{13.2}\selectfont\color{color_29791}\textbf{\VAR{authors | latex_escape}}\par
     \vspace{0cm}
-    \fontsize{9}{10.8}\selectfont\color{color_29791}\VAR{authorsDepartment}\par
+    \fontsize{9}{10.8}\selectfont\color{color_29791}\VAR{authorsDepartment | latex_escape}\par
     \vspace{0.1cm}
     % Measure the width of the department text
     \settowidth{\dimen0}{\fontsize{9}{10.8}\selectfont\color{color_29791}\VAR{authorsDepartment}}%
@@ -156,30 +156,32 @@
 
 \section*{Introduction}
 % \section*{\color{color_100238}Introduction}
-\VAR{introduction}
+\VAR{introduction | latex_escape}
 \section*{Description}
-\VAR{description}
+\VAR{description | latex_escape}
 
 \section*{Conclusion}
-\VAR{conclusion}
+\VAR{conclusion | latex_escape}
 
 \section*{Acknowledgement}
-None.
-\section*{Conflict of Interest}
 None.
 
 \begin{framed}
 \noindent\fontsize{8.5}{10.2}\selectfont
-\textbf{How to cite this article:} \VAR{citation}
+\textbf{How to cite this article:} \VAR{citation | latex_escape}
 \end{framed}
 
 \section*{References}
 \fontsize{8}{9.6}\selectfont
 \begin{enumerate}
     \BLOCK{ for key, item in content.items() }
-        \href{\VAR{item.parentLink}}{\item \VAR{item.references}}
+        \item \href{\VAR{item.parentLink}}{ \VAR{item.references | latex_escape}}
     \BLOCK{ endfor }
 \end{enumerate}
+
+\section*{Conflict of Interest}
+None.
+
 \end{multicols}
 
 \vfill

@@ -1,3 +1,4 @@
+from math import e
 from fastapi import FastAPI, Path, HTTPException, Query
 from fastapi.responses import JSONResponse
 import json
@@ -46,8 +47,6 @@ class CoreRequest(BaseModel):
 
 
 
-
-
 # class ContentItem(BaseModel):
 #     subContent: str
 #     references: str
@@ -64,6 +63,7 @@ class PulsusInputStr(BaseModel):
     id: Annotated[str, Field(..., title="ID of the Input Journal", description="Enter the id for this journal input....")]
     topic: Annotated[str, Field(..., title="Name of the topic", description="Enter the topic....")]
     journalName : Annotated[str, Field(..., title="Name of the journal where it belongs to.", description="Enter the journal where it belongs from...")]
+    shortJournalName : Annotated[str, Field(..., title="Name of the short journal name where it belongs to.", description="Enter the short journal name where it belongs from...")]
     type: Annotated[str, Field(..., title="Name of the type(journal)", description="Enter the type of journal....")]
     citation : Annotated[str, Field(..., title="The citation of the journal", description="Enter the citation for this journal....")]
     author: Annotated[str, Field(..., title="Name of the author", description="Enter the author....")]
@@ -106,13 +106,14 @@ class PulsusInputStr(BaseModel):
         data = fetchInpData()
         for i in data.values():
             if value == i['pdfNo']:
-                raise ValueError(f'Change the pdf page no. it is similar to the pdf artical name{i['topic']}')
+                raise ValueError(f"Change the pdf page no. it is similar to the pdf artical name{i['topic']}")
         return value
 
 class UpdateInputPartJournal(BaseModel):
     id: Annotated[Optional[str], Field(default=None, title="ID of the Input Journal", description="Enter the id for this journal input....")]
     topic: Annotated[Optional[str], Field(default=None, title="Name of the topic", description="Enter the topic....")]
     journalName : Annotated[Optional[str], Field(default=None, title="Name of the journal where it belongs to.", description="Enter the journal where it belongs from...")]
+    shortJournalName : Annotated[Optional[str], Field(default=None, title="Name of the short journal name where it belongs to.", description="Enter the short journal name where it belongs from...")]
     type: Annotated[Optional[str], Field(default=None, title="Name of the type(journal)", description="Enter the type of journal....")]
     citation : Annotated[Optional[str], Field(default=None, title="The citation of the journal", description="Enter the citation for this journal....")]
     author: Annotated[Optional[str], Field(default=None, title="Name of the author", description="Enter the author....")]
@@ -151,6 +152,7 @@ class ArticleItem(BaseModel):
 class PulsusOutputStr(BaseModel):
     title :  Annotated[str, Field(..., title="ID of the Input Journal", description="Enter the id for this journal input....")]
     journalName : Annotated[str, Field(..., title="ID of the Input Journal", description="Enter the id for this journal input....")]
+    shortJournalName : Annotated[str, Field(..., title="Name of the short journal name where it belongs to.", description="Enter the short journal name where it belongs from...")]
     type :  Annotated[str, Field(..., title="ID of the Input Journal", description="Enter the id for this journal input....")]
     authors : Annotated[str, Field(..., title="ID of the Input Journal", description="Enter the id for this journal input....")]
     email : Annotated[EmailStr, Field(..., title="ID of the Input Journal", description="Enter the id for this journal input....")]
@@ -191,30 +193,50 @@ class PulsusOutputStr(BaseModel):
 
     
 
-
 def fetchInpData():
-    with open('journalDBInput.json','r') as file:
-        data = json.load(file)
-        return data
-   
+    if not os.path.exists('journalDBInput.json'):
+        return {}  # File doesn't exist → return empty dict
+
+    with open('journalDBInput.json', 'r') as file:
+        try:
+            data = json.load(file)
+            if not isinstance(data, dict):  # Ensure it's a dict
+                return {}
+            return data
+        except json.JSONDecodeError:
+            # File exists but is empty or invalid JSON
+            return {}
 
 
 def saveInpData(data):
     with open('journalDBInput.json','w') as file:
+        if data is None:
+            file = {}
         json.dump(data, file, default=str)
 
 
 
 
-
 def fetchOutData():
-    with open('journalDBOutput.json','r') as file:
-        data = json.load(file)
-        return data
-   
+    if not os.path.exists('journalDBOutput.json'):
+        return {}  # File doesn't exist → return empty dict
+
+    with open('journalDBOutput.json', 'r') as file:
+        try:
+            data = json.load(file)
+            if not isinstance(data, dict):  # Ensure it's a dict
+                return {}
+            return data
+        except json.JSONDecodeError:
+            # File exists but is empty or invalid JSON
+            return {}
+
+
 
 def saveOutData(data):
     with open('journalDBOutput.json','w') as file:
+        if data is None:
+            file = {}
         json.dump(data, file, default=str)
 
 def sanitize_for_json(obj):
@@ -328,13 +350,6 @@ def pulsus_ask_groq(LLaMAAAAAAA : GroqRequest):
         return {"response": chat_completion.choices[0].message.content}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Groq API error: {str(e)}")
-
-
-
-
-
-
-
 
 
 
@@ -471,7 +486,7 @@ async def full_journal_pipeline(journal: PulsusInputStr):
         "subContent": "...",
         "references": "...",
         "parentLink": "..." #parent link is the link where we can find the article or the journal
-      }}, # try to achieve as much as possible but maximum will be 15(C015) and the minimum will be 10(C010)
+      }}, # try to achieve as much as possible but maximum will be 8(C008) and the minimum will be 5(C005)
       ...
     }}
 
@@ -484,7 +499,7 @@ async def full_journal_pipeline(journal: PulsusInputStr):
         Avoid robotic phrases like 'in today's fast-paced world', 'leveraging synergies', or
         'furthermore.
         Skip unnecessary dashes (-), quotation marks (''), and corporate buzzwords like 'cutting-edge', 'robust', or 'seamless experience. No Al tone. No fluff. No filler.
-        Use natural transitions like 'here's the thing', ‘let's break it down; or ‘what this really means is’ Keep sentences varied in length and rhythm, like how real people speak or write. Prioritize clarity, personality, and usefulness.
+        Use natural transitions like 'here's the thing', 'let's break it down; or 'what this really means is' Keep sentences varied in length and rhythm, like how real people speak or write. Prioritize clarity, personality, and usefulness.
         Every sentence should feel intentional, not generated
     """
 
@@ -581,12 +596,13 @@ async def full_journal_pipeline(journal: PulsusInputStr):
         journal.id: {
             "title": gem_title,
             "journalName" : journal.journalName,
+            "shortJournalName" : journal.shortJournalName,
             "type": journal.type,
             "authors": journal.author,
             "email": journal.email,
             "authorsDepartment": journal.authorsDepartment,
             "citation": journal.citation,
-            "journalYearVolumeIssue": f"{journal.journalName} {journal.published.split('-')[-1]} Volume {journal.volume} Issue {journal.issues}",
+            "journalYearVolumeIssue": f"{journal.shortJournalName}, Volume {journal.volume}:{journal.issues}, {journal.published.split('-')[-1]}",
             "introduction": gem_info["introduction"] ,
             "description": gem_info["description"] ,
             "content": content_data,
@@ -609,12 +625,42 @@ async def full_journal_pipeline(journal: PulsusInputStr):
         }
     }
     
+    
     saveInpData(data)
     
     data = fetchOutData()
     pulsus_output_instance = PulsusOutputStr(**final_output[journal.id])
     data[journal.id] = pulsus_output_instance.model_dump()
     saveOutData(data)
+    
+    
+    #10 : create HTML file
+
+
+    env = Environment(
+        loader=FileSystemLoader(pathOfPathLib("."))  # Assumes templates are in the current folder
+    )
+
+    # ===== Render and Save HTML File =====
+    try:
+        html_template = env.get_template("journal_template.html")
+        rendered_html = html_template.render(**data[journal.id])
+        
+        html_output_filename = f"{journal.id}.html"
+        html_file = pathOfPathLib(html_output_filename)
+        html_file.write_text(rendered_html, encoding="utf-8")
+        
+    except Exception as e:
+        # It's good practice to handle potential errors, e.g., template not found
+        raise HTTPException(status_code=500, detail=f"Failed to generate HTML file: {str(e)}")
+
+
+
+
+
+    
+    #11 : create PDF file
+
 
     # ===== Load Jinja2 Template =====
     env = Environment(
@@ -631,6 +677,24 @@ async def full_journal_pipeline(journal: PulsusInputStr):
         loader=FileSystemLoader(pathOfPathLib("."))  # current folder
     )
 
+
+    def latex_escape(text):
+        if not isinstance(text, str):
+            return text
+        replacements = {
+            '&': r'\&',
+            '%': r'\%',
+            '$': r'\$',
+            '#': r'\#',
+            '_': r'\_',
+            '{': r'\{',
+            '}': r'\}',
+            '^': r'\^{}',
+        }
+        pattern = re.compile('|'.join(re.escape(k) for k in replacements.keys()))
+        return pattern.sub(lambda m: replacements[m.group()], text)
+
+    env.filters['latex_escape'] = latex_escape
     template = env.get_template("finalFormate.tex")
 
     # ===== Render LaTeX =====
@@ -641,7 +705,36 @@ async def full_journal_pipeline(journal: PulsusInputStr):
     tex_file = pathOfPathLib(outputFileName)
     tex_file.write_text(rendered_latex, encoding="utf-8")
 
-    # ===== Compile LaTeX to PDF =====
-    subprocess.run(["xelatex", "-interaction=nonstopmode", str(tex_file)], check=True)
 
-    return JSONResponse(status_code=200, content="Data Added successfull and generated PDF successfully✅.")
+# ===== Compile LaTeX to PDF =====
+    for i in range(2):  # run twice so references and page labels are resolved
+        result = subprocess.run(
+            ["xelatex", "-interaction=nonstopmode", str(tex_file)],
+            text=True
+        )
+
+        if result.returncode != 0:
+            # Save full log for later debugging
+            log_file = tex_file.with_suffix(".log")
+            log_file.write_text(result.stdout + "\n" + result.stderr)
+
+            # Extract only lines containing "!" (LaTeX errors) and a few lines after each
+            lines = result.stdout.splitlines()
+            error_snippets = []
+            for j, line in enumerate(lines):
+                if line.startswith("!"):
+                    snippet = "\n".join(lines[j:j+6])  # error line + context
+                    error_snippets.append(snippet)
+
+            error_text = "\n\n".join(error_snippets) or "Unknown LaTeX error."
+
+            raise HTTPException(
+                status_code=500,
+                detail=f"LaTeX compilation failed on run {i+1}:\n\n{error_text}\n\n(Full log saved to {log_file})"
+            )
+
+
+    return JSONResponse(
+        status_code=200,
+        content="Data added successfully and generated PDF successfully ✅."
+    )
