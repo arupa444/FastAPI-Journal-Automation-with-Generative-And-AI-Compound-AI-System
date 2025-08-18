@@ -638,12 +638,12 @@ async def full_journal_pipeline(journal: PulsusInputStr):
 
 
     env = Environment(
-        loader=FileSystemLoader(pathOfPathLib("."))  # Assumes templates are in the current folder
+        loader=FileSystemLoader(pathOfPathLib("./templates/"))  # Assumes templates are in the templates folder
     )
 
     # ===== Render and Save HTML File =====
     try:
-        html_template = env.get_template("journal_template.html")
+        html_template = env.get_template("Format1.html")
         rendered_html = html_template.render(**data[journal.id])
         
         html_output_filename = f"{journal.id}.html"
@@ -653,8 +653,6 @@ async def full_journal_pipeline(journal: PulsusInputStr):
     except Exception as e:
         # It's good practice to handle potential errors, e.g., template not found
         raise HTTPException(status_code=500, detail=f"Failed to generate HTML file: {str(e)}")
-
-
 
 
 
@@ -674,7 +672,7 @@ async def full_journal_pipeline(journal: PulsusInputStr):
         line_comment_prefix='%#',
         trim_blocks=True,
         autoescape=False,
-        loader=FileSystemLoader(pathOfPathLib("."))  # current folder
+        loader=FileSystemLoader(pathOfPathLib("./templates"))  # current folder
     )
 
 
@@ -695,7 +693,7 @@ async def full_journal_pipeline(journal: PulsusInputStr):
         return pattern.sub(lambda m: replacements[m.group()], text)
 
     env.filters['latex_escape'] = latex_escape
-    template = env.get_template("finalFormate.tex")
+    template = env.get_template("Format1.tex")
 
     # ===== Render LaTeX =====
     rendered_latex = template.render(**data[journal.id])
