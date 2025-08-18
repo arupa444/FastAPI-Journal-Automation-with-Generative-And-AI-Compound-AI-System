@@ -60,7 +60,7 @@ class CoreRequest(BaseModel):
 
 
 class PulsusInputStr(BaseModel):
-    id: Annotated[str, Field(..., title="ID of the Input Journal", description="Enter the id for this journal input....")]
+    id: Annotated[str, Field(..., title="ID of the Input Journal", description="Enter the id for this journal input....", max_length=6, min_length=3)]
     topic: Annotated[str, Field(..., title="Name of the topic", description="Enter the topic....")]
     journalName : Annotated[str, Field(..., title="Name of the journal where it belongs to.", description="Enter the journal where it belongs from...")]
     shortJournalName : Annotated[str, Field(..., title="Name of the short journal name where it belongs to.", description="Enter the short journal name where it belongs from...")]
@@ -486,7 +486,7 @@ async def full_journal_pipeline(journal: PulsusInputStr):
         "subContent": "...",
         "references": "...",
         "parentLink": "..." #parent link is the link where we can find the article or the journal
-      }}, # try to achieve as much as possible but maximum will be 8(C008) and the minimum will be 5(C005)
+      }}, # try to achieve the maximum of 10 (C010) counts.
       ...
     }}
 
@@ -693,7 +693,7 @@ async def full_journal_pipeline(journal: PulsusInputStr):
         return pattern.sub(lambda m: replacements[m.group()], text)
 
     env.filters['latex_escape'] = latex_escape
-    template = env.get_template("Format1.tex")
+    template = env.get_template("Format2.tex")
 
     # ===== Render LaTeX =====
     rendered_latex = template.render(**data[journal.id])
