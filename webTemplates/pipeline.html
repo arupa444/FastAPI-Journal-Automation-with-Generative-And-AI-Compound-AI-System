@@ -1,0 +1,179 @@
+{% extends "universalLayout.html" %}
+{% block title %}Pipeline Process{% endblock %}
+
+{% block content %}
+<h2>Run Full Journal Pipeline</h2>
+<p class="text-muted">Fill in all journal details. This will save the journal and also run the pipeline process (Gemini
+    + Groq + CORE + PDF/HTML generation).</p>
+
+<form id="runThePipeline" class="row g-3">
+
+    <!-- Basic IDs -->
+    <div class="col-md-4">
+        <label class="form-label">Journal ID</label>
+        <input type="text" name="id" class="form-control" placeholder="J001" required>
+    </div>
+    <div class="col-md-8">
+        <label class="form-label">Topic</label>
+        <input type="text" name="topic" class="form-control" required>
+    </div>
+
+    <!-- Journal Info -->
+    <div class="col-md-6">
+        <label class="form-label">Journal Name</label>
+        <input type="text" name="journalName" class="form-control" required>
+    </div>
+    <div class="col-md-6">
+        <label class="form-label">Short Journal Name</label>
+        <input type="text" name="shortJournalName" class="form-control" required>
+    </div>
+
+    <div class="col-md-4">
+        <label class="form-label">Type</label>
+        <input type="text" name="type" class="form-control" required>
+    </div>
+
+    <!-- Author -->
+    <div class="col-md-6">
+        <label class="form-label">Author</label>
+        <input type="text" name="author" class="form-control" required>
+    </div>
+    <div class="col-md-6">
+        <label class="form-label">Email</label>
+        <input type="email" name="email" class="form-control" placeholder="author@email.com" required>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label">Brand Name</label>
+        <select name="brandName" class="form-select" required>
+            <option value="" selected disabled>Choose brand</option>
+            <option value="hilaris.tex">Hilaris</option>
+            <option value="alliedAcademy.tex">Allied Academy</option>
+            <option value="omics.tex">Omics</option>
+        </select>
+    </div>
+
+    <div class="col-md-12">
+        <label class="form-label">Author's Department</label>
+        <input type="text" name="authorsDepartment" class="form-control" required>
+    </div>
+
+    <!-- Dates -->
+    <div class="col-md-2">
+        <label class="form-label">Received</label>
+        <input type="text" name="received" class="form-control" placeholder="01-Jan-2025" required>
+    </div>
+    <div class="col-md-2">
+        <label class="form-label">Editor Assigned</label>
+        <input type="text" name="editorAssigned" class="form-control" placeholder="05-Jan-2025" required>
+    </div>
+    <div class="col-md-2">
+        <label class="form-label">Reviewed</label>
+        <input type="text" name="reviewed" class="form-control" placeholder="10-Jan-2025" required>
+    </div>
+    <div class="col-md-2">
+        <label class="form-label">Revised</label>
+        <input type="text" name="revised" class="form-control" placeholder="15-Jan-2025" required>
+    </div>
+    <div class="col-md-2">
+        <label class="form-label">Published</label>
+        <input type="text" name="published" class="form-control" placeholder="20-Jan-2025" required>
+    </div>
+
+    <div class="col-md-2">
+        <label class="form-label">Image Path</label>
+        <select id="imageSelector" name="imgPath" class="form-select">
+            <option value="" disabled selected>Choose image</option>
+            {% for image in images %}
+            <option value="{{ image }}">{{ image }}</option>
+            {% endfor %}
+        </select>
+        <img id="preview" src="" alt="Preview will appear here" class="mt-2 img-fluid rounded d-none"
+            style="max-height:150px;">
+    </div>
+
+    <!-- Numbers -->
+    <div class="col-md-3">
+        <label class="form-label">Manuscript No</label>
+        <input type="text" name="manuscriptNo" class="form-control" placeholder="MS-1234" required>
+    </div>
+    <div class="col-md-3">
+        <label class="form-label">Volume</label>
+        <input type="number" name="volume" class="form-control" min="1" required>
+    </div>
+    <div class="col-md-3">
+        <label class="form-label">Issue</label>
+        <input type="number" name="issues" class="form-control" min="1" required>
+    </div>
+    <div class="col-md-3">
+        <label class="form-label">PDF No</label>
+        <input type="number" name="pdfNo" class="form-control" min="1" required>
+    </div>
+
+    <!-- Identifiers -->
+    <div class="col-md-6">
+        <label class="form-label">DOI</label>
+        <input type="text" name="doi" class="form-control" required>
+    </div>
+    <div class="col-md-6">
+        <label class="form-label">ISSN</label>
+        <input type="text" name="ISSN" class="form-control">
+    </div>
+    <div class="col-md-12">
+        <label class="form-label">Parent Link</label>
+        <input type="url" name="parentLink" class="form-control" placeholder="https://example.com/journal" required>
+    </div>
+
+    <!-- Submit -->
+    <div class="col-12">
+        <button type="submit" class="btn btn-danger">Run Pipeline</button>
+    </div>
+</form>
+
+<div id="responseBox" class="mt-4"></div>
+
+<script>
+    const selector = document.getElementById('imageSelector');
+    const preview = document.getElementById('preview');
+
+    // ✅ Show preview after selecting
+    selector.addEventListener("change", function () {
+        if (this.value) {
+            // This line correctly builds the full URL
+            preview.src = '/Logo/' + this.value;
+            preview.classList.remove("d-none");
+        } else {
+            preview.classList.add("d-none");
+        }
+    });
+    // Handle form submit
+    document.getElementById("runThePipeline").addEventListener("submit", async function (e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        let data = {};
+        formData.forEach((value, key) => data[key] = value);
+
+        showLoading();
+
+        try {
+            const response = await fetch("/pipeline/journal-full-process", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+            document.getElementById("responseBox").innerHTML = `
+              <div class="alert alert-${response.ok ? 'success' : 'danger'}">
+                <h5>Response body:</h5>
+                <pre>${JSON.stringify(result, null, 2)}</pre>
+              </div>`;
+        } catch (error) {
+            document.getElementById("responseBox").innerHTML = `
+              <div class="alert alert-danger">Error: ${error}</div>`;
+        } finally {
+            hideLoading();
+        }
+    });
+</script>
+{% endblock %}
