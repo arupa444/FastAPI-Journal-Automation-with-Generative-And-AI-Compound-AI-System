@@ -38,8 +38,8 @@ This system integrates **Large Language Models (LLMs)** such as **Google Gemini*
 
 ### 1️⃣ Clone the Repository
 ```bash
-git clone <your-repository-url>
-cd <your-repository-directory>
+git clone https://github.com/arupa444/FastAPI-Journal-Automation-with-Generative-And-AI-Compound-AI-System.git
+cd https://github.com/arupa444/FastAPI-Journal-Automation-with-Generative-And-AI-Compound-AI-System.git
 ```
 
 
