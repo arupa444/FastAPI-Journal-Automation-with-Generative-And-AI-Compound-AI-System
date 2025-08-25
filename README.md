@@ -20,17 +20,17 @@ A **FastAPI-based** application designed to **automate the creation, enrichment,
 
 | Method   | Path                                            | Description                                                                 |
 | :------- | :---------------------------------------------- | :-------------------------------------------------------------------------- |
-| **GET**  | `/`                                             | Welcome message.                                                            |
+| **UI**  | `/`                                             | Home Page.                                                                  |
 | **GET**  | `/about`                                        | Project description.                                                        |
 | **GET**  | `/view/journalInputData`                        | Retrieve all journal input data.                                            |
 | **GET**  | `/journalInputData/{JournalInputID}`            | Fetch a specific journal input by ID.                                       |
 | **POST** | `/addJournalInInput`                            | Add a new journal input.                                                    |
 | **PUT**  | `/updateInputJournal/{JournalInputID}`          | Update an existing journal input.                                           |
 | **DELETE** | `/delete/journalInputData/{JournalInputID}`     | Delete a journal input by ID.                                               |
-| **POST** | `/pulsus-ask-gemini`                            | Send a prompt to the Google Gemini API (model: `gemini-2.5-flash`).       |
-| **POST** | `/pulsus-ask-groq`                              | Send a prompt to the Groq API (model: `llama-3.3-70b-versatile`).         |
+| **POST** | `/pulsus-ask-gemini`                            | Send a prompt to the Google Gemini API (model: `gemini-2.5-flash`).         |
+| **POST** | `/pulsus-ask-groq`                              | Send a prompt to the Groq API (model: `llama-3.3-70b-versatile`).           |
 | **POST** | `/core/search/articles`                         | Search academic articles via CORE API.                                      |
-| **POST** | `/pipeline/journal-full-process`                | Execute the full journal processing pipeline to generate HTML & PDF.      |
+| **POST** | `/pipeline/journal-full-process`                | Execute the full journal processing pipeline to generate HTML & PDF.        |
 | **UI**   | `/ui/about`                                     | User interface for project description.                                     |
 | **UI**   | `/ui/add-journal`                               | User interface to add new journal input.                                    |
 | **UI**   | `/ui/update-journal`                            | User interface to update existing journal input.                            |
