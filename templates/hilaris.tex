@@ -9,7 +9,7 @@
     BoldFont = *-Bold,
     ItalicFont = *-Italic,
     BoldItalicFont = *-BoldItalic
-]}
+]
 \usepackage{titlesec} % for heading sizes
 \usepackage{latexsym}
 \usepackage{pict2e}
@@ -166,10 +166,8 @@
 \section*{Acknowledgement}
 None.
 
-\begin{framed}
-\noindent\fontsize{8.5}{10.2}\selectfont
-\textbf{How to cite this article:} \VAR{citation | latex_escape}
-\end{framed}
+\section*{Conflict of Interest}
+None.
 
 \section*{References}
 \fontsize{8}{9.6}\selectfont
@@ -179,18 +177,22 @@ None.
     \BLOCK{ endfor }
 \end{enumerate}
 
-\section*{Conflict of Interest}
-None.
+\begin{framed}
+\noindent\fontsize{8.5}{10.2}\selectfont
+\textbf{How to cite this article:} \VAR{citation | latex_escape}
+\end{framed}
+
 
 \end{multicols}
 
 \vfill
-\noindent
-\hspace*{0pt}\color{color_100238}\rule{\textwidth}{1pt}
-\par\vspace{0.3cm} % ensures space between line and text
+% Horizontal line spanning the full text width, aligned properly
+\noindent\color{color_100238}\rule{\linewidth}{1pt} 
 
+\begin{justify} % start justification
 \fontsize{8.5}{10.2}\selectfont
-\color{color_100238}\textbf{*Address for Correspondence:} 
+
+\color{color_100238}\textbf{Address for Correspondence:}  
 \color{color_29791}\VAR{authors}, \VAR{authorsDepartment},
 E-mail: \href{mailto:\VAR{email}}{\VAR{email}} \\
 
@@ -199,7 +201,7 @@ E-mail: \href{mailto:\VAR{email}}{\VAR{email}} \\
 
 \vspace{0.1cm}
 \color{color_29791}\textbf{Received:} \VAR{received}, Manuscript No. \VAR{manuscriptNo}; 
-\textbf{Editor assigned:} \VAR{aeditorAssigneduthors}, PreQC No. \VAR{preQCNo}; 
+\textbf{Editor assigned:} \VAR{editorAssigned}, PreQC No. \VAR{preQCNo}; 
 \textbf{Reviewed:} \VAR{reviewed}, QC No. \VAR{QCNo}; 
 \textbf{Revised:} \VAR{revised}, Manuscript No. \VAR{RManuNo}; 
 \textbf{Published:} \VAR{published}, 

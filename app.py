@@ -1,6 +1,7 @@
-from math import e
-from fastapi import FastAPI, Path, HTTPException, Query
-from fastapi.responses import JSONResponse
+from math import e 
+from fastapi import FastAPI, Path, HTTPException, Query, Request, Form 
+from fastapi.responses import JSONResponse, HTMLResponse 
+from fastapi.templating import Jinja2Templates 
 import json
 from pydantic import BaseModel, Field, field_validator, computed_field, AnyUrl, EmailStr
 from typing import Annotated, Literal, Optional, List, Dict
@@ -43,6 +44,8 @@ class CoreRequest(BaseModel):
 
 
 
+# Template configuration 
+templates = Jinja2Templates(directory="webTemplates") 
 
 
 
@@ -65,9 +68,9 @@ class PulsusInputStr(BaseModel):
     journalName : Annotated[str, Field(..., title="Name of the journal where it belongs to.", description="Enter the journal where it belongs from...")]
     shortJournalName : Annotated[str, Field(..., title="Name of the short journal name where it belongs to.", description="Enter the short journal name where it belongs from...")]
     type: Annotated[str, Field(..., title="Name of the type(journal)", description="Enter the type of journal....")]
-    citation : Annotated[str, Field(..., title="The citation of the journal", description="Enter the citation for this journal....")]
     author: Annotated[str, Field(..., title="Name of the author", description="Enter the author....")]
     email : Annotated[EmailStr, Field(..., title="Email of the author", description="Enter the autors email....")]
+    brandName : Annotated[str, Field(..., title="Name of the brand", description="Enter the name of your brand...")]
     authorsDepartment : Annotated[str, Field(..., title="Department of the authour", description="Enter the department of the author....")]
     received: Annotated[str, Field(..., title="The receiving date", description="Enter the receiving date in DD-Mon format....")]
     editorAssigned: Annotated[str, Field(..., title="The Editor Assigned date", description="Enter the editor assigned date in DD-Mon format....")]
@@ -108,6 +111,7 @@ class PulsusInputStr(BaseModel):
             if value == i['pdfNo']:
                 raise ValueError(f"Change the pdf page no. it is similar to the pdf artical name{i['topic']}")
         return value
+    
 
 class UpdateInputPartJournal(BaseModel):
     id: Annotated[Optional[str], Field(default=None, title="ID of the Input Journal", description="Enter the id for this journal input....")]
@@ -115,9 +119,9 @@ class UpdateInputPartJournal(BaseModel):
     journalName : Annotated[Optional[str], Field(default=None, title="Name of the journal where it belongs to.", description="Enter the journal where it belongs from...")]
     shortJournalName : Annotated[Optional[str], Field(default=None, title="Name of the short journal name where it belongs to.", description="Enter the short journal name where it belongs from...")]
     type: Annotated[Optional[str], Field(default=None, title="Name of the type(journal)", description="Enter the type of journal....")]
-    citation : Annotated[Optional[str], Field(default=None, title="The citation of the journal", description="Enter the citation for this journal....")]
     author: Annotated[Optional[str], Field(default=None, title="Name of the author", description="Enter the author....")]
     email : Annotated[Optional[EmailStr], Field(default=None, title="Email of the author", description="Enter the autors email....")]
+    brandName : Annotated[Optional[str], Field(default=None, title="Name of the brand", description="Enter the name of your brand...")]
     authorsDepartment : Annotated[Optional[str], Field(default=None, title="Department of the authour", description="Enter the department of the author....")]
     received: Annotated[Optional[str], Field(default=None, title="The receiving date", description="Enter the receiving date in DD-Mon format....")]
     editorAssigned: Annotated[Optional[str], Field(default=None, title="The Editor Assigned date", description="Enter the editor assigned date in DD-Mon format....")]
@@ -154,10 +158,10 @@ class PulsusOutputStr(BaseModel):
     journalName : Annotated[str, Field(..., title="ID of the Input Journal", description="Enter the id for this journal input....")]
     shortJournalName : Annotated[str, Field(..., title="Name of the short journal name where it belongs to.", description="Enter the short journal name where it belongs from...")]
     type :  Annotated[str, Field(..., title="ID of the Input Journal", description="Enter the id for this journal input....")]
-    authors : Annotated[str, Field(..., title="ID of the Input Journal", description="Enter the id for this journal input....")]
+    author : Annotated[str, Field(..., title="ID of the Input Journal", description="Enter the id for this journal input....")]
     email : Annotated[EmailStr, Field(..., title="ID of the Input Journal", description="Enter the id for this journal input....")]
+    brandName : Annotated[str, Field(..., title="Name of the brand", description="Enter the name of your brand...")]
     authorsDepartment : Annotated[str, Field(..., title="ID of the Input Journal", description="Enter the id for this journal input....")]
-    citation : Annotated[str, Field(..., title="ID of the Input Journal", description="Enter the id for this journal input....")]
     journalYearVolumeIssue : Annotated[str, Field(..., title="ID of the Input Journal", description="Enter the id for this journal input....")]
     introduction : Annotated[str, Field(..., title="ID of the Input Journal", description="Enter the id for this journal input....")]
     description : Annotated[str, Field(..., title="ID of the Input Journal", description="Enter the id for this journal input....")]
@@ -175,7 +179,8 @@ class PulsusOutputStr(BaseModel):
     RManuNo : Annotated[str, Field(..., title="The RManuNo number", description="Enter the RManuNo number....")]
     volume: Annotated[int, Field(..., title="The volume for the issue", description="Enter the Volume of the issue...", gt=0)]
     issues: Annotated[int, Field(..., title="The issue no. of the volume", description="Enter the issue no. of the volume...",gt=0)]
-    ISSN : Annotated[str, Field(..., title="ISSN Number", description="Enter the ISSN Number....")]
+    ISSN : Annotated[Optional[str], Field(default="", title="ISSN Number", description="Enter the ISSN Number....")]
+    pdfNo : Annotated[Optional[int], Field(..., title="Pdf Number", description="Enter the PDF Number....")]
     parentLink : Annotated[AnyUrl, Field(..., title="ID of the Input Journal", description="Enter the id for this journal input....")] 
     conclusion : Annotated[str, Field(..., title="ID of the Input Journal", description="Enter the id for this journal input....")] 
 
@@ -190,6 +195,28 @@ class PulsusOutputStr(BaseModel):
         for k in keys_to_delete:
             del value[k]
         return value
+    
+    @computed_field
+    @property
+    def citation(self)-> str:
+        if self.brandName == 'hilaris.tex':
+            justToCite = self.author.split(' ')
+            justToCite.insert(0,justToCite[-1])
+            justToCite = justToCite[0:-1]
+            justToCite[0] = f"{justToCite[0]},"
+            justToCite[1] = " "+justToCite[1]
+            justToCite = "".join(justToCite)
+            return f"""{justToCite}. "{self.title}." {self.shortJournalName} {self.volume} ({self.published.split("-")[-1]}):{self.pdfNo}."""
+            
+        if self.brandName == 'alliedAcademy.tex':
+            justToCite = self.author.split(' ')
+            justToCite.insert(0,justToCite[-1])
+            justToCite = justToCite[0:-1]
+            for i in range(1, len(justToCite)):
+                justToCite[i] = justToCite[i][0]
+            justToCite[1] = " "+justToCite[1]
+            justToCite = "".join(justToCite)
+            return f"{justToCite}. {self.title}. {self.shortJournalName}. {self.published.split("-")[-1]};{self.volume}({self.issues}):{self.pdfNo}."
 
     
 
@@ -256,7 +283,46 @@ def extract_json_from_markdown(text: str) -> str:
         return match.group(1)
     return text.strip()
 
+
+
 @app.get("/")
+def ui_index(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
+
+@app.get("/ui/about")
+def ui_about(request: Request):
+    return templates.TemplateResponse("aboutUs.html", {"request": request})
+
+@app.get("/ui/add-journal")
+def ui_add_journal(request: Request):
+    return templates.TemplateResponse("addJournal.html", {"request": request})
+
+@app.get("/ui/update-journal")
+def ui_update_journal(request: Request):
+    return templates.TemplateResponse("updateJournal.html", {"request": request})
+
+@app.get("/ui/ask-gemini")
+def ui_ask_gemini(request: Request):
+    return templates.TemplateResponse("askGemini.html", {"request": request})
+
+@app.get("/ui/ask-groq")
+def ui_ask_groq(request: Request):
+    return templates.TemplateResponse("askGroq.html", {"request": request})
+
+@app.get("/ui/core-search")
+def ui_core_search(request: Request):
+    return templates.TemplateResponse("coreSearch.html", {"request": request})
+
+@app.get("/ui/pipeline")
+def ui_pipeline(request: Request):
+    return templates.TemplateResponse("pipeline.html", {"request": request})
+
+@app.get("/ui/delete-journal")
+def ui_delete_journal(request: Request):
+    return templates.TemplateResponse("deleteJournal.html", {"request": request})
+
+
+@app.get("/home")
 def home():
     return {"message":"Automate the journals"}
 
@@ -477,7 +543,7 @@ async def full_journal_pipeline(journal: PulsusInputStr):
     topic : "{journal.topic}"
 
 
-    Using this data, generate a summarized structure that contains only "subContent" (summary of key insights from the article) and "references" (citation-style reference).
+    Using this topic, generate a summarized structure that contains "subContent" (summary of key insights from the article), "references" (citation-style reference) and the remainings and make sure all the journals are authentic not created by you, and i need recent year data's(last 5 years) and must from a legit author and the links must work properly, don't provide any dummy data or dummy link.
 
 
     The final structure should look like:
@@ -485,16 +551,22 @@ async def full_journal_pipeline(journal: PulsusInputStr):
       "C001": {{
         "subContent": "...",
         "references": "...",
-        "parentLink": "..." #parent link is the link where we can find the article or the journal
+        "title": "...",
+        "authors": "...",
+        "published": "...",
+        "pageRangeOrNumber": "...", #the page range or the page number
+        "volume": "...",
+        "issues": "...",
+        "DOI": "...",
+        "url": "...",
+        "parentLink": "..."
       }}, # try to achieve the maximum of 10 (C010) counts.
       ...
     }}
 
 
-    Ensure the summaries are meaningful and extracted from the provided article data.
-    Focus on creating references from title, authors, year, and DOI if available.
-    And also if possible add some more important ("article" and "journal") data on that topic from your side and merge it with the same thing.
-    the most important the whole data will be copied out and used so give me clean information only the structured data no other thing not even a symbol or dot.
+    Focus on creating references from title, authors, year, and DOI.
+    the most important thing, and the whole data will be copied out and used so give me clean information only the structured data no other thing not even a symbol or dot.
     note: Write like a confident, clear thinking human speaking to another smart human.
         Avoid robotic phrases like 'in today's fast-paced world', 'leveraging synergies', or
         'furthermore.
@@ -538,8 +610,8 @@ async def full_journal_pipeline(journal: PulsusInputStr):
     This is the given data : "{content_data}"
     i want to you to process this data and give me some output:
     1: Give me a brief summary from the given data where the word count lies in between 200 - 400.
-    2: Give me a brief introduction from the given data where it will contain the citation markers as well, and you have to take in this way: the "C001" will be 1, "C002": 2......, where the word count lies in between 600 - 800.
-    3: Give me a brief description from the given data where it will contain the citation markers as well, and you have to take in this way: the "C001" will be 1, "C002": 2......, where the word count lies in between 600 - 800.
+    2: Give me a brief introduction from the given data where it will contain the citation markers as well, and note, you have to take in this way: the "C001" will be 1, "C002": 2...... and each section should have different but sequencial citation markers (for ex: "C001" will be 1, "C002": 2 and so on). and give two linebreak '\n' after the citation marker and also make sure the citation marker must stays before the full stop '.', and the full introduction word count lies in between 600 - 800.
+    3: Give me a brief description from the given data where it will contain the citation markers as well, and note, you have to take in this way: the "C001" will be 1, "C002": 2...... and each section should have different but sequencial citation markers (for ex: "C001" will be 1, "C002": 2 and so on). and give two linebreak '\n' after the citation marker and also make sure the citation marker must stays before the full stop '.', and the full description word count lies in between 600 - 800.
 
     The final structure should look like:
     "content": {{
@@ -587,7 +659,8 @@ async def full_journal_pipeline(journal: PulsusInputStr):
         gem_title = gem_response.text
     except Exception as e:
         gem_title = f"Gemini API failed: {str(e)}"
-
+        
+        
 
 
 
@@ -598,10 +671,10 @@ async def full_journal_pipeline(journal: PulsusInputStr):
             "journalName" : journal.journalName,
             "shortJournalName" : journal.shortJournalName,
             "type": journal.type,
-            "authors": journal.author,
+            "author": journal.author,
             "email": journal.email,
+            "brandName" : journal.brandName,
             "authorsDepartment": journal.authorsDepartment,
-            "citation": journal.citation,
             "journalYearVolumeIssue": f"{journal.shortJournalName}, Volume {journal.volume}:{journal.issues}, {journal.published.split('-')[-1]}",
             "introduction": gem_info["introduction"] ,
             "description": gem_info["description"] ,
@@ -619,6 +692,7 @@ async def full_journal_pipeline(journal: PulsusInputStr):
             "RManuNo" : f"R-{journal.manuscriptNo.split('-')[-1]}",
             "volume" : journal.volume,
             "issues" : journal.issues,
+            "pdfNo" : journal.pdfNo,
             "ISSN" : journal.ISSN,
             "parentLink": str(journal.parentLink),
             "conclusion": gem_info["summary"]
@@ -644,7 +718,34 @@ async def full_journal_pipeline(journal: PulsusInputStr):
     # ===== Render and Save HTML File =====
     try:
         html_template = env.get_template("Format1.html")
-        rendered_html = html_template.render(**data[journal.id])
+        forHtml = data[journal.id]
+        for i in range(0, len(forHtml["content"])):
+            i += 1
+
+            forHtml["introduction"] = forHtml["introduction"].replace(f"[{i}]", f"[<a href='#{i}' title='{i}'>{i}</a>]")
+        count = 0
+        forHtml["storeRefPart"] = ""
+        for i in forHtml["content"].values():
+            count += 1
+            i["issues"] = f"({i['issues']})" if i["issues"] != "" else ""
+            
+            temp = f"""<li><a name="{count}" id="{count}"></a>{i["authors"]}<a href="{i["parentLink"]}" target="_blank">{i["title"]}</a>. {i["published"]};{i["volume"]}{i["issues"]}:{i["pageRangeOrNumber"]}.</li>
+            <p align="right"><a href="{i["url"]}" target="_blank"><u>Indexed at</u></a>, <a href="https://scholar.google.com/scholar?hl=en&as_sdt=0%2C5&q={'+'.join(i["title"].split(' '))}&btnG=" target="_blank"><u>Google Scholar</u></a>, <a href="https://doi.org/{i["DOI"]}" target="_blank"><u>Crossref</u></a></p>"""
+            
+            forHtml["storeRefPart"] = f"""{forHtml['storeRefPart']}
+            {temp}"""
+        
+        # Corrected lines: Use key-based access for the dictionary
+        department_parts = forHtml['authorsDepartment'].split(',')
+        if len(department_parts) > 1:
+            forHtml["prefixAuthorDepartment"] = f"{department_parts[0]}<br />" # Changed to get the first part
+            forHtml["suffixAuthorDepartment"] = f"{",".join(department_parts[1:])}.<br />"
+        else:
+            # Handle cases where there is no comma
+            forHtml["prefixAuthorDepartment"] = forHtml['authorsDepartment']
+            forHtml["suffixAuthorDepartment"] = ""
+
+        rendered_html = html_template.render(**forHtml)
         
         html_output_filename = f"{journal.id}.html"
         html_file = pathOfPathLib(html_output_filename)
@@ -693,7 +794,7 @@ async def full_journal_pipeline(journal: PulsusInputStr):
         return pattern.sub(lambda m: replacements[m.group()], text)
 
     env.filters['latex_escape'] = latex_escape
-    template = env.get_template("Format2.tex")
+    template = env.get_template(journal.brandName)
 
     # ===== Render LaTeX =====
     rendered_latex = template.render(**data[journal.id])
@@ -714,7 +815,6 @@ async def full_journal_pipeline(journal: PulsusInputStr):
         if result.returncode != 0:
             # Save full log for later debugging
             log_file = tex_file.with_suffix(".log")
-            log_file.write_text(result.stdout + "\n" + result.stderr)
 
             # Extract only lines containing "!" (LaTeX errors) and a few lines after each
             lines = result.stdout.splitlines()
@@ -734,5 +834,5 @@ async def full_journal_pipeline(journal: PulsusInputStr):
 
     return JSONResponse(
         status_code=200,
-        content="Data added successfully and generated PDF successfully ✅."
+        content={"Status":"Data added successfully and generated PDF successfully ✅."}
     )

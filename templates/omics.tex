@@ -1,0 +1,255 @@
+\documentclass{article} % body text 10pt globally
+
+% === PACKAGES ===
+\usepackage[margin=35pt, top=90pt, bottom=90pt]{geometry}
+% === FONT SETUP ===
+\usepackage{fontspec}
+\setmainfont{Times New Roman}[
+    Path=./Fonts/,
+    UprightFont    = *,
+    BoldFont       = * - Bold ,
+    ItalicFont     = * - Italic ,
+    BoldItalicFont = * - Bold Italic
+]
+\usepackage{titlesec} % for heading sizes
+\usepackage{latexsym}
+\usepackage{pict2e}
+\usepackage{wasysym}
+\usepackage[english]{babel}
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\usepackage{fancyhdr}
+\usepackage{multicol}
+\usepackage{hyperref}
+\usepackage{framed}
+\usepackage{lettrine}
+\usepackage{zref-abspage}
+\usepackage{refcount}
+\usepackage{graphicx}
+\usepackage{ragged2e}
+\usepackage{indentfirst}
+
+% === COLORS ===
+\definecolor{White}{rgb}{1,1,1}% White - color_283006
+\definecolor{Black}{rgb}{0,0,0}% Black - color_29791
+\definecolor{Off_white}{rgb}{1,0.996078,0.996078}% Very Light Pink / Off-White - color_282974
+\definecolor{Light_navy_blue}{rgb}{0,0.349,0.588}
+
+
+
+% === LINK COLORS ===
+\hypersetup{
+    colorlinks=true,
+    urlcolor=Black,
+    citecolor=Light_navy_blue,
+    linkcolor=Light_navy_blue
+}
+
+% === Global font size control ===
+\renewcommand\normalsize{%
+  \fontsize{11}{13.6}\selectfont
+}
+\normalsize
+
+% === TITLE & SECTION FONT SIZES ===
+% --- Section (numbered + unnumbered) ---
+\titleformat{name=\section,numberless}[block]%
+  {\Large\bfseries\color{Black}}{}{0pt}{}
+
+% --- Subsection ---
+\titleformat{\subsection}[block]%
+  {\normalsize\bfseries\color{Black}}{}{0pt}{}
+
+% --- Abstract "section" (custom command) ---
+\newcommand{\abstractsection}[1]{%
+  {\large\bfseries\color{Black} #1}\par
+}
+
+% === TITLE STYLE ===
+\newcommand{\articletitle}[1]{%
+  {\LARGE\color{Black}{#1}}\par
+}
+
+
+\fancypagestyle{firstpage}{
+    \fancyhf{}
+    \fancyheadoffset[L]{0pt}
+    \fancyheadoffset[R]{0pt}
+    \renewcommand{\headrulewidth}{0pt}
+
+    % --- Footer Rule Line ---
+    \renewcommand{\footrulewidth}{0pt} % disable default
+    \renewcommand{\footrule}{%
+      \hbox to\headwidth{\color{Light_navy_blue}\leaders\hrule height 0.5pt\hfill}\vss
+    }
+
+    % === Header with logo + title + citation + blue bar ===
+    \fancyhead[C]{%
+    \begin{tikzpicture}[overlay, remember picture]
+        % --- Top row: Logo + Journal title ---
+         \node[anchor=west] at 
+            ($(current page.north west) + (35pt,-64pt)$) {%
+            \includegraphics[height=70pt]{./Logo/something.png}%
+            };
+        \node[anchor=west] at ($(current page.north west) + (95pt,-64pt)$) {%
+            \hspace{0.6em}%
+            {\fontsize{18}{20}\selectfont\color{Light_navy_blue}\textbf{\VAR{journalName}}}%
+        };
+    
+        % Right side citation info
+        \node[anchor=east] at 
+            ($(current page.north east) + (-35pt,-64pt)$) {%
+            \fontsize{8}{10}\selectfont\color{Black}{\VAR{authors}, \VAR{journalName}, \VAR{volume}:\VAR{issues}}%
+        };
+    
+        % --- Blue bar inside text margins ---
+        \fill[Light_navy_blue] 
+            ($(current page.north west) + (0,-110pt)$) 
+            rectangle 
+            ($(current page.north east) + (0,-125pt)$);
+    
+        % Article type - left
+        \node[anchor=west, font=\fontsize{11}{11}\selectfont\bfseries, text=white] 
+            at ($(current page.north west) + (1in+\oddsidemargin,-117.5pt)$) \VAR{type};
+    
+        % Open Access - right
+        \node[anchor=east, font=\fontsize{11}{11}\selectfont\bfseries, text=white] 
+            at ($(current page.north east) + (-1in-\oddsidemargin,-117.5pt)$) {Open Access};
+    \end{tikzpicture}%
+}
+
+    % Left footer
+    \fancyfoot[L]{\fontsize{8}{10}\selectfont\color{Black}\VAR{journalName}}
+
+    % Right footer: volume info BELOW the rule line
+    \fancyfoot[R]{\fontsize{8.5}{10}\selectfont\color{Black}%
+      \VAR{volume} • \VAR{issues} • \VAR{pdfNo}}
+}
+
+
+
+
+% --- Header and Footer for all subsequent pages ---
+\fancypagestyle{subsequent}{
+    \fancyhf{}
+    \renewcommand{\headrulewidth}{0pt}
+
+    % --- Footer Rule Line ---
+    \renewcommand{\footrulewidth}{0pt} % disable default
+    \renewcommand{\footrule}{%
+      \hbox to\headwidth{\color{Light_navy_blue}\leaders\hrule height 0.5pt\hfill}\vss
+    }
+
+    \fancyhead[L]{\fontsize{8}{10}\selectfont\color{Black}\textbf{Citation:} \VAR{citation | latex_escape}}
+    \fancyhead[R]{\fontsize{8.5}{10}\selectfont\color{Black}%
+      Page~\thepage~of~\getpagerefnumber{TotPages}}
+
+    % Left footer
+    \fancyfoot[L]{\fontsize{8}{10}\selectfont\color{Black}\VAR{journalName}}
+
+    % Right footer: volume info BELOW the rule line
+    \fancyfoot[R]{\fontsize{8.5}{10}\selectfont\color{Black}%
+      \VAR{volume} • \VAR{issues} • \VAR{pdfNo}}
+}
+
+\setlength{\headheight}{28pt}  % Fix fancyhdr warning & allow purple bar display
+
+% --- Apply styles ---
+\pagestyle{subsequent}   % Default for all pages
+\thispagestyle{firstpage} % First page special style
+
+\setlength{\parindent}{1.5em}   % size of tab (adjust as needed)
+\setlength{\parskip}{0em}
+% --- Main Document ---
+\begin{document}
+
+% Push heading below Article type/Open Access bar
+\vspace*{0.2cm} % adjust this value until it clears the purple bar
+
+\begin{flushleft}
+    \articletitle{\VAR{title | latex_escape}}
+    \vspace{0.3cm}
+\end{flushleft}
+
+\begin{flushleft}
+\vspace*{-0.5cm}
+    \fontsize{10}{13.2}\selectfont\color{color_29791}\textbf{\VAR{authors | latex_escape}}\par
+    \vspace{0cm}
+    \fontsize{8}{10.8}\selectfont\color{color_29791}\VAR{authorsDepartment | latex_escape}\par
+    \vspace{0.1cm}
+\end{flushleft}
+
+% --- Abstract Box ---
+\begin{center}
+\fbox{%
+  \begin{minipage}{0.9\textwidth}
+    \abstractsection{Abstract} % <-- uses same style
+    \vspace{0.2cm}
+    \justifying
+    \fontsize{9}{11}\selectfont
+    \VAR{abstract | latex_escape}
+  \end{minipage}
+}
+\end{center}
+
+\vspace{0.5cm} % space before main text
+
+
+\begin{multicols}{2}
+\fontsize{11}{10.8}\selectfont\color{Black}
+
+\section*{Introduction}
+\VAR{introduction | latex_escape}
+
+
+\section*{Description}
+\VAR{description | latex_escape}
+
+
+\section*{Discussion}
+\VAR{discussion | latex_escape}
+
+
+\section*{Conclusion}
+\VAR{conclusion | latex_escape}
+
+
+\section*{References}
+\fontsize{8}{9.6}\selectfont
+\begin{enumerate}
+    \BLOCK{ for key, item in content.items() }
+        \item \href{\VAR{item.parentLink}}{ \VAR{item.references | latex_escape}}
+    \BLOCK{ endfor }
+\end{enumerate}
+
+
+\end{multicols}
+
+\vfill
+
+\noindent\color{color_100238}\rule{\linewidth}{1pt} 
+
+\begin{justify} % start justification
+\fontsize{8.5}{10.2}\selectfont
+
+\color{color_100238}\textbf{Address for Correspondence:}  
+\color{color_29791}\VAR{authors}, \VAR{authorsDepartment},
+E-mail: \href{mailto:\VAR{email}}{\VAR{email}} \\
+
+\color{color_100238}\textbf{Copyright:} 
+\color{color_29791}© 2024 \VAR{authors} This is an open-access article distributed under the terms of the Creative Commons Attribution License, which permits unrestricted use, distribution and reproduction in any medium, provided the original author and source are credited. \\
+
+\vspace{0.1cm}
+\color{color_29791}\textbf{Received:} \VAR{received}, Manuscript No. \VAR{manuscriptNo}; 
+\textbf{Editor assigned:} \VAR{editorAssigned}, PreQC No. \VAR{preQCNo}; 
+\textbf{Reviewed:} \VAR{reviewed}, QC No. \VAR{QCNo}; 
+\textbf{Revised:} \VAR{revised}, Manuscript No. \VAR{RManuNo}; 
+\textbf{Published:} \VAR{published}, 
+DOI: \href{\VAR{parentLink}}{\VAR{doi}}
+
+\noindent\color{Light_navy_blue}\rule{\linewidth}{1pt}
+
+\end{justify}
+
+\label{TotPages}
+\end{document}
