@@ -535,6 +535,8 @@ async def full_journal_pipeline(journal: PulsusInputStr):
         raise HTTPException(status_code=400, detail="Journal ID already exists.")
     data[journal.id] = journal.model_dump(exclude=["id"])
 
+    print("step 1 : Save journal input ✅")
+
     # # Step 2: Use the topic to search CORE articles
     # CORE_API_URL = "https://api.core.ac.uk/v3/search/works"
     # headers = {
@@ -567,6 +569,8 @@ async def full_journal_pipeline(journal: PulsusInputStr):
 
     # except Exception as e:
     #     raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
+
+    print("step 2 : Use the topic to search CORE articles ✅")
 
     # Step 3: Create universal prompt
     prompt = f"""
@@ -605,7 +609,7 @@ async def full_journal_pipeline(journal: PulsusInputStr):
         Use natural transitions like 'here's the thing', 'let's break it down; or 'what this really means is' Keep sentences varied in length and rhythm, like how real people speak or write. Prioritize clarity, personality, and usefulness.
         Every sentence should feel intentional, not generated
     """
-
+    print("step 3 : Create universal prompt ✅")
     # Step 4: Ask Gemini
     try:
         gem_response = gemClient.models.generate_content(
@@ -615,18 +619,11 @@ async def full_journal_pipeline(journal: PulsusInputStr):
     except Exception as e:
         gem_summary = f"Gemini API failed: {str(e)}"
 
-    # Step 5: Ask Groq
-    try:
-        chat_completion = GroqClient.chat.completions.create(
-            messages=[{"role": "user", "content": prompt}],
-            model="llama-3.3-70b-versatile",
-        )
-        groq_summary = chat_completion.choices[0].message.content
-    except Exception as e:
-        groq_summary = f"Groq API failed: {str(e)}"
 
-    # Step 6: Clean and parse JSON output from Gemini or Groq
-    raw_json = extract_json_from_markdown(gem_summary if "Gemini API failed" not in gem_summary else groq_summary)
+    print("step 4 : ask Genini ✅")
+
+    # Step 5: Clean and parse JSON output from Gemini
+    raw_json = extract_json_from_markdown(gem_summary)
 
 
     try:
@@ -635,8 +632,9 @@ async def full_journal_pipeline(journal: PulsusInputStr):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to parse structured JSON from LLM output: {str(e)}")
 
+    print("step 5 : Clean and parse JSON output from Gemini ✅")
 
-    # Step 7: Conclusion content using Gemini
+    # Step 6: Conclusion content using Gemini
     prompt = f"""
     This is the given data : "{content_data}"
     i want to you to process this data and give me some output:
@@ -670,7 +668,9 @@ async def full_journal_pipeline(journal: PulsusInputStr):
     except Exception as e:
         gem_info = f"Gemini API failed: {str(e)}"
 
-    # Step 7.5: Clean and parse JSON output from Gemini or Groq
+    print("step 6 : Conclusion content using Gemini ✅")
+
+    # Step 6.5: Clean and parse JSON output from Gemini or Groq
     raw_json = extract_json_from_markdown(gem_info)
 
     try:
@@ -680,9 +680,10 @@ async def full_journal_pipeline(journal: PulsusInputStr):
         raise HTTPException(status_code=500, detail=f"Failed to parse structured JSON from LLM output: {str(e)}")
 
 
+    print("step 6.5 : Clean and parse JSON output from Gemini or Groq ✅")
 
 
-    # Step 8: Title content using Gemini
+    # Step 7: Title content using Gemini
     prompt = f"give me a 5 to 7 words title based on the generated summary {content_data}. use playoff method to generate 5,6 titles and choose the best one and give that title. no need to display background process. just give 1 title as a final response"
 
     try:
@@ -695,9 +696,10 @@ async def full_journal_pipeline(journal: PulsusInputStr):
         
         
 
+    print("step 7 : Title content using Gemini ✅")
 
 
-    # Step 9: Final response
+    # Step 8: Final response
     final_output = {
         journal.id: {
             "title": gem_title,
@@ -721,9 +723,9 @@ async def full_journal_pipeline(journal: PulsusInputStr):
             "published": journal.published,
             "year" : int(journal.published.split('-')[-1]),
             "manuscriptNo": journal.manuscriptNo,
-            "QCNo": f"Q-{journal.manuscriptNo.split('-')[-1]}",
-            "preQCNo": f"P-{journal.manuscriptNo.split('-')[-1]}",
-            "RManuNo" : f"R-{journal.manuscriptNo.split('-')[-1]}",
+            "QCNo": f"Q-{journal.manuscriptNo.split('-')[-1]}" if journal.brandName == "hilaris.tex" else journal.manuscriptNo,
+            "preQCNo": f"P-{journal.manuscriptNo.split('-')[-1]}" if journal.brandName == "hilaris.tex" else journal.manuscriptNo,
+            "RManuNo" : f"R-{journal.manuscriptNo.split('-')[-1]}" if journal.brandName == "hilaris.tex" else journal.manuscriptNo,
             "volume" : journal.volume,
             "issues" : journal.issues,
             "pdfNo" : journal.pdfNo,
@@ -751,8 +753,9 @@ async def full_journal_pipeline(journal: PulsusInputStr):
     journal_folder = output_base_dir / journal.id
     journal_folder.mkdir(parents=True, exist_ok=True)
 
+    print("step 8 : Final response ✅")
 
-    # --- 10: Create HTML file ---
+    # --- 9: Create HTML file ---
     env_html = Environment(
         loader=FileSystemLoader(pathOfPathLib("./templates/"))
     )
@@ -798,7 +801,11 @@ async def full_journal_pipeline(journal: PulsusInputStr):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to generate HTML file: {str(e)}")
 
-    # --- 11: Create PDF file ---
+
+
+    print("step 9 : Create HTML file ✅")
+
+    # --- 10: Create PDF file ---
     env_latex = Environment(
         block_start_string=r'\BLOCK{',
         block_end_string='}',
@@ -853,6 +860,9 @@ async def full_journal_pipeline(journal: PulsusInputStr):
                 status_code=500,
                 detail=f"LaTeX compilation failed on run {i+1}:\n\n{error_text}"
             )
+
+
+    print("step 10 : Create PDF file ✅")
 
     return JSONResponse(
         status_code=200,
