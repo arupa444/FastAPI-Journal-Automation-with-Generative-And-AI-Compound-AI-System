@@ -85,7 +85,7 @@ class PulsusInputStr(BaseModel):
     pdfNo: Annotated[int, Field(..., title="The pdf number", description="Enter the pdf number....",gt=0)]
     doi : Annotated[str, Field(..., title="DOI for this journal", description="Enter DOI for this Journal....")]
     ISSN : Annotated[str, Field(..., title="ISSN number of this journal", description="Enter the ISSN number for the journal....")]
-    imgPath : Annotated[str, Field(..., title="image path", description="Enter the img path....")]
+    imgPath : Annotated[Optional[str], Field(default=None, title="image path", description="Enter the img path....")]
     parentLink : Annotated[AnyUrl, Field(..., title="The url for the centralized link", description="Enter the link which will led to the centralized page....")]
 
 
@@ -642,7 +642,7 @@ async def full_journal_pipeline(journal: PulsusInputStr):
     i want to you to process this data and give me some output:
     1: Give me a brief summary from the given data where the word count lies in between 200 - 400.
     2: Give me a brief introduction from the given data where it will contain the citation markers as well, and note, you have to take in this way: the "C001" will be 1, "C002": 2...... and each section should have different but sequencial citation markers (for ex: "C001" will be 1, "C002": 2 and so on). and give two linebreak '\n' after the citation marker and also make sure the citation marker must stays before the full stop '.', and the full introduction word count lies in between 600 - 800.
-    3: Give me a brief description from the given data where it will contain the citation markers as well, and note, you have to take in this way: the "C001" will be 1, "C002": 2...... and each section should have different but sequencial citation markers (for ex: "C001" will be 1, "C002": 2 and so on). and give two linebreak '\n' after the citation marker and also make sure the citation marker must stays before the full stop '.', and the full description word count lies in between 600 - 800.
+    3: Give me a brief description from the given data and note, the full description contain more then 4 paragraphs with word count lies in between 600 - 800.
     4: Give me a abstract from the given data, and the full abstract word count lies in between 90 - 100.
 
     The final structure should look like:
@@ -733,71 +733,73 @@ async def full_journal_pipeline(journal: PulsusInputStr):
             "conclusion": gem_info["summary"]
         }
     }
-    
-    
+     
     saveInpData(data)
     
-    data = fetchOutData()
+    output_data = fetchOutData()
     pulsus_output_instance = PulsusOutputStr(**final_output[journal.id])
-    data[journal.id] = pulsus_output_instance.model_dump()
-    saveOutData(data)
+    output_data[journal.id] = pulsus_output_instance.model_dump()
+    saveOutData(output_data)
     
-    
-    #10 : create HTML file
+    # =========================================================================
+    # File Generation Section
+    # =========================================================================
+
+    # --- Centralized Directory Setup ---
+    # Create a single directory for all of this journal's output files.
+    output_base_dir = pathOfPathLib("PDFStorePulsus")
+    journal_folder = output_base_dir / journal.id
+    journal_folder.mkdir(parents=True, exist_ok=True)
 
 
-    env = Environment(
-        loader=FileSystemLoader(pathOfPathLib("./templates/"))  # Assumes templates are in the templates folder
+    # --- 10: Create HTML file ---
+    env_html = Environment(
+        loader=FileSystemLoader(pathOfPathLib("./templates/"))
     )
-
-    # ===== Render and Save HTML File =====
     try:
-        html_template = env.get_template("Format1.html")
-        forHtml = copy.deepcopy(data[journal.id])
-        for i in range(0, len(forHtml["content"])):
-            i += 1
+        html_template = env_html.get_template("Format1.html")
+        forHtml = copy.deepcopy(output_data[journal.id])
+        
+        # Logic for processing references for HTML
+        for i in range(1, len(forHtml["content"]) + 1):
+             forHtml["introduction"] = forHtml["introduction"].replace(f"[{i}].", f"[<a href='#{i}' title='{i}'>{i}</a>].</p><p>")
 
-            forHtml["introduction"] = forHtml["introduction"].replace(f"[{i}]", f"[<a href='#{i}' title='{i}'>{i}</a>]")
+
+        forHtml["description"] = forHtml["description"].replace("\n\n", "</p><p>")
+        forHtml["description"] = forHtml["description"].replace("\n", "</p><p>")
+
+
+
         count = 0
         forHtml["storeRefPart"] = ""
         for i in forHtml["content"].values():
             count += 1
-            i["issues"] = f"({i['issues']})" if i["issues"] != "" else ""
+            i["issues"] = f"({i['issues']})" if i.get("issues") else ""
             
-            temp = f"""<li><a name="{count}" id="{count}"></a>{i["authors"]}<a href="{i["parentLink"]}" target="_blank">{i["title"]}</a>. {i["published"]};{i["volume"]}{i["issues"]}:{i["pageRangeOrNumber"]}.</li>
+            temp = f"""<li><a name="{count}" id="{count}"></a>{i["authors"]} <a href="{i["parentLink"]}" target="_blank">{i["title"]}</a>. {i["published"]};{i["volume"]}{i["issues"]}:{i["pageRangeOrNumber"]}.</li>
             <p align="right"><a href="{i["url"]}" target="_blank"><u>Indexed at</u></a>, <a href="https://scholar.google.com/scholar?hl=en&as_sdt=0%2C5&q={'+'.join(i["title"].split(' '))}&btnG=" target="_blank"><u>Google Scholar</u></a>, <a href="https://doi.org/{i["DOI"]}" target="_blank"><u>Crossref</u></a></p>"""
             
-            forHtml["storeRefPart"] = f"""{forHtml['storeRefPart']}
-            {temp}"""
+            forHtml["storeRefPart"] = f"""{forHtml['storeRefPart']}\n{temp}"""
         
-        # Corrected lines: Use key-based access for the dictionary
         department_parts = forHtml['authorsDepartment'].split(',')
         if len(department_parts) > 1:
-            forHtml["prefixAuthorDepartment"] = f"{department_parts[0]}<br />" # Changed to get the first part
-            forHtml["suffixAuthorDepartment"] = f"{",".join(department_parts[1:])}.<br />"
+            forHtml["prefixAuthorDepartment"] = f"{department_parts[0]}<br />"
+            forHtml["suffixAuthorDepartment"] = f"{','.join(department_parts[1:])}.<br />"
         else:
-            # Handle cases where there is no comma
             forHtml["prefixAuthorDepartment"] = forHtml['authorsDepartment']
             forHtml["suffixAuthorDepartment"] = ""
 
         rendered_html = html_template.render(**forHtml)
         
-        html_output_filename = f"{journal.id}.html"
-        html_file = pathOfPathLib(html_output_filename)
-        html_file.write_text(rendered_html, encoding="utf-8")
+        # Save the HTML file inside the journal's dedicated folder
+        html_file_path = journal_folder / f"{journal.id}.html"
+        html_file_path.write_text(rendered_html, encoding="utf-8")
         
     except Exception as e:
-        # It's good practice to handle potential errors, e.g., template not found
         raise HTTPException(status_code=500, detail=f"Failed to generate HTML file: {str(e)}")
 
-
-
-    
-    #11 : create PDF file
-
-
-    # ===== Load Jinja2 Template =====
-    env = Environment(
+    # --- 11: Create PDF file ---
+    env_latex = Environment(
         block_start_string=r'\BLOCK{',
         block_end_string='}',
         variable_start_string=r'\VAR{',
@@ -808,66 +810,51 @@ async def full_journal_pipeline(journal: PulsusInputStr):
         line_comment_prefix='%#',
         trim_blocks=True,
         autoescape=False,
-        loader=FileSystemLoader(pathOfPathLib("./templates"))  # current folder
+        loader=FileSystemLoader(pathOfPathLib("./templates"))
     )
-
 
     def latex_escape(text):
         if not isinstance(text, str):
             return text
-        replacements = {
-            '&': r'\&',
-            '%': r'\%',
-            '$': r'\$',
-            '#': r'\#',
-            '_': r'\_',
-            '{': r'\{',
-            '}': r'\}',
-            '^': r'\^{}',
-        }
+        replacements = { '&': r'\&', '%': r'\%', '$': r'\$', '#': r'\#', '_': r'\_', '{': r'\{', '}': r'\}', '^': r'\^{}', }
         pattern = re.compile('|'.join(re.escape(k) for k in replacements.keys()))
         return pattern.sub(lambda m: replacements[m.group()], text)
 
-    env.filters['latex_escape'] = latex_escape
-    template = env.get_template(journal.brandName)
+    env_latex.filters['latex_escape'] = latex_escape
+    template = env_latex.get_template(journal.brandName)
 
-    # ===== Render LaTeX =====
-    rendered_latex = template.render(**data[journal.id])
-    outputFileName = f"{journal.id}.tex"
+    rendered_latex = template.render(**output_data[journal.id])
+    
+    # Save the .tex file inside the journal's dedicated folder
+    tex_file_path = journal_folder / f"{journal.id}.tex"
+    tex_file_path.write_text(rendered_latex, encoding="utf-8")
 
-    # ===== Save LaTeX to file =====
-    tex_file = pathOfPathLib(outputFileName)
-    tex_file.write_text(rendered_latex, encoding="utf-8")
-
-
-# ===== Compile LaTeX to PDF =====
-    for i in range(2):  # run twice so references and page labels are resolved
+    # Compile LaTeX to PDF. Run from within the journal's folder.
+    for i in range(2):
         result = subprocess.run(
-            ["xelatex", "-interaction=nonstopmode", str(tex_file)],
-            text=True
+            ["xelatex", "-interaction=nonstopmode", tex_file_path.name],
+            capture_output=True, # Capture stdout/stderr
+            text=True,
+            cwd=journal_folder # CRITICAL: Set the working directory
         )
 
         if result.returncode != 0:
-            # Save full log for later debugging
-            log_file = tex_file.with_suffix(".log")
-
-            # Extract only lines containing "!" (LaTeX errors) and a few lines after each
-            lines = result.stdout.splitlines()
-            error_snippets = []
-            for j, line in enumerate(lines):
-                if line.startswith("!"):
-                    snippet = "\n".join(lines[j:j+6])  # error line + context
-                    error_snippets.append(snippet)
-
-            error_text = "\n\n".join(error_snippets) or "Unknown LaTeX error."
-
+            log_file_path = tex_file_path.with_suffix(".log")
+            
+            # The log file is already saved by xelatex, so we just read it for the error message
+            error_text = "Unknown LaTeX error. Check the log file."
+            if log_file_path.exists():
+                with open(log_file_path, 'r') as f:
+                    lines = f.readlines()
+                error_snippets = [line for line in lines if line.startswith("! ")]
+                error_text = "\n".join(error_snippets) or f"LaTeX compilation failed. Full log in {log_file_path}"
+            
             raise HTTPException(
                 status_code=500,
-                detail=f"LaTeX compilation failed on run {i+1}:\n\n{error_text}\n\n(Full log saved to {log_file})"
+                detail=f"LaTeX compilation failed on run {i+1}:\n\n{error_text}"
             )
-
 
     return JSONResponse(
         status_code=200,
-        content={"Status":"Data added successfully and generated PDF successfully ✅."}
+        content={"Status": f"Data added and files generated successfully in PDFStorePulsus/{journal.id}/ ✅."}
     )
