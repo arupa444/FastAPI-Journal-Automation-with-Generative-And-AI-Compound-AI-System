@@ -68,45 +68,34 @@
 </head>
 
 <body>
-    <div class="container">
-        <header>
-            <h1>{{ title }}</h1>
-            <p><strong>Journal:</strong> {{ journalName }} ({{ shortJournalName }})</p>
-            <p><strong>Authors:</strong> {{ authors }}</p>
-            <p><strong>Department:</strong> {{ authorsDepartment }}</p>
-            <p><strong>Email:</strong> <a href="mailto:{{ email }}">{{ email }}</a></p>
-        </header>
-
-        <div class="meta-info">
-            <h3>Article Details</h3>
-            <p><strong>Publication Date:</strong> {{ published }} | <strong>Year:</strong> {{ year }}</p>
-            <p><strong>Volume:</strong> {{ volume }}, <strong>Issue:</strong> {{ issues }}</p>
-            <p><strong>DOI:</strong> <a href="https://doi.org/{{ doi }}" target="_blank">{{ doi }}</a></p>
-            <p><strong>ISSN:</strong> {{ ISSN }}</p>
-            <p><strong>Citation:</strong> {{ citation }}</p>
-            <p><strong>Parent Link:</strong> <a href="{{ parentLink }}" target="_blank">View Source</a></p>
-        </div>
-
-        <article>
-            <h2>Introduction</h2>
-            <p>{{ introduction }}</p>
-
-            <h2>Description</h2>
-            <p>{{ description }}</p>
-
-            <h2>Content Analysis</h2>
-            {% for key, value in content.items() %}
-            <div class="content-block">
-                <h3>Section: {{ key }}</h3>
-                <p>{{ value.subContent }}</p>
-                <p class="references"><strong>References:</strong> {{ value.references }}</p>
-            </div>
-            {% endfor %}
-
-            <h2>Conclusion</h2>
-            <p>{{ conclusion }}</p>
-        </article>
-    </div>
+    <p><strong>{{ author }}<a href="#corr"><sup>*</sup></a></strong>
+    <p>
+    <p>{{ authorsDepartment }}</p>
+    <dl class="dl-horizontal">
+        <dt>*Corresponding Author:</dt>
+        <dd>{{ author }}<a name="corr" id="corr"></a><br />
+            {{ prefixAuthorDepartment }}
+            {{ suffixAuthorDepartment }}
+            <strong>E-mail:</strong> <a href="mailto:{{ email }}">{{ email }}</a>
+        </dd>
+    </dl>
+    <p><strong>Received</strong>: {{received}}, Manuscript No. {{manuscriptNo}}; <strong>Editor assigned</strong>:
+        {{editorAssigned}},
+        PreQC No. {{preQCNo}}(PQ); <strong>Reviewed</strong>: {{reviewed}}, QC No {{QCNo}};
+        <strong>Revised</strong>: {{revised}}, Manuscript No. {{RManuNo}}(R); <strong>Published</strong>: {{published}},
+        DOI:<a href="https://doi.org/{{ doi }}" target="_blank">{{ doi }}</a>
+    </p>
+    <p><strong>Citation</strong>: {{ citation }}</p>
+    <br />
+    <br />
+    <h2 class="post-title">Introduction</h2>
+    <p>{{ introduction }}</p>
+    <h2 class="post-title">Conclusion</h2>
+    <p>{{ conclusion }}</p>
+    <h2 class="post-title">References</h2>
+    <ol>
+        {{ storeRefPart }}
+    </ol>
 </body>
 
 </html>

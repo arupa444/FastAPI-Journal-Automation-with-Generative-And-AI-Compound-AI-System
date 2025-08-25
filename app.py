@@ -12,7 +12,9 @@ from google import genai
 from groq import Groq
 import os
 import httpx
+import copy
 import re
+from fastapi.staticfiles import StaticFiles
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -83,6 +85,7 @@ class PulsusInputStr(BaseModel):
     pdfNo: Annotated[int, Field(..., title="The pdf number", description="Enter the pdf number....",gt=0)]
     doi : Annotated[str, Field(..., title="DOI for this journal", description="Enter DOI for this Journal....")]
     ISSN : Annotated[str, Field(..., title="ISSN number of this journal", description="Enter the ISSN number for the journal....")]
+    imgPath : Annotated[str, Field(..., title="image path", description="Enter the img path....")]
     parentLink : Annotated[AnyUrl, Field(..., title="The url for the centralized link", description="Enter the link which will led to the centralized page....")]
 
 
@@ -134,6 +137,7 @@ class UpdateInputPartJournal(BaseModel):
     pdfNo: Annotated[Optional[int], Field(default=None, title="The pdf number", description="Enter the pdf number....",gt=0)]
     doi : Annotated[Optional[str], Field(default=None, title="DOI for this journal", description="Enter DOI for this Journal....")]
     ISSN : Annotated[Optional[str], Field(default=None, title="ISSN number of this journal", description="Enter the ISSN number for the journal....")]
+    imgPath : Annotated[Optional[str], Field(default=None, title="image path", description="Enter the img path....")]
     parentLink : Annotated[Optional[AnyUrl], Field(default=None, title="The url for the centralized link", description="Enter the link which will led to the centralized page....")]
 
 
@@ -166,6 +170,7 @@ class PulsusOutputStr(BaseModel):
     introduction : Annotated[str, Field(..., title="ID of the Input Journal", description="Enter the id for this journal input....")]
     description : Annotated[str, Field(..., title="ID of the Input Journal", description="Enter the id for this journal input....")]
     content : Annotated[Dict[str, Dict], Field(..., title="ID of the Input Journal", description="Enter the id for this journal input....")] 
+    abstract : Annotated[str, Field(..., title="ID of the Input Journal", description="Enter the id for this journal input....")]
     doi : Annotated[str, Field(..., title="ID of the Input Journal", description="Enter the id for this journal input....")] 
     received : Annotated[str, Field(..., title="ID of the Input Journal", description="Enter the id for this journal input....")] 
     editorAssigned : Annotated[str, Field(..., title="ID of the Input Journal", description="Enter the id for this journal input....")] 
@@ -180,6 +185,10 @@ class PulsusOutputStr(BaseModel):
     volume: Annotated[int, Field(..., title="The volume for the issue", description="Enter the Volume of the issue...", gt=0)]
     issues: Annotated[int, Field(..., title="The issue no. of the volume", description="Enter the issue no. of the volume...",gt=0)]
     ISSN : Annotated[Optional[str], Field(default="", title="ISSN Number", description="Enter the ISSN Number....")]
+<<<<<<< HEAD
+=======
+    imgPath : Annotated[Optional[str], Field(default=None, title="image path", description="Enter the img path....")]
+>>>>>>> upstream/main
     pdfNo : Annotated[Optional[int], Field(..., title="Pdf Number", description="Enter the PDF Number....")]
     parentLink : Annotated[AnyUrl, Field(..., title="ID of the Input Journal", description="Enter the id for this journal input....")] 
     conclusion : Annotated[str, Field(..., title="ID of the Input Journal", description="Enter the id for this journal input....")] 
@@ -217,6 +226,20 @@ class PulsusOutputStr(BaseModel):
             justToCite[1] = " "+justToCite[1]
             justToCite = "".join(justToCite)
             return f"{justToCite}. {self.title}. {self.shortJournalName}. {self.published.split("-")[-1]};{self.volume}({self.issues}):{self.pdfNo}."
+<<<<<<< HEAD
+=======
+        
+        if self.brandName == 'omics.tex':
+            justToCite = self.author.split(' ')
+            justToCite.insert(0,justToCite[-1])
+            justToCite = justToCite[0:-1]
+            for i in range(1, len(justToCite)):
+                justToCite[i] = justToCite[i][0]
+            justToCite[1] = " "+justToCite[1]
+            justToCite = "".join(justToCite)
+            return f"{justToCite},({self.published.split("-")[-1]}) {self.title}. {self.shortJournalName} {self.volume}: {self.pdfNo}. DOI: {self.doi}"
+
+>>>>>>> upstream/main
 
     
 
@@ -313,10 +336,31 @@ def ui_ask_groq(request: Request):
 def ui_core_search(request: Request):
     return templates.TemplateResponse("coreSearch.html", {"request": request})
 
+<<<<<<< HEAD
 @app.get("/ui/pipeline")
 def ui_pipeline(request: Request):
     return templates.TemplateResponse("pipeline.html", {"request": request})
 
+=======
+app.mount("/Logo", StaticFiles(directory="Logo"), name="Logo")
+
+@app.get("/ui/pipeline")
+def ui_pipeline(request: Request):
+    image_files = []
+    # Allowed image extensions
+    allowed_ext = (".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp", ".tiff", ".svg")
+
+    for filename in os.listdir("Logo"):
+        if filename.lower().endswith(allowed_ext):
+            image_files.append(filename)
+
+    return templates.TemplateResponse(
+        "pipeline.html",
+        {"request": request, "images": image_files}
+    )
+    
+    
+>>>>>>> upstream/main
 @app.get("/ui/delete-journal")
 def ui_delete_journal(request: Request):
     return templates.TemplateResponse("deleteJournal.html", {"request": request})
@@ -612,12 +656,17 @@ async def full_journal_pipeline(journal: PulsusInputStr):
     1: Give me a brief summary from the given data where the word count lies in between 200 - 400.
     2: Give me a brief introduction from the given data where it will contain the citation markers as well, and note, you have to take in this way: the "C001" will be 1, "C002": 2...... and each section should have different but sequencial citation markers (for ex: "C001" will be 1, "C002": 2 and so on). and give two linebreak '\n' after the citation marker and also make sure the citation marker must stays before the full stop '.', and the full introduction word count lies in between 600 - 800.
     3: Give me a brief description from the given data where it will contain the citation markers as well, and note, you have to take in this way: the "C001" will be 1, "C002": 2...... and each section should have different but sequencial citation markers (for ex: "C001" will be 1, "C002": 2 and so on). and give two linebreak '\n' after the citation marker and also make sure the citation marker must stays before the full stop '.', and the full description word count lies in between 600 - 800.
+<<<<<<< HEAD
+=======
+    4: Give me a abstract from the given data, and the full abstract word count lies in between 90 - 100.
+>>>>>>> upstream/main
 
     The final structure should look like:
     "content": {{
       "introduction": '''...''',
       "description" : '''...''',
-      "summary" : '''...'''
+      "summary" : '''...''',
+      "abstract" : '''...'''
       ...
     }}
     
@@ -678,6 +727,7 @@ async def full_journal_pipeline(journal: PulsusInputStr):
             "journalYearVolumeIssue": f"{journal.shortJournalName}, Volume {journal.volume}:{journal.issues}, {journal.published.split('-')[-1]}",
             "introduction": gem_info["introduction"] ,
             "description": gem_info["description"] ,
+            "abstract": gem_info["abstract"] ,
             "content": content_data,
             "doi": journal.doi,
             "received": journal.received,
@@ -694,6 +744,7 @@ async def full_journal_pipeline(journal: PulsusInputStr):
             "issues" : journal.issues,
             "pdfNo" : journal.pdfNo,
             "ISSN" : journal.ISSN,
+            "imgPath" : journal.imgPath,
             "parentLink": str(journal.parentLink),
             "conclusion": gem_info["summary"]
         }
@@ -718,7 +769,11 @@ async def full_journal_pipeline(journal: PulsusInputStr):
     # ===== Render and Save HTML File =====
     try:
         html_template = env.get_template("Format1.html")
+<<<<<<< HEAD
         forHtml = data[journal.id]
+=======
+        forHtml = copy.deepcopy(data[journal.id])
+>>>>>>> upstream/main
         for i in range(0, len(forHtml["content"])):
             i += 1
 

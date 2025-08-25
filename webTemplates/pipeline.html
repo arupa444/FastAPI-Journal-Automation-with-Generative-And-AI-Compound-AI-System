@@ -49,6 +49,10 @@
             <option value="" selected disabled>Choose brand</option>
             <option value="hilaris.tex">Hilaris</option>
             <option value="alliedAcademy.tex">Allied Academy</option>
+<<<<<<< HEAD
+=======
+            <option value="omics.tex">Omics</option>
+>>>>>>> upstream/main
         </select>
     </div>
 
@@ -79,6 +83,21 @@
         <input type="text" name="published" class="form-control" placeholder="20-Jan-2025" required>
     </div>
 
+<<<<<<< HEAD
+=======
+    <div class="col-md-2">
+        <label class="form-label">Image Path</label>
+        <select id="imageSelector" name="imgPath" class="form-select">
+            <option value="" disabled selected>Choose image</option>
+            {% for image in images %}
+            <option value="{{ image }}">{{ image }}</option>
+            {% endfor %}
+        </select>
+        <img id="preview" src="" alt="Preview will appear here" class="mt-2 img-fluid rounded d-none"
+            style="max-height:150px;">
+    </div>
+
+>>>>>>> upstream/main
     <!-- Numbers -->
     <div class="col-md-3">
         <label class="form-label">Manuscript No</label>
@@ -117,10 +136,30 @@
     </div>
 </form>
 
+<<<<<<< HEAD
 
 <div id="responseBox" class="mt-4"></div>
 
 <script>
+=======
+<div id="responseBox" class="mt-4"></div>
+
+<script>
+    const selector = document.getElementById('imageSelector');
+    const preview = document.getElementById('preview');
+
+    // ✅ Show preview after selecting
+    selector.addEventListener("change", function () {
+        if (this.value) {
+            // This line correctly builds the full URL
+            preview.src = '/Logo/' + this.value;
+            preview.classList.remove("d-none");
+        } else {
+            preview.classList.add("d-none");
+        }
+    });
+    // Handle form submit
+>>>>>>> upstream/main
     document.getElementById("runThePipeline").addEventListener("submit", async function (e) {
         e.preventDefault();
         const formData = new FormData(this);
@@ -138,6 +177,7 @@
 
             const result = await response.json();
             document.getElementById("responseBox").innerHTML = `
+<<<<<<< HEAD
           <div class="alert alert-${response.ok ? 'success' : 'danger'}">
             <h5>Response body:</h5>
             <pre>${JSON.stringify(result, null, 2)}</pre>
@@ -154,4 +194,18 @@
 
 
 
+=======
+              <div class="alert alert-${response.ok ? 'success' : 'danger'}">
+                <h5>Response body:</h5>
+                <pre>${JSON.stringify(result, null, 2)}</pre>
+              </div>`;
+        } catch (error) {
+            document.getElementById("responseBox").innerHTML = `
+              <div class="alert alert-danger">Error: ${error}</div>`;
+        } finally {
+            hideLoading();
+        }
+    });
+</script>
+>>>>>>> upstream/main
 {% endblock %}
