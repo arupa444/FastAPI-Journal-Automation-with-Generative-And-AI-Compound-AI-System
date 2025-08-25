@@ -1,0 +1,211 @@
+\documentclass[10pt]{article} % body text 10pt globally
+
+% === PACKAGES ===
+\usepackage[margin=35pt, top=69pt, bottom=90pt]{geometry}
+\usepackage{fontspec}
+\setmainfont{ArchivoNarrow}[
+    Path=./Fonts/,
+    UprightFont = *-Regular,
+    BoldFont = *-Bold,
+    ItalicFont = *-Italic,
+    BoldItalicFont = *-BoldItalic
+]
+\usepackage{titlesec} % for heading sizes
+\usepackage{latexsym}
+\usepackage{pict2e}
+\usepackage{wasysym}
+\usepackage[english]{babel}
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\usepackage{fancyhdr}
+\usepackage{multicol}
+\usepackage{hyperref}
+\usepackage{framed}
+\usepackage{lettrine}
+\usepackage{zref-abspage}
+\usepackage{refcount}
+
+% === COLORS ===
+\definecolor{color_101230}{rgb}{0.286275,0.14902,0.423529}
+\definecolor{color_283006}{rgb}{1,1,1}
+\definecolor{color_100238}{rgb}{0.282353,0.145098,0.423529}
+\definecolor{color_29791}{rgb}{0,0,0}
+\definecolor{color_282974}{rgb}{1,0.996078,0.996078}
+
+% === LINK COLORS ===
+\hypersetup{
+    colorlinks=true,
+    urlcolor=color_29791,
+    citecolor=color_100238,
+    linkcolor=color_100238
+}
+
+% === TITLE & SECTION FONT SIZES ===
+% Section headings (15pt)
+\titleformat{name=\section,numberless}[block]%
+  {\bfseries\fontsize{15}{17}\selectfont\color{color_100238}} % 15pt section
+  {} % no numbering
+  {0pt}
+  {}
+  [\vspace{-0.4cm}\noindent\color{color_100238}\rule{\linewidth}{1pt}]
+
+% === TITLE STYLE ===
+\newcommand{\articletitle}[1]{%
+    {\fontsize{24}{22}\selectfont\color{color_29791}\textbf{#1}}\par
+}
+
+
+\fancypagestyle{firstpage}{
+    \fancyhf{} % clear header/footer
+    \fancyheadoffset[L]{0pt}
+    \fancyheadoffset[R]{0pt}
+    \renewcommand{\headrulewidth}{0pt}
+    
+    % Main header row
+    \fancyhead[L]{%
+        \fontsize{12}{15}\selectfont\color{color_29791}\textbf{\VAR{type}}\\
+        \fontsize{10}{12}\selectfont\color{color_29791}Volume 0\VAR{volume}:0\VAR{issues}, \VAR{year}
+    }
+    \fancyhead[R]{%
+        \fontsize{15}{16.8}\selectfont\color{color_100238}\textbf{\VAR{journalName}}
+    }
+
+    % === Second row: Purple bar with ISSN & Open Access ===
+    \fancyhead[C]{%
+    \begin{tikzpicture}[overlay, remember picture]
+        % Purple bar
+        \fill[color_100238] 
+            ($(current page.north west) + (0,-74pt)$) 
+            rectangle 
+            ($(current page.north east) + (0,-95pt)$);
+
+        % ISSN - shifted to match left margin
+        \node[anchor=west, font=\fontsize{9}{11}\selectfont\bfseries, text=white] 
+            at ($(current page.north west) + (\dimexpr\oddsidemargin+1in\relax,-85pt)$) {ISSN: \VAR{ISSN}};
+
+        % Open Access - shifted to match right margin
+        \node[anchor=east, font=\fontsize{9}{11}\selectfont\bfseries, text=white] 
+            at ($(current page.north east) + (-\dimexpr\oddsidemargin+1in\relax,-85pt)$) {Open Access};
+    \end{tikzpicture}%
+    }
+
+    % Footer stays same
+    \fancyfoot[L]{%
+    \begin{tikzpicture}[baseline=(text.base)]
+        \fill[color_100238] (0,0) rectangle (76.56pt, -16.3pt);
+        \node[white, font=\fontsize{8}{9.6}\selectfont] (text)
+            at (38.28pt, -8.15pt) {Page~\thepage~of~\getpagerefnumber{TotPages}};
+    \end{tikzpicture}%
+    }
+}
+
+
+% --- Header and Footer for all subsequent pages ---
+\fancypagestyle{subsequent}{
+    \fancyhf{}
+    % Header
+    \fancyhead[L]{\fontsize{8.5}{10}\selectfont\color{color_29791}\VAR{authors | latex_escape}}
+    \fancyhead[R]{\fontsize{8.5}{10}\selectfont\color{color_29791}\VAR{journalYearVolumeIssue}}
+    % \renewcommand{\headrule}{%
+    %   \vbox to 0pt{\hbox to\headwidth{\color{color_100238}\leaders\hrule height 0.5pt\hfill}\vss}%
+    % }
+    % Footer
+    \fancyfoot[L]{%
+    \begin{tikzpicture}[baseline=(text.base)]
+        \fill[color_100238] (0,0) rectangle (76.56pt, -16.3pt);
+        \node[white, font=\fontsize{8}{9.6}\selectfont] (text)
+            at (38.28pt, -8.15pt) 
+            {Page~\thepage~of~\getpagerefnumber{TotPages}};
+    \end{tikzpicture}%
+}
+}
+\setlength{\headheight}{28pt}  % Fix fancyhdr warning & allow purple bar display
+
+% --- Apply styles ---
+\pagestyle{subsequent}   % Default for all pages
+\thispagestyle{firstpage} % First page special style
+
+
+% --- Main Document ---
+\begin{document}
+
+% Push heading below ISSN/Open Access bar
+\vspace*{1cm} % adjust this value until it clears the purple bar
+
+\begin{flushleft}
+    \articletitle{\VAR{title | latex_escape}}
+    \color{color_100238}\rule{0.97\textwidth}{1pt}
+    \vspace{0.1cm}
+\end{flushleft}
+
+
+\begin{flushleft}
+\vspace*{-0.5cm}
+    \fontsize{11}{13.2}\selectfont\color{color_29791}\textbf{\VAR{authors | latex_escape}}\par
+    \vspace{0cm}
+    \fontsize{9}{10.8}\selectfont\color{color_29791}\VAR{authorsDepartment | latex_escape}\par
+    \vspace{0.1cm}
+    % Measure the width of the department text
+    \settowidth{\dimen0}{\fontsize{9}{10.8}\selectfont\color{color_29791}\VAR{authorsDepartment}}%
+    % Draw a rule with that width
+    \color{color_100238}\rule{\dimen0}{1pt}
+\end{flushleft}
+
+\begin{multicols}{2}
+\fontsize{9}{10.8}\selectfont\color{color_29791}
+
+\section*{Introduction}
+% \section*{\color{color_100238}Introduction}
+\VAR{introduction | latex_escape}
+\section*{Description}
+\VAR{description | latex_escape}
+
+\section*{Conclusion}
+\VAR{conclusion | latex_escape}
+
+\section*{Acknowledgement}
+None.
+
+\section*{Conflict of Interest}
+None.
+
+\section*{References}
+\fontsize{8}{9.6}\selectfont
+\begin{enumerate}
+    \BLOCK{ for key, item in content.items() }
+        \item \href{\VAR{item.parentLink}}{ \VAR{item.references | latex_escape}}
+    \BLOCK{ endfor }
+\end{enumerate}
+
+\begin{framed}
+\noindent\fontsize{8.5}{10.2}\selectfont
+\textbf{How to cite this article:} \VAR{citation | latex_escape}
+\end{framed}
+
+
+\end{multicols}
+
+\vfill
+\noindent
+\hspace*{0pt}\color{color_100238}\rule{\textwidth}{1pt}
+\par\vspace{0.3cm} % ensures space between line and text
+
+\fontsize{8.5}{10.2}\selectfont
+\color{color_100238}\textbf{*Address for Correspondence:} 
+\color{color_29791}\VAR{authors}, \VAR{authorsDepartment},
+E-mail: \href{mailto:\VAR{email}}{\VAR{email}} \\
+
+\color{color_100238}\textbf{Copyright:} 
+\color{color_29791}© 2024 \VAR{authors} This is an open-access article distributed under the terms of the Creative Commons Attribution License, which permits unrestricted use, distribution and reproduction in any medium, provided the original author and source are credited. \\
+
+\vspace{0.1cm}
+\color{color_29791}\textbf{Received:} \VAR{received}, Manuscript No. \VAR{manuscriptNo}; 
+\textbf{Editor assigned:} \VAR{editorAssigned}, PreQC No. \VAR{preQCNo}; 
+\textbf{Reviewed:} \VAR{reviewed}, QC No. \VAR{QCNo}; 
+\textbf{Revised:} \VAR{revised}, Manuscript No. \VAR{RManuNo}; 
+\textbf{Published:} \VAR{published}, 
+DOI: \href{\VAR{parentLink}}{\VAR{doi}}
+
+
+\label{TotPages}
+\end{document}

@@ -1,0 +1,142 @@
+\documentclass[10pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=35pt, top=50pt, bottom=150pt]{geometry}
+\setlength{\headheight}{20pt} % enough for 2-line headers
+\setlength{\footskip}{20pt}   % increase space so footer doesn't overlap
+\usepackage{fontspec} % required for XeLaTeX/LuaLaTeX
+\setmainfont{Times New Roman} % sets main text font
+\usepackage{setspace}
+\usepackage{eso-pic}
+\usepackage{tikz}
+\usepackage{titlesec}
+\usepackage{hyperref}
+\usepackage{multicol}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1em}
+\usepackage{fancyhdr} % For headers/footers
+\setstretch{1.15}
+
+% === COLORS ===
+\definecolor{color_101230}{rgb}{0.286275,0.14902,0.423529}
+\definecolor{color_283006}{rgb}{1,1,1}
+\definecolor{color_100238}{rgb}{0.282353,0.145098,0.423529}
+\definecolor{color_29791}{rgb}{0,0,0}
+\definecolor{color_282974}{rgb}{1,0.996078,0.996078}
+
+% === LINK COLORS ===
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    urlcolor=black,   % make URLs black
+    citecolor=black
+}
+
+% === TITLE & SECTION FONT SIZES ===
+% Section headings (15pt)
+\titleformat{name=\section,numberless}[block]%
+  {\bfseries\fontsize{13}{17}\selectfont} % 15pt section
+  {} % no numbering
+  {0pt}
+  {}
+
+% === TITLE STYLE ===
+\newcommand{\articletitle}[1]{%
+    {\fontsize{16}{22}\selectfont \textbf{#1}}\par
+}
+
+\fancypagestyle{firstpage}{
+    \fancyhf{} % clear
+    \renewcommand{\headrulewidth}{0pt} % no header line
+    \renewcommand{\footrulewidth}{0pt} % no auto foot rule
+
+    % === HEADER ===
+    \vspace{0.5cm}
+    \fancyhead[L]{\fontsize{13}{14}\textit{\VAR{type}}}
+    \fancyhead[R]{\fontsize{12}{14}\textit{\href{\VAR{parentLink}}{\VAR{parentLink}}}}
+
+    % === FOOTER ===
+    \fancyfoot[L]{%
+        % Top rule
+        \rule{\textwidth}{0.4pt}
+        % Correspondence + received/published info
+        {\footnotesize\textbf{*Correspondence to:} \VAR{author}, \VAR{authorsDepartment}.
+        E-mail: \href{mailto:\VAR{email}}{\VAR{email}}}\\[0.3em]
+        {\footnotesize \textbf{Received:} \VAR{received}, Manuscript No. \VAR{manuscriptNo}; 
+        \textbf{Editor assigned:} \VAR{editorAssigned}, Pre QC No. \VAR{preQCNo}; 
+        \textbf{Reviewed:} \VAR{reviewed}, QC No. \VAR{QCNo}; 
+        \textbf{Revised:} \VAR{revised}, Manuscript No. \VAR{RManuNo}; 
+        \textbf{Published:} \VAR{published}, 
+        DOI: \href{\VAR{parentLink}}{\VAR{doi}}}\\[0.5em]
+        % Citation (centered)
+        \vspace{-0.35cm}
+        \rule{\textwidth}{0.4pt}
+        \begin{flushleft}
+        \textit{Citation: \VAR{citation | latex_escape}}
+        \end{flushleft}
+        % Bottom line: page left, journal right
+        \noindent\makebox[\textwidth]{%
+            \thepage \hfill \textit{\VAR{journalYearVolumeIssue}}%
+        }
+    }
+}
+
+% --- Subsequent pages style ---
+\fancypagestyle{subsequent}{
+    \fancyhf{} % clear everything (important!)
+    \renewcommand{\headrulewidth}{0pt} % remove top line
+    \renewcommand{\footrulewidth}{0pt} % remove any bottom line
+
+    \fancyfoot[L]{%
+        % Citation centered
+        \vspace*{4em}
+        \begin{flushleft}
+        \textit{\textbf{Citation:} \VAR{citation | latex_escape}}
+        \end{flushleft}
+
+        % Bottom line: page left, journal right
+        \noindent\makebox[\textwidth]{%
+        \textit{\VAR{journalYearVolumeIssue}}   \hfill \thepage
+        }
+    }
+}
+
+\begin{document}
+% Apply first-page style
+\thispagestyle{firstpage}
+
+% ARTICLE TITLE (20pt)
+\begin{flushleft}
+    \articletitle{\VAR{title | latex_escape}.}
+    \vspace{0.1cm}
+\end{flushleft}
+% AUTHOR NAME & INFO
+\begin{flushleft}
+    \fontsize{12}{15}\selectfont\color{color_29791}\textbf{\VAR{author | latex_escape}*}\par
+    \vspace{0.2cm}
+    \fontsize{11}{12}\selectfont\color{color_29791}\VAR{authorsDepartment | latex_escape}\par
+    \vspace{-0.1cm}\settowidth{\dimen0}{\fontsize{10}{12}\selectfont\color{color_29791}\VAR{authorsDepartment}}
+\end{flushleft}
+
+
+% ===== Two-column main content =====
+\begin{multicols}{2}
+
+\section*{Introduction}
+\VAR{introduction | latex_escape}
+
+\section*{Conclusion}
+\VAR{conclusion | latex_escape}
+
+\section*{References}
+\begin{enumerate}
+    \BLOCK{ for key, item in content.items() }
+        \item \href{\VAR{item.parentLink}}{ \VAR{item.references | latex_escape}}
+    \BLOCK{ endfor }
+\end{enumerate}
+
+\end{multicols}
+
+% Switch to subsequent page style automatically
+\pagestyle{subsequent}
+
+\end{document}
