@@ -31,7 +31,11 @@
 
 % === COLORS ===
 \definecolor{White}{rgb}{1,1,1}% White - color_283006
+<<<<<<< HEAD
+\definecolor{Black}{rgb}{0,0,0}% Black - color_29791
+=======
 \definecolor{Black}{rgb}{0,0,0}% Black - Black
+>>>>>>> upstream/main
 \definecolor{Off_white}{rgb}{1,0.996078,0.996078}% Very Light Pink / Off-White - color_282974
 \definecolor{Light_navy_blue}{rgb}{0,0.349,0.588}
 
@@ -89,7 +93,11 @@
         % --- Top row: Logo + Journal title ---
          \node[anchor=west] at 
             ($(current page.north west) + (35pt,-64pt)$) {%
+<<<<<<< HEAD
+            \includegraphics[height=70pt]{./Logo/something.png}%
+=======
             \includegraphics[height=70pt]{./Logo/\VAR{imgPath}}%
+>>>>>>> upstream/main
             };
         \node[anchor=west] at ($(current page.north west) + (95pt,-64pt)$) {%
             \hspace{0.6em}%
@@ -99,7 +107,11 @@
         % Right side citation info
         \node[anchor=east] at 
             ($(current page.north east) + (-35pt,-64pt)$) {%
+<<<<<<< HEAD
+            \fontsize{8}{10}\selectfont\color{Black}{\VAR{authors}, \VAR{journalName}, \VAR{volume}:\VAR{issues}}%
+=======
             \fontsize{8}{10}\selectfont\color{Black}{\VAR{author}, \VAR{journalName}, \VAR{volume}:\VAR{issues}}%
+>>>>>>> upstream/main
         };
     
         % --- Blue bar inside text margins ---
@@ -110,7 +122,11 @@
     
         % Article type - left
         \node[anchor=west, font=\fontsize{11}{11}\selectfont\bfseries, text=white] 
+<<<<<<< HEAD
+            at ($(current page.north west) + (1in+\oddsidemargin,-117.5pt)$) \VAR{type};
+=======
             at ($(current page.north west) + (1in+\oddsidemargin,-117.5pt)$) {\VAR{type}};
+>>>>>>> upstream/main
     
         % Open Access - right
         \node[anchor=east, font=\fontsize{11}{11}\selectfont\bfseries, text=white] 
@@ -149,7 +165,11 @@
 
     % Right footer: volume info BELOW the rule line
     \fancyfoot[R]{\fontsize{8.5}{10}\selectfont\color{Black}%
+<<<<<<< HEAD
+      \VAR{volume} • \VAR{issues} • \VAR{pdfNo}}
+=======
       {Volume} \VAR{volume} • {Issue} \VAR{issues} • \VAR{pdfNo}}
+>>>>>>> upstream/main
 }
 
 \setlength{\headheight}{28pt}  % Fix fancyhdr warning & allow purple bar display
@@ -173,9 +193,15 @@
 
 \begin{flushleft}
 \vspace*{-0.5cm}
+<<<<<<< HEAD
+    \fontsize{10}{13.2}\selectfont\color{color_29791}\textbf{\VAR{authors | latex_escape}}\par
+    \vspace{0cm}
+    \fontsize{8}{10.8}\selectfont\color{color_29791}\VAR{authorsDepartment | latex_escape}\par
+=======
     \fontsize{10}{13.2}\selectfont\color{Black}\textbf{\VAR{author | latex_escape}}\par
     \vspace{0cm}
     \fontsize{8}{10.8}\selectfont\color{Black}\VAR{authorsDepartment | latex_escape}\par
+>>>>>>> upstream/main
     \vspace{0.1cm}
 \end{flushleft}
 
@@ -226,12 +252,28 @@
 \end{multicols}
 
 \vfill
+<<<<<<< HEAD
+
+\noindent\color{color_100238}\rule{\linewidth}{1pt} 
+=======
 % Horizontal line spanning the full text width, aligned properly
 \noindent\color{Light_navy_blue}\rule{\linewidth}{1pt} 
+>>>>>>> upstream/main
 
 \begin{justify} % start justification
 \fontsize{8.5}{10.2}\selectfont
 
+<<<<<<< HEAD
+\color{color_100238}\textbf{Address for Correspondence:}  
+\color{color_29791}\VAR{authors}, \VAR{authorsDepartment},
+E-mail: \href{mailto:\VAR{email}}{\VAR{email}} \\
+
+\color{color_100238}\textbf{Copyright:} 
+\color{color_29791}© 2024 \VAR{authors} This is an open-access article distributed under the terms of the Creative Commons Attribution License, which permits unrestricted use, distribution and reproduction in any medium, provided the original author and source are credited. \\
+
+\vspace{0.1cm}
+\color{color_29791}\textbf{Received:} \VAR{received}, Manuscript No. \VAR{manuscriptNo}; 
+=======
 \color{Light_navy_blue}\textbf{Address for Correspondence:}  
 \color{Black}\VAR{author}, \VAR{authorsDepartment},
 E-mail: \href{mailto:\VAR{email}}{\VAR{email}} \\
@@ -241,6 +283,7 @@ E-mail: \href{mailto:\VAR{email}}{\VAR{email}} \\
 
 \vspace{0.1cm}
 \color{Black}\textbf{Received:} \VAR{received}, Manuscript No. \VAR{manuscriptNo}; 
+>>>>>>> upstream/main
 \textbf{Editor assigned:} \VAR{editorAssigned}, PreQC No. \VAR{preQCNo}; 
 \textbf{Reviewed:} \VAR{reviewed}, QC No. \VAR{QCNo}; 
 \textbf{Revised:} \VAR{revised}, Manuscript No. \VAR{RManuNo}; 

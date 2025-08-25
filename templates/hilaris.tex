@@ -186,12 +186,13 @@ None.
 \end{multicols}
 
 \vfill
-\noindent
-\hspace*{0pt}\color{color_100238}\rule{\textwidth}{1pt}
-\par\vspace{0.3cm} % ensures space between line and text
+% Horizontal line spanning the full text width, aligned properly
+\noindent\color{color_100238}\rule{\linewidth}{1pt} 
 
+\begin{justify} % start justification
 \fontsize{8.5}{10.2}\selectfont
-\color{color_100238}\textbf{*Address for Correspondence:} 
+
+\color{color_100238}\textbf{Address for Correspondence:}  
 \color{color_29791}\VAR{authors}, \VAR{authorsDepartment},
 E-mail: \href{mailto:\VAR{email}}{\VAR{email}} \\
 
