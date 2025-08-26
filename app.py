@@ -692,7 +692,7 @@ async def full_journal_pipeline(journal: PulsusInputStr):
     except Exception as e:
         gem_summary = f"Gemini API failed: {str(e)}"
 
-    print("step 4 : ask Genini ✅")
+    print("step 4 : ask Gemini ✅")
 
     # Step 5: Clean and parse JSON output from Gemini
     raw_json = extract_json_from_markdown(gem_summary)
