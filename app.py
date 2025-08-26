@@ -658,7 +658,7 @@ async def full_journal_pipeline(journal: PulsusInputStr):
     "content": {{
       "C001": {{
         "subContent": "...",
-        "references": "...", # make sure that should be in {journal.citeAuthorFormate} formate
+        "references": "...", # make sure that cite should be in {journal.citeAuthorFormate} formate
         "title": "...",
         "authors": ["...", "...", "..."], #only three authors name (full name)
         "published": "...",
