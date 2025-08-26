@@ -133,13 +133,13 @@ class PulsusInputStr(BaseModel):
     @property
     def citeAuthorFormate(self) -> str:
         if self.brandName == 'hilaris.tex':
-            return ""
+            return """author names(first name + the remainings name's first letter(ex.: Arupa Nanda Swain then that should be Arupa NS) and there must be 3 to 6 authors and seperated with comma), title of that journal inside double quotation, Journal short name. Volume of the journal (year of publishing inside parenthesis):the page range or the number. (for example: 'author n, author n, author n. "titleOFtheJournal", journalShortName Volume (year):ThePageRangeOrTheNumber')"""
 
         if self.brandName == 'alliedAcademy.tex':
-            return ""
+            return """author names(first name + the remainings name's first letter(ex.: Arupa Nanda Swain then that should be Arupa NS) and there must be 3 to 6 authors and seperated with comma), title of that journal, Journal short name. year of publishing;Volume of the journal:the page range or the number.(for example: 'author n, author n, author n, titleOFtheJournal, journalShortName. year;Volume:ThePageRangeOrTheNumber')"""
 
         if self.brandName == 'omics.tex':
-            return ""
+            return """author names(first name + the remainings name's first letter(ex.: Arupa Nanda Swain then that should be Arupa NS) and there must be 3 to 6 authors and seperated with comma) (year of publishing inside parenthesis) title of that journal. Journal short name Volume of the journal:the page range or the number.(for example: 'author n, author n, author n (year) titleOFtheJournal. journalShortName Volume:ThePageRangeOrTheNumber')"""
 
 
 class UpdateInputPartJournal(BaseModel):
