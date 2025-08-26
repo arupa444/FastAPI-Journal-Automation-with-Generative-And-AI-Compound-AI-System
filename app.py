@@ -129,6 +129,18 @@ class PulsusInputStr(BaseModel):
                 raise ValueError(f"Change the pdf page no. it is similar to the pdf artical name{i['topic']}")
         return value
 
+    @computed_field
+    @property
+    def citeAuthorFormate(self) -> str:
+        if self.brandName == 'hilaris.tex':
+            return ""
+
+        if self.brandName == 'alliedAcademy.tex':
+            return ""
+
+        if self.brandName == 'omics.tex':
+            return ""
+
 
 class UpdateInputPartJournal(BaseModel):
     id: Annotated[Optional[str], Field(default=None, title="ID of the Input Journal",
@@ -294,6 +306,8 @@ class PulsusOutputStr(BaseModel):
             justToCite[1] = " " + justToCite[1]
             justToCite = "".join(justToCite)
             return f"{justToCite},({self.published.split("-")[-1]}) {self.title}. {self.shortJournalName} {self.volume}: {self.pdfNo}. DOI: {self.doi}"
+
+
 
 
 def fetchInpData():
@@ -644,7 +658,7 @@ async def full_journal_pipeline(journal: PulsusInputStr):
     "content": {{
       "C001": {{
         "subContent": "...",
-        "references": "...",
+        "references": "...", # make sure that should be in {journal.citeAuthorFormate} formate
         "title": "...",
         "authors": ["...", "...", "..."], #only three authors name (full name)
         "published": "...",
