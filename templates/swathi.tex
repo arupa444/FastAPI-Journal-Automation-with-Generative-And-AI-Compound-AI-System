@@ -1,0 +1,206 @@
+\documentclass[10pt]{article} % body text 10pt globally
+
+% === PACKAGES ===
+\usepackage[margin=35pt, top=69pt, bottom=90pt]{geometry}
+\usepackage{fontspec}
+\setmainfont{ArchivoNarrow}[
+    Path=./Fonts/,
+    UprightFont = *-Regular,
+    BoldFont = *-Bold,
+    ItalicFont = *-Italic,
+    BoldItalicFont = *-BoldItalic
+]
+\usepackage{titlesec} % for heading sizes
+\usepackage{latexsym}
+\usepackage{pict2e}
+\usepackage{wasysym}
+\usepackage[english]{babel}
+\usepackage{fancyhdr}
+\usepackage{multicol}
+\usepackage{hyperref}
+\usepackage{framed}
+\usepackage{lettrine}
+\usepackage{zref-abspage}
+\usepackage{refcount}
+\usepackage{ragged2e}
+\usepackage[most]{tcolorbox}
+\usepackage{tikz}
+\usetikzlibrary{calc}
+
+
+% === COLORS ===
+\definecolor{color_101230}{rgb}{0.286275,0.14902,0.423529}
+\definecolor{color_283006}{rgb}{1,1,1}
+\definecolor{color_100238}{rgb}{0.282353,0.145098,0.423529}
+\definecolor{color_29791}{rgb}{0,0,0}
+\definecolor{color_282974}{rgb}{1,0.996078,0.996078}
+
+% === LINK COLORS ===
+\hypersetup{
+    colorlinks=true,
+    urlcolor=color_29791,
+    citecolor=color_100238,
+    linkcolor=color_100238
+}
+
+% === TITLE & SECTION FONT SIZES ===
+% Section headings (15pt)
+\titleformat{name=\section,numberless}[block]%
+  {\bfseries\fontsize{15}{17}\selectfont\color{color_100238}}
+  {} % no numbering
+  {0pt}
+  {}
+
+% === TITLE STYLE ===
+\newcommand{\articletitle}[1]{%
+    {\fontsize{20}{22}\selectfont\color{color_29791}\textbf{#1}}\par
+}
+
+
+\fancypagestyle{firstpage}{
+    \fancyhf{} % clear header/footer
+    \fancyheadoffset[L]{0pt}
+    \fancyheadoffset[R]{0pt}
+    \renewcommand{\headrulewidth}{0pt}
+    
+    % Main header row
+    \fancyhead[L]{%
+        \selectfont\color{color_29791}\textbf{Primary Health Care: Open Access 2021, Vol.11, Issue 5, 384.}
+    }
+    \fancyhead[R]{%
+        \selectfont\color{color_29791}\textbf{Short Communication}
+    }
+    
+    % Footer
+    \fancyfoot[C]{
+        \begin{tcolorbox}[colback=white, colframe=black, arc=2pt, boxrule=1pt, left=2pt, right=2pt, top=2pt, bottom=2pt]
+    
+        \centering % centers all content inside the box
+        \textbf{Cite this article: }Sunitha. Good Health Determinants: Lifestyle and Primary Health. Prim Health Care, 2021, 11(5), 384.
+        \end{tcolorbox}
+        \begin{flushright}
+            \textbf{\thepage}
+        \end{flushright}
+    }
+        
+}
+
+
+% --- Header and Footer for all subsequent pages ---
+\fancypagestyle{subsequent}{
+    \fancyhf{}
+
+    % Footer
+    \fancyfoot[C]{
+        \begin{tcolorbox}[colback=white, colframe=black, arc=2pt, boxrule=1pt, left=2pt, right=2pt, top=2pt, bottom=2pt]
+    
+        \centering % centers all content inside the box
+        \textbf{Cite this article: }Sunitha. Good Health Determinants: Lifestyle and Primary Health. Prim Health Care, 2021, 11(5), 384.
+        \end{tcolorbox}
+    }
+    \fancyfoot[R]{
+        \textbf{\thepage}
+    }
+}
+
+% --- Apply styles ---
+\pagestyle{subsequent}   % Default for all pages
+\thispagestyle{firstpage} % First page special style
+
+
+% --- Main Document ---
+\begin{document}
+
+\begin{tcolorbox}[colback=white, colframe=black,
+    arc=5pt, % <-- roundness of corners
+    boxrule=1pt, % border thickness
+    left=6pt, right=6pt, top=6pt, bottom=6pt]
+    
+    \centering % centers all content inside the box
+    
+    \articletitle{Good Health Determinants: Lifestyle and Primary Health}
+    
+    \vspace{0.2cm}
+    \fontsize{11}{13.2}\selectfont\color{color_29791}\textbf{Sunitha*}\par
+    \vspace{0cm}
+    \fontsize{9}{10.8}\selectfont\color{color_29791}Department of Botany, Greenfield University, Springfield, USA\par
+\end{tcolorbox}
+
+
+\begin{multicols}{2}
+\fontsize{9}{10.8}\selectfont\color{color_29791}
+
+\begin{flushleft}
+\color{color_100238}\textbf{\underline{\textit{Corresponding Authors*}}} \\
+\vspace{0.3cm}
+\color{color_29791}Ashutosh Mishra\\
+\color{color_29791}Department of Neurology\\
+E-mail: \href{mailto:sunitha89@yahoo.com}{sunitha89@yahoo.com}
+\vspace{0.1cm}
+\rule{\linewidth}{1pt}
+\color{color_100238}\textbf{Copyright:} 
+\color{color_29791} 2021 Sunitha. This is an open-access article distributed under the 
+terms of the Creative Commons Attribution License, which permits unrestricted 
+use, distribution, and reproduction in any medium, provided the original author 
+and source are credited.
+\vspace{0.1cm}
+\rule{\linewidth}{1pt}
+\color{color_29791}\textbf{Received:}  20 February, 2021;
+\textbf{Accepted:} 28 May, 2021; 
+\textbf{Published:} 30 May, 2021
+\rule{\linewidth}{1pt}
+\end{flushleft}
+
+
+
+\section*{Introduction}
+Light is one of the most critical factors for plant development, influencing photosynthesis, morphology, and productivity. Recent research has emphasized the specific roles of red and blue light spectra in regulating plant physiology.
+
+Light is one of the most critical factors for plant development, influencing photosynthesis, morphology, and productivity. Recent research has emphasized the specific 
+
+Plants require light for photosynthesis, which drives growth and development. The role of different wavelengths and intensities of light in regulating plant physiology has been widely studied. This research explores the effects of red and blue light on the biomass production of \textit{Arabidopsis thaliana}.
+
+
+Plants require light for photosynthesis, which drives growth and development. The role of different wavelengths and intensities of light in regulating plant physiology has been widely studied. This research explores the effects of red and blue light on the biomass production of \textit{Arabidopsis thaliana}.
+
+Red light is strongly associated with stem elongation and flowering, while blue light is vital for stomatal opening, chlorophyll synthesis, and phototropism. By manipulating light conditions, controlled-environment agriculture can maximize plant growth and yield.
+
+Light is one of the most critical factors for plant development, influencing photosynthesis, morphology, and productivity. Recent research has emphasized the specific roles of red and blue light spectra in regulating plant physiology.
+
+Light is one of the most critical factors for plant development, influencing photosynthesis, morphology, and productivity. Recent research has emphasized the specific roles of red and blue light spectra in regulating plant physiology.
+
+Light is one of the most critical factors for plant development, influencing photosynthesis, morphology, and productivity. Recent research has emphasized the specific roles of red and blue light spectra in regulating plant physiology.
+
+Red light is strongly associated with stem elongation and flowering, while blue light is vital for stomatal opening, chlorophyll synthesis, and phototropism. By manipulating light conditions, controlled-environment agriculture can maximize plant growth and yield.
+
+Light is one of the most critical factors for plant development, influencing photosynthesis, morphology, and productivity. Recent research has emphasized the specific roles of red and blue light spectra in regulating plant physiology.
+
+Light is one of the most critical factors for plant development, influencing photosynthesis, morphology, and productivity. Recent research has emphasized the specific roles of red and blue light spectra in regulating plant physiology.
+
+Light is one of the most critical factors for plant development, influencing photosynthesis, morphology, and productivity. Recent research has emphasized the specific roles of red and blue light spectra in regulating plant physiology.
+
+Plants require light for photosynthesis, which drives growth and development. The role of different wavelengths and intensities of light in regulating plant physiology has been widely studied. This research explores the effects of red and blue light on the biomass production of \textit{Arabidopsis thaliana}.
+
+
+Plants require light for photosynthesis, which drives growth and development. The role of different wavelengths and intensities of light in regulating plant physiology has been widely studied. This research explores the effects of red and blue light on the biomass production of \textit{Arabidopsis thaliana}.
+
+Our findings suggest that combining red and blue light in optimal ratios enhances plant biomass and improves overall photosynthetic efficiency, offering new insights for greenhouse and vertical farming systems.
+Plants require light for photosynthesis, which drives growth and development. The role of different wavelengths and intensities of light in regulating plant physiology has been widely studied. This research explores the effects of red and blue light on the biomass production of \textit{Arabidopsis thaliana}.
+Plants require light for photosynthesis, which drives growth and development. The role of drives growth and development. The role of different wavelengths and intensities of light in regulating plant physiology has been widely studied. This research explores the effects of red and blue light on the biomass production of \textit{Arabidopsis thaliana}.
+Plants require light for photosynthesis, which drives growth and development. The role of different wavelengths and intensities of light in regulating plant physiology has been widely studied. This research explores the effects of red and blue light on the biomass production of \textit{Arabidopsis thaliana}.
+
+\section*{References}
+\fontsize{8}{9.6}\selectfont
+\begin{enumerate}
+    \item \href{https://doi.org/10.1093/plphys/kiab123}{Chen H, Lee S. (2021). Role of Blue Light in Plant Growth. Plant Physiology, 182(3): 567–579.}
+    \item \href{https://doi.org/10.1080/23818107.2022.1690001}{Rodriguez M, Patel R. (2022). Red Light and Flowering Regulation in Arabidopsis. Botany Letters, 169(1): 45–53.}
+    \item \href{https://doi.org/10.1016/j.jcea.2024.01.005}{Taylor J, Kim Y. (2024). Advances in LED-based Plant Cultivation Systems. Journal of Controlled Environment Agriculture, 10(1): 12–25.}
+
+    \item \href{https://doi.org/10.1093/plphys/kiab123}{Chen H, Lee S. (2021). Role of Blue Light in Plant Growth. Plant Physiology, 182(3): 567–579.}
+    \item \href{https://doi.org/10.1080/23818107.2022.1690001}{Rodriguez M, Patel R. (2022). Red Light and Flowering Regulation in Arabidopsis. Botany Letters, 169(1): 45–53.}
+\end{enumerate}
+
+\end{multicols}
+
+\label{TotPages}
+\end{document}
