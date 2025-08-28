@@ -671,8 +671,8 @@ async def full_journal_pipeline(journal: PulsusInputStr):
         "volume": "...",
         "issues": "...",
         "DOI": "...",
-        "url": "...", # journal link
-        "parentLink": "..." # pubmed link of the journal
+        "url": "...", # pubmed link of the journal
+        "parentLink": "..." # the perticular article link
       }}, # try to achieve the maximum of 10 (C010) counts.
       ...
     }}
@@ -955,3 +955,4 @@ async def full_journal_pipeline(journal: PulsusInputStr):
         status_code=200,
         content={"Status": f"Data added and files generated successfully in PDFStorePulsus/{journal.id}/ ✅."}
     )
+
