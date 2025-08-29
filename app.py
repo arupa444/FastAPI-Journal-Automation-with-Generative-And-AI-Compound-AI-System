@@ -894,7 +894,7 @@ async def full_journal_pipeline(journal: PulsusInputStr):
             forHtml["suffixAuthorDepartment"] = f"{','.join(department_parts[1:])}.<br />"
         else:
             forHtml["prefixAuthorDepartment"] = forHtml['authorsDepartment']
-            forHtml["suffixAuthorDepartment"] = ""
+            forHtml["suffixAuthorDepartment"] = "<br />"
 
         rendered_html = html_template.render(**forHtml)
 
