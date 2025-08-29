@@ -664,14 +664,15 @@ async def full_journal_pipeline(journal: PulsusInputStr):
         "subContent": "...",
         "references": "...", # make sure that cite should be in {journal.citeAuthorFormate} formate
         "title": "...",
+        "journalShortName": "...",
         "authors": ["...", "...", "..."], #only three authors name (full name)
         "published": "...",
         "pageRangeOrNumber": "...", #the page range or the page number
         "volume": "...",
         "issues": "...",
         "DOI": "...",
-        "url": "...",
-        "parentLink": "..."
+        "url": "...", # pubmed link of the journal
+        "parentLink": "..." # the perticular article link
       }}, # try to achieve the maximum of 10 (C010) counts.
       ...
     }}
@@ -860,8 +861,15 @@ async def full_journal_pipeline(journal: PulsusInputStr):
             count += 1
             i["issues"] = f"({i['issues']})" if i.get("issues") else ""
 
-            temp = f"""<li><a name="{count}" id="{count}"></a>{i["authors"]} <a href="{i["parentLink"]}" target="_blank">{i["title"]}</a>. {i["published"]};{i["volume"]}{i["issues"]}:{i["pageRangeOrNumber"]}.</li>
-            <p align="right"><a href="{i["url"]}" target="_blank"><u>Indexed at</u></a>, <a href="https://scholar.google.com/scholar?hl=en&as_sdt=0%2C5&q={'+'.join(i["title"].split(' '))}&btnG=" target="_blank"><u>Google Scholar</u></a>, <a href="https://doi.org/{i["DOI"]}" target="_blank"><u>Crossref</u></a></p>"""
+            if journal.brandName == "alliedAcademy.tex":
+                temp = f"""<li><a name="{count}" id="{count}"></a>{i["authors"]} <a href="{i["parentLink"]}" target="_blank">{i["title"]}</a>. {i["journalShortName"]} {i["published"]};{i["volume"]}{i["issues"]}:{i["pageRangeOrNumber"]}.</li>
+                <p align="right"><a href="{i["url"]}" target="_blank"><u>Indexed at</u></a>, <a href="https://scholar.google.com/scholar?hl=en&as_sdt=0%2C5&q={'+'.join(i["title"].split(' '))}&btnG=" target="_blank"><u>Google Scholar</u></a>, <a href="https://doi.org/{i["DOI"]}" target="_blank"><u>Crossref</u></a></p>"""
+            elif journal.brandName == "omics.tex":
+                temp = f"""<li><a name="{count}" id="{count}"></a>{i["authors"]} ({i["published"]}) <a href="{i["parentLink"]}" target="_blank">{i["title"]}</a>.{i["journalShortName"]} {i["volume"]}:{i["pageRangeOrNumber"]}.</li>
+                <p align="right"><a href="{i["url"]}" target="_blank"><u>Indexed at</u></a>, <a href="https://scholar.google.com/scholar?hl=en&as_sdt=0%2C5&q={'+'.join(i["title"].split(' '))}&btnG=" target="_blank"><u>Google Scholar</u></a>, <a href="https://doi.org/{i["DOI"]}" target="_blank"><u>Crossref</u></a></p>"""
+            elif journal.brandName == "hilaris.tex":
+                temp = f"""<li><a name="{count}" id="{count}"></a>{i["authors"]}. <a href="{i["parentLink"]}" target="_blank">"{i["title"]}"</a>.<i>{i["journalShortName"]}</i> {i["volume"]} ({i["published"]}):{i["pageRangeOrNumber"]}.</li>
+                <p align="right"><a href="{i["url"]}" target="_blank"><u>Indexed at</u></a>, <a href="https://scholar.google.com/scholar?hl=en&as_sdt=0%2C5&q={'+'.join(i["title"].split(' '))}&btnG=" target="_blank"><u>Google Scholar</u></a>, <a href="https://doi.org/{i["DOI"]}" target="_blank"><u>Crossref</u></a></p>"""
 
             forHtml["storeRefPart"] = f"""{forHtml['storeRefPart']}\n{temp}"""
 
