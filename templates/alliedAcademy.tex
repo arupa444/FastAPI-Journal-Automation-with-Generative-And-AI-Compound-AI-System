@@ -135,9 +135,10 @@
 \VAR{conclusion | latex_escape}
 
 \section*{References}
+\fontsize{8}{9.6}\selectfont
 \begin{enumerate}
     \BLOCK{ for key, item in content.items() }
-        \item \href{\VAR{item.parentLink}}{ \VAR{item.references | latex_escape}}
+        \item \href{\VAR{item.url}}{ \VAR{item.references | latex_escape}}
     \BLOCK{ endfor }
 \end{enumerate}
 
