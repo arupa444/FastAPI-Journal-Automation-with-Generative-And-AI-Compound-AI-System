@@ -1,1 +1,5 @@
 .env
+journalDBInput.json
+journalDBOutput.json
+__pycache__
+PDFStorePulsus

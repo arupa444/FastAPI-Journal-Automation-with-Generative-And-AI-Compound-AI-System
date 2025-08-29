@@ -4,7 +4,7 @@
 \usepackage[margin=35pt, top=69pt, bottom=90pt]{geometry}
 \usepackage{fontspec}
 \setmainfont{ArchivoNarrow}[
-    Path=./Fonts/,
+    Path=../../Fonts/,
     UprightFont = *-Regular,
     BoldFont = *-Bold,
     ItalicFont = *-Italic,
@@ -105,7 +105,7 @@
 \fancypagestyle{subsequent}{
     \fancyhf{}
     % Header
-    \fancyhead[L]{\fontsize{8.5}{10}\selectfont\color{Black}\VAR{authors | latex_escape}}
+    \fancyhead[L]{\fontsize{8.5}{10}\selectfont\color{Black}\VAR{author | latex_escape}}
     \fancyhead[R]{\fontsize{8.5}{10}\selectfont\color{Black}\VAR{journalYearVolumeIssue}}
     % \renewcommand{\headrule}{%
     %   \vbox to 0pt{\hbox to\headwidth{\color{Dark_Violet}\leaders\hrule height 0.5pt\hfill}\vss}%
@@ -142,7 +142,7 @@
 
 \begin{flushleft}
 \vspace*{-0.5cm}
-    \fontsize{11}{13.2}\selectfont\color{Black}\textbf{\VAR{authors | latex_escape}}\par
+    \fontsize{11}{13.2}\selectfont\color{Black}\textbf{\VAR{author | latex_escape}}\par
     \vspace{0cm}
     \fontsize{9}{10.8}\selectfont\color{Black}\VAR{authorsDepartment | latex_escape}\par
     \vspace{0.1cm}
@@ -193,11 +193,11 @@ None.
 
 \fontsize{8.5}{10.2}\selectfont
 \color{Dark_Violet}\textbf{*Address for Correspondence:} 
-\color{Black}\VAR{authors}, \VAR{authorsDepartment},
+\color{Black}\VAR{author}, \VAR{authorsDepartment},
 E-mail: \href{mailto:\VAR{email}}{\VAR{email}} \\
 
 \color{Dark_Violet}\textbf{Copyright:} 
-\color{Black}© 2024 \VAR{authors} This is an open-access article distributed under the terms of the Creative Commons Attribution License, which permits unrestricted use, distribution and reproduction in any medium, provided the original author and source are credited. \\
+\color{Black}© 2024 \VAR{author} This is an open-access article distributed under the terms of the Creative Commons Attribution License, which permits unrestricted use, distribution and reproduction in any medium, provided the original author and source are credited. \\
 
 \vspace{0.1cm}
 \color{Black}\textbf{Received:} \VAR{received}, Manuscript No. \VAR{manuscriptNo}; 
