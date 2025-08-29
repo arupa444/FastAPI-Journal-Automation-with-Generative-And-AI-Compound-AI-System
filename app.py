@@ -139,12 +139,14 @@ class PulsusInputStr(BaseModel):
         if self.brandName == 'hilaris.tex':
             return """author names(first name + the remainings name's first letter(ex.: Arupa Nanda Swain then that should be Arupa NS) and there must be 3 to 6 authors and seperated with comma). title of that journal inside double quotation. Journal short name. Volume of the journal (year of publishing inside parenthesis):the page range or the number.end it with a full stop (for example: 'author n, author n, author n. "titleOFtheJournal". journalShortName. Volume (year):ThePageRangeOrTheNumber.')"""
 
-        if self.brandName == 'alliedAcademy.tex':
+        elif self.brandName == 'alliedAcademy.tex':
             return """author names(first name + the remainings name's first letter(ex.: Arupa Nanda Swain then that should be Arupa NS) and there must be 3 or less not more authors then that and seperated with comma), title of that journal, Journal short name. year of publishing;Volume of the journal:the page range or the number.(for example: 'author n, author n, author n, titleOFtheJournal, journalShortName. year;Volume:ThePageRangeOrTheNumber')"""
 
-        if self.brandName == 'omics.tex':
+        elif self.brandName == 'omics.tex':
             return """author names(first name + the remainings name's first letter(ex.: Arupa Nanda Swain then that should be Arupa NS) and there must be 3 to 6 authors and seperated with comma) (year of publishing inside parenthesis) title of that journal. Journal short name Volume of the journal:the page range or the number.(for example: 'author n, author n, author n (year) titleOFtheJournal. journalShortName Volume:ThePageRangeOrTheNumber')"""
 
+        else:
+            return """author names(first name + the remainings name's first letter(ex.: Arupa Nanda Swain then that should be Arupa NS) and there must be 3 or less not more authors then that and seperated with comma), title of that journal, Journal short name. year of publishing;Volume of the journal:the page range or the number.(for example: 'author n, author n, author n, titleOFtheJournal, journalShortName. year;Volume:ThePageRangeOrTheNumber')"""
 
 class UpdateInputPartJournal(BaseModel):
     id: Annotated[Optional[str], Field(default=None, title="ID of the Input Journal",
@@ -291,7 +293,7 @@ class PulsusOutputStr(BaseModel):
             justToCite = "".join(justToCite)
             return f"""{justToCite}. "{self.title}." {self.shortJournalName} {self.volume} ({self.published.split("-")[-1]}):{self.pdfNo}."""
 
-        if self.brandName == 'alliedAcademy.tex':
+        elif self.brandName == 'alliedAcademy.tex':
             justToCite = self.author.split(' ')
             justToCite.insert(0, justToCite[-1])
             justToCite = justToCite[0:-1]
@@ -301,7 +303,17 @@ class PulsusOutputStr(BaseModel):
             justToCite = "".join(justToCite)
             return f"""{justToCite}. {self.title}. {self.shortJournalName}. {self.published.split("-")[-1]};{self.volume}({self.issues}):{self.pdfNo}."""
 
-        if self.brandName == 'omics.tex':
+        elif self.brandName == 'omics.tex':
+            justToCite = self.author.split(' ')
+            justToCite.insert(0, justToCite[-1])
+            justToCite = justToCite[0:-1]
+            for i in range(1, len(justToCite)):
+                justToCite[i] = justToCite[i][0]
+            justToCite[1] = " " + justToCite[1]
+            justToCite = "".join(justToCite)
+            return f"""{justToCite},({self.published.split("-")[-1]}) {self.title}. {self.shortJournalName} {self.volume}: {self.pdfNo}. DOI: {self.doi}"""
+        
+        else:
             justToCite = self.author.split(' ')
             justToCite.insert(0, justToCite[-1])
             justToCite = justToCite[0:-1]
@@ -358,15 +370,6 @@ def saveOutData(data):
         json.dump(data, file, default=str)
 
 
-def sanitize_for_json(obj):
-    """Convert objects like AnyUrl into plain serializable types."""
-    if isinstance(obj, dict):
-        return {k: sanitize_for_json(v) for k, v in obj.items()}
-    elif isinstance(obj, list):
-        return [sanitize_for_json(v) for v in obj]
-    elif isinstance(obj, AnyUrl):
-        return str(obj)
-    return obj
 
 
 def extract_json_from_markdown(text: str) -> str:
@@ -686,6 +689,8 @@ async def full_journal_pipeline(journal: PulsusInputStr):
         Skip unnecessary dashes (-), quotation marks (''), and corporate buzzwords like 'cutting-edge', 'robust', or 'seamless experience. No Al tone. No fluff. No filler.
         Use natural transitions like 'here's the thing', 'let's break it down; or 'what this really means is' Keep sentences varied in length and rhythm, like how real people speak or write. Prioritize clarity, personality, and usefulness.
         Every sentence should feel intentional, not generated
+    IMPORTANT: Your response must be ONLY a valid JSON object with no additional text, 
+        explanations, or markdown formatting. Do not include any text before or after the JSON.
     """
     print("step 3 : Create universal prompt ✅")
     # Step 4: Ask Gemini
@@ -748,6 +753,8 @@ async def full_journal_pipeline(journal: PulsusInputStr):
         Skip unnecessary dashes (-), quotation marks (''), and corporate buzzwords like 'cutting-edge', 'robust', or 'seamless experience. No Al tone. No fluff. No filler.
         Use natural transitions like 'here's the thing', ‘let's break it down; or ‘what this really means is’ Keep sentences varied in length and rhythm, like how real people speak or write. Prioritize clarity, personality, and usefulness.
         Every sentence should feel intentional, not generated
+    IMPORTANT: Your response must be ONLY a valid JSON object with no additional text, 
+        explanations, or markdown formatting. Do not include any text before or after the JSON.
 """
     try:
         gem_response = gemClient.models.generate_content(
@@ -771,8 +778,13 @@ async def full_journal_pipeline(journal: PulsusInputStr):
     print("step 6.5 : Clean and parse JSON output from Gemini or Groq ✅")
 
     # Step 7: Title content using Gemini
-    prompt = f"give me a 5 to 7 words title based on the generated summary {content_data}. use playoff method to generate 5,6 titles and choose the best one and give that title. no need to display background process. just give 1 title as a final response"
-
+    
+    prompt = f"""
+    Generate a 5-7 word title based on this summary: {gem_info.get('summary', '')}
+    
+    IMPORTANT: Respond with ONLY the title. No additional text, explanations, or formatting.
+    """
+    
     try:
         gem_response = gemClient.models.generate_content(
             model="gemini-2.5-flash", contents=prompt
@@ -870,6 +882,9 @@ async def full_journal_pipeline(journal: PulsusInputStr):
             elif journal.brandName == "hilaris.tex":
                 temp = f"""<li><a name="{count}" id="{count}"></a>{i["authors"]}. <a href="{i["parentLink"]}" target="_blank">"{i["title"]}"</a>.<i>{i["journalShortName"]}</i> {i["volume"]} ({i["published"]}):{i["pageRangeOrNumber"]}.</li>
                 <p align="right"><a href="{i["url"]}" target="_blank"><u>Indexed at</u></a>, <a href="https://scholar.google.com/scholar?hl=en&as_sdt=0%2C5&q={'+'.join(i["title"].split(' '))}&btnG=" target="_blank"><u>Google Scholar</u></a>, <a href="https://doi.org/{i["DOI"]}" target="_blank"><u>Crossref</u></a></p>"""
+            else:
+                temp = f"""<li><a name="{count}" id="{count}"></a>{i["authors"]} <a href="{i["parentLink"]}" target="_blank">{i["title"]}</a>. {i["journalShortName"]} {i["published"]};{i["volume"]}{i["issues"]}:{i["pageRangeOrNumber"]}.</li>
+                <p align="right"><a href="{i["url"]}" target="_blank"><u>Indexed at</u></a>, <a href="https://scholar.google.com/scholar?hl=en&as_sdt=0%2C5&q={'+'.join(i["title"].split(' '))}&btnG=" target="_blank"><u>Google Scholar</u></a>, <a href="https://doi.org/{i["DOI"]}" target="_blank"><u>Crossref</u></a></p>"""
 
             forHtml["storeRefPart"] = f"""{forHtml['storeRefPart']}\n{temp}"""
 
@@ -955,5 +970,3 @@ async def full_journal_pipeline(journal: PulsusInputStr):
         status_code=200,
         content={"Status": f"Data added and files generated successfully in PDFStorePulsus/{journal.id}/ ✅."}
     )
-
-
