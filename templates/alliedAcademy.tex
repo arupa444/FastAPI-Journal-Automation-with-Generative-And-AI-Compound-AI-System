@@ -3,8 +3,14 @@
 \usepackage[margin=35pt, top=50pt, bottom=150pt]{geometry}
 \setlength{\headheight}{20pt} % enough for 2-line headers
 \setlength{\footskip}{20pt}   % increase space so footer doesn't overlap
-\usepackage{fontspec} % required for XeLaTeX/LuaLaTeX
-\setmainfont{Times New Roman} % sets main text font
+\usepackage{fontspec}
+\setmainfont{Times New Roman}[
+    Path=../../Fonts/,
+    UprightFont    = *,
+    BoldFont       = * - Bold ,
+    ItalicFont     = * - Italic ,
+    BoldItalicFont = * - Bold Italic
+]
 \usepackage{setspace}
 \usepackage{eso-pic}
 \usepackage{tikz}

@@ -5,7 +5,7 @@
 % === FONT SETUP ===
 \usepackage{fontspec}
 \setmainfont{Times New Roman}[
-    Path=./Fonts/,
+    Path=../../Fonts/,
     UprightFont    = *,
     BoldFont       = * - Bold ,
     ItalicFont     = * - Italic ,
@@ -28,6 +28,7 @@
 \usepackage{graphicx}
 \usepackage{ragged2e}
 \usepackage{indentfirst}
+\usepackage{atbegshi}
 
 % === COLORS ===
 \definecolor{White}{rgb}{1,1,1}% White - color_283006
@@ -89,7 +90,7 @@
         % --- Top row: Logo + Journal title ---
          \node[anchor=west] at 
             ($(current page.north west) + (35pt,-64pt)$) {%
-            \includegraphics[height=70pt]{./Logo/\VAR{imgPath}}%
+            \includegraphics[height=70pt]{../../Logo/\VAR{imgPath}}%
             };
         \node[anchor=west] at ($(current page.north west) + (95pt,-64pt)$) {%
             \hspace{0.6em}%
@@ -225,6 +226,7 @@
 
 \end{multicols}
 
+\AtEndDocument{%
 \vfill
 % Horizontal line spanning the full text width, aligned properly
 \noindent\color{Light_navy_blue}\rule{\linewidth}{1pt} 
@@ -250,6 +252,7 @@ DOI: \href{\VAR{parentLink}}{\VAR{doi}}
 \noindent\color{Light_navy_blue}\rule{\linewidth}{1pt}
 
 \end{justify}
+}
 
 \label{TotPages}
 \end{document}

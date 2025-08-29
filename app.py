@@ -299,7 +299,7 @@ class PulsusOutputStr(BaseModel):
                 justToCite[i] = justToCite[i][0]
             justToCite[1] = " " + justToCite[1]
             justToCite = "".join(justToCite)
-            return f"{justToCite}. {self.title}. {self.shortJournalName}. {self.published.split("-")[-1]};{self.volume}({self.issues}):{self.pdfNo}."
+            return f"{justToCite}. {self.title}. {self.shortJournalName}. {self.published.split('-')[-1]};{self.volume}({self.issues}):{self.pdfNo}."
 
         if self.brandName == 'omics.tex':
             justToCite = self.author.split(' ')
@@ -309,7 +309,7 @@ class PulsusOutputStr(BaseModel):
                 justToCite[i] = justToCite[i][0]
             justToCite[1] = " " + justToCite[1]
             justToCite = "".join(justToCite)
-            return f"{justToCite},({self.published.split("-")[-1]}) {self.title}. {self.shortJournalName} {self.volume}: {self.pdfNo}. DOI: {self.doi}"
+            return f"{justToCite},({self.published.split('-')[-1]}) {self.title}. {self.shortJournalName} {self.volume}: {self.pdfNo}. DOI: {self.doi}"
 
 
 
