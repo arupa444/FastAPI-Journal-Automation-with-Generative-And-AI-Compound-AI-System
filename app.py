@@ -101,9 +101,9 @@ class PulsusInputStr(BaseModel):
     issues: Annotated[
         int, Field(..., title="The issue no. of the volume", description="Enter the issue no. of the volume...", gt=0)]
     pdfNo: Annotated[int, Field(..., title="The pdf number", description="Enter the pdf number....", gt=0)]
-    doi: Annotated[str, Field(..., title="DOI for this journal", description="Enter DOI for this Journal....")]
+    doi: Annotated[Optional[str], Field(default=None, title="DOI for this journal", description="Enter DOI for this Journal....")]
     ISSN: Annotated[
-        str, Field(..., title="ISSN number of this journal", description="Enter the ISSN number for the journal....")]
+        Optional[str], Field(default=None, title="ISSN number of this journal", description="Enter the ISSN number for the journal....")]
     imgPath: Annotated[Optional[str], Field(default=None, title="image path", description="Enter the img path....")]
     parentLink: Annotated[AnyUrl, Field(..., title="The url for the centralized link",
                                         description="Enter the link which will led to the centralized page....")]
@@ -238,7 +238,7 @@ class PulsusOutputStr(BaseModel):
     abstract: Annotated[
         str, Field(..., title="ID of the Input Journal", description="Enter the id for this journal input....")]
     doi: Annotated[
-        str, Field(..., title="ID of the Input Journal", description="Enter the id for this journal input....")]
+        Optional[str], Field(default=None, title="ID of the Input Journal", description="Enter the id for this journal input....")]
     received: Annotated[
         str, Field(..., title="ID of the Input Journal", description="Enter the id for this journal input....")]
     editorAssigned: Annotated[
@@ -261,7 +261,7 @@ class PulsusOutputStr(BaseModel):
         int, Field(..., title="The issue no. of the volume", description="Enter the issue no. of the volume...", gt=0)]
     ISSN: Annotated[Optional[str], Field(default="", title="ISSN Number", description="Enter the ISSN Number....")]
     imgPath: Annotated[Optional[str], Field(default=None, title="image path", description="Enter the img path....")]
-    pdfNo: Annotated[Optional[int], Field(..., title="Pdf Number", description="Enter the PDF Number....")]
+    pdfNo: Annotated[int, Field(..., title="Pdf Number", description="Enter the PDF Number....")]
     parentLink: Annotated[
         AnyUrl, Field(..., title="ID of the Input Journal", description="Enter the id for this journal input....")]
     conclusion: Annotated[
