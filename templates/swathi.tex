@@ -29,31 +29,32 @@
 
 
 % === COLORS ===
-\definecolor{color_101230}{rgb}{0.286275,0.14902,0.423529}
-\definecolor{color_283006}{rgb}{1,1,1}
-\definecolor{color_100238}{rgb}{0.282353,0.145098,0.423529}
-\definecolor{color_29791}{rgb}{0,0,0}
-\definecolor{color_282974}{rgb}{1,0.996078,0.996078}
+\definecolor{Dark_Purple}{rgb}{0.286275,0.14902,0.423529}   % Dark Purple / Indigo | color_101230
+\definecolor{White}{rgb}{1,1,1}                       % White | color_283006
+\definecolor{Dark_Violet}{rgb}{0.282353,0.145098,0.423529}  % Dark Violet / Eggplant | color_100238
+\definecolor{Black}{rgb}{0,0,0}                        % Black | color_29791
+\definecolor{Off_White}{rgb}{1,0.996078,0.996078}         % Very Light Pink / Off-White | color_282974
+\definecolor{Dark_Green}{rgb}{0.121569,0.372549,0.364706}
 
 % === LINK COLORS ===
 \hypersetup{
     colorlinks=true,
-    urlcolor=color_29791,
-    citecolor=color_100238,
-    linkcolor=color_100238
+    urlcolor=Black,
+    citecolor=Dark_Violet,
+    linkcolor=Dark_Violet
 }
 
 % === TITLE & SECTION FONT SIZES ===
 % Section headings (15pt)
 \titleformat{name=\section,numberless}[block]%
-  {\bfseries\fontsize{15}{17}\selectfont\color{color_100238}}
+  {\bfseries\fontsize{15}{17}\selectfont\color{Dark_Violet}}
   {} % no numbering
   {0pt}
   {}
 
 % === TITLE STYLE ===
 \newcommand{\articletitle}[1]{%
-    {\fontsize{20}{22}\selectfont\color{color_29791}\textbf{#1}}\par
+    {\fontsize{20}{22}\selectfont\color{Black}\textbf{#1}}\par
 }
 
 
@@ -65,10 +66,10 @@
     
     % Main header row
     \fancyhead[L]{%
-        \selectfont\color{color_29791}\textbf{\VAR{journalName}: Open Access 2021, \VAR{volume}, \VAR{issues}, \VAR{pdfNo}.}
+        \selectfont\color{Black}\textbf{\VAR{journalName}: Open Access 2021, \VAR{volume}, \VAR{issues}, \VAR{pdfNo}.}
     }
     \fancyhead[R]{%
-        \selectfont\color{color_29791}\textbf{\VAR{type | latex_escape}}
+        \selectfont\color{Black}\textbf{\VAR{type | latex_escape}}
     }
     
     % Footer
@@ -121,31 +122,31 @@
     \articletitle{\VAR{title | latex_escape}}
     
     \vspace{0.2cm}
-    \fontsize{11}{13.2}\selectfont\color{color_29791}\textbf{\VAR{author | latex_escape}}\par
+    \fontsize{11}{13.2}\selectfont\color{Black}\textbf{\VAR{author | latex_escape}}\par
     \vspace{0cm}
-    \fontsize{9}{10.8}\selectfont\color{color_29791}\VAR{authorsDepartment | latex_escape}\par
+    \fontsize{9}{10.8}\selectfont\color{Black}\VAR{authorsDepartment | latex_escape}\par
 \end{tcolorbox}
 
 
 \begin{multicols}{2}
-\fontsize{9}{10.8}\selectfont\color{color_29791}
+\fontsize{9}{10.8}\selectfont\color{Black}
 
 \begin{flushleft}
-\color{color_100238}\textbf{\underline{\textit{Corresponding Authors*}}} \\
+\color{Dark_Violet}\textbf{\underline{\textit{Corresponding Authors*}}} \\
 \vspace{0.3cm}
-\color{color_29791}\VAR{author | latex_escape}\\
-\color{color_29791}\VAR{authorsDepartment | latex_escape}\\
+\color{Black}\VAR{author | latex_escape}\\
+\color{Black}\VAR{authorsDepartment | latex_escape}\\
 E-mail: \href{mailto:\VAR{email}}{\VAR{email}}\\
 \vspace{0.1cm}
 \rule{\linewidth}{1pt}
-\color{color_100238}\textbf{Copyright:} 
-\color{color_29791} 2021 \VAR{author}. This is an open-access article distributed under the 
+\color{Dark_Violet}\textbf{Copyright:} 
+\color{Black} 2021 \VAR{author}. This is an open-access article distributed under the 
 terms of the Creative Commons Attribution License, which permits unrestricted 
 use, distribution, and reproduction in any medium, provided the original author 
 and source are credited.
 \vspace{0.1cm}
 \rule{\linewidth}{1pt}
-\color{color_29791}\textbf{Received:} \VAR{receivedDate | latex_escape};
+\color{Black}\textbf{Received:} \VAR{receivedDate | latex_escape};
 \textbf{Accepted:} \VAR{acceptedDate | latex_escape}; 
 \textbf{Published:} \VAR{publishedDate | latex_escape}
 \rule{\linewidth}{1pt}
