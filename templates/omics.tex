@@ -1,7 +1,7 @@
 \documentclass{article} % body text 10pt globally
 
 % === PACKAGES ===
-\usepackage[margin=35pt, top=90pt, bottom=90pt]{geometry}
+\usepackage[margin=35pt, top=70pt, bottom=90pt]{geometry}
 % === FONT SETUP ===
 \usepackage{fontspec}
 \setmainfont{Times New Roman}[
@@ -29,6 +29,8 @@
 \usepackage{ragged2e}
 \usepackage{indentfirst}
 \usepackage{atbegshi}
+% \setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt}
 
 % === COLORS ===
 \definecolor{White}{rgb}{1,1,1}% White - color_283006
@@ -48,7 +50,7 @@
 
 % === Global font size control ===
 \renewcommand\normalsize{%
-  \fontsize{11}{13.6}\selectfont
+  \fontsize{10}{13.6}\selectfont
 }
 \normalsize
 
@@ -89,33 +91,38 @@
     \begin{tikzpicture}[overlay, remember picture]
         % --- Top row: Logo + Journal title ---
          \node[anchor=west] at 
-            ($(current page.north west) + (25pt,-64pt)$) {%
-            \includegraphics[height=70pt]{../../Logo/\VAR{imgPath}}%
+            ($(current page.north west) + (25pt,-55pt)$) {%
+            \includegraphics[height=50pt]{../../Logo/\VAR{imgPath}}%
             };
-        \node[anchor=west] at ($(current page.north west) + (95pt,-64pt)$) {%
-            \hspace{0.6em}%
-            {\fontsize{18}{20}\selectfont\color{Light_navy_blue}\textbf{\VAR{journalName}}}%
+        \node[anchor=west] at ($(current page.north west) + (90pt,-55pt)$) {%
+	    \begin{minipage}[t]{0.70\textwidth}
+	    \raggedright
+            \setlength{\parskip}{0pt} % no extra spacing
+            \fontsize{15}{17}\selectfont\color{Light_navy_blue}\textbf{%  
+	    \sloppy 
+	    \VAR{journalName}}
+	    \end{minipage}%
         };
     
-        % Right side citation info
-        \node[anchor=east] at 
-            ($(current page.north east) + (-35pt,-64pt)$) {%
-            \fontsize{8}{10}\selectfont\color{Black}{\VAR{author}, \VAR{journalName}, \VAR{volume}:\VAR{issues}}%
-        };
+      % Right side citation info
+      \node[anchor=east] at 
+          ($(current page.north east) + (-35pt,-30pt)$) {%
+          \fontsize{8}{10}\selectfont\color{Black}{\VAR{author}, \VAR{journalName}, \VAR{volume}:\VAR{issues}}%
+    };
     
         % --- Blue bar inside text margins ---
         \fill[Light_navy_blue] 
-            ($(current page.north west) + (0,-110pt)$) 
+            ($(current page.north west) + (35pt,-90pt)$) 
             rectangle 
-            ($(current page.north east) + (0,-125pt)$);
+            ($(current page.north east) + (-35pt,-105pt)$);
     
         % Article type - left
         \node[anchor=west, font=\fontsize{11}{11}\selectfont\bfseries, text=white] 
-            at ($(current page.north west) + (1in+\oddsidemargin,-117.5pt)$) {\VAR{type}};
+            at ($(current page.north west) + (1in+\oddsidemargin,-97.5pt)$) {\VAR{type}};
     
         % Open Access - right
         \node[anchor=east, font=\fontsize{11}{11}\selectfont\bfseries, text=white] 
-            at ($(current page.north east) + (-1in-\oddsidemargin,-117.5pt)$) {Open Access};
+            at ($(current page.north east) + (-1in-\oddsidemargin,-97.5pt)$) {Open Access};
     \end{tikzpicture}%
 }
 
@@ -158,9 +165,6 @@
 % --- Apply styles ---
 \pagestyle{subsequent}   % Default for all pages
 \thispagestyle{firstpage} % First page special style
-
-\setlength{\parindent}{1.5em}   % size of tab (adjust as needed)
-\setlength{\parskip}{0em}
 % --- Main Document ---
 \begin{document}
 
@@ -169,7 +173,7 @@
 
 \begin{flushleft}
     \articletitle{\VAR{title | latex_escape}}
-    \vspace{0.3cm}
+    \vspace{0.5cm}
 \end{flushleft}
 
 \begin{flushleft}
@@ -197,26 +201,27 @@
 
 
 \begin{multicols}{2}
-\fontsize{11}{10.8}\selectfont\color{Black}
+
+\section*{Keywords}
+\vspace{-0.3cm}
+\noindent\VAR{keywords | latex_escape}
 
 \section*{Introduction}
+\vspace{-0.3cm}
 \VAR{introduction | latex_escape}
 
 
 \section*{Description}
+\vspace{-0.3cm}
 \VAR{description | latex_escape}
 
 
-\section*{Discussion}
-\VAR{discussion | latex_escape}
-
-
 \section*{Conclusion}
+\vspace{-0.3cm}
 \VAR{conclusion | latex_escape}
 
 
 \section*{References}
-\fontsize{8}{9.6}\selectfont
 \begin{enumerate}
     \BLOCK{ for key, item in content.items() }
         \item \href{\VAR{item.url}}{ \VAR{item.references | latex_escape}}
@@ -227,22 +232,24 @@
 \end{multicols}
 
 \AtEndDocument{%
-\vfill
+\vspace*{\fill} % pushes it to the bottom
+\noindent
+\begin{minipage}{\textwidth} % keep everything together
 % Horizontal line spanning the full text width, aligned properly
 \noindent\color{Light_navy_blue}\rule{\linewidth}{1pt} 
 
 \begin{justify} % start justification
 \fontsize{8.5}{10.2}\selectfont
 
-\color{Light_navy_blue}\textbf{Address for Correspondence:}  
+\color{Light_navy_blue}\textbf{*Corresponding Author:}  
 \color{Black}\VAR{author}, \VAR{authorsDepartment},
 E-mail: \href{mailto:\VAR{email}}{\VAR{email}} \\
 
-\color{Light_navy_blue}\textbf{Copyright:} 
+\noindent\color{Light_navy_blue}\textbf{Copyright:} 
 \color{Black}© 2024 \VAR{author} This is an open-access article distributed under the terms of the Creative Commons Attribution License, which permits unrestricted use, distribution and reproduction in any medium, provided the original author and source are credited. \\
 
 \vspace{0.1cm}
-\color{Black}\textbf{Received:} \VAR{received}, Manuscript No. \VAR{manuscriptNo}; 
+\noindent\color{Black}\textbf{Received:} \VAR{received}, Manuscript No. \VAR{manuscriptNo}; 
 \textbf{Editor assigned:} \VAR{editorAssigned}, PreQC No. \VAR{preQCNo}(PQ); 
 \textbf{Reviewed:} \VAR{reviewed}, QC No. \VAR{QCNo}; 
 \textbf{Revised:} \VAR{revised}, Manuscript No. \VAR{RManuNo}(R); 
@@ -252,6 +259,7 @@ DOI: \href{\VAR{parentLink}}{\VAR{doi}}
 \noindent\color{Light_navy_blue}\rule{\linewidth}{1pt}
 
 \end{justify}
+\end{minipage}
 }
 
 \label{TotPages}

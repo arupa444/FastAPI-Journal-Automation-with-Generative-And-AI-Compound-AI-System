@@ -137,16 +137,16 @@ class PulsusInputStr(BaseModel):
     @property
     def citeAuthorFormate(self) -> str:
         if self.brandName == 'hilaris.tex':
-            return """author names(first name + the remainings name's first letter(ex.: Arupa Nanda Swain then that should be Arupa NS) and there must be 3 to 6 authors and seperated with comma). title of that journal inside double quotation. Journal short name. Volume of the journal (year of publishing inside parenthesis):the page range or the number.end it with a full stop (for example: 'author n, author n, author n. "titleOFtheJournal". journalShortName. Volume (year):ThePageRangeOrTheNumber.')"""
+            return """author names(first name + the remainings name's first letter(ex.: Arupa Nanda Swain then that should be Arupa NS) and there must be 3 to 6 authors and seperated with comma). title of that journal inside double quotation. Journal short name Volume of the journal (year of publishing inside parenthesis):the page range or the number.end it with a full stop (for example: 'author n, author n, author n. "titleOFtheJournal." journalShortName Volume (year):ThePageRangeOrTheNumber.')"""
 
         elif self.brandName == 'alliedAcademy.tex':
-            return """author names(first name + the remainings name's first letter(ex.: Arupa Nanda Swain then that should be Arupa NS) and there must be 3 or less not more authors then that and seperated with comma), title of that journal, Journal short name. year of publishing;Volume of the journal:the page range or the number.(for example: 'author n, author n, author n, titleOFtheJournal, journalShortName. year;Volume:ThePageRangeOrTheNumber')"""
+            return """author names(first name + the remainings name's first letter(ex.: Arupa Nanda Swain then that should be Arupa NS) and there must be 3 or less, not more authors then that and seperated with comma). title of that journal. Journal short name. year of publishing;Volume of the journal:the page range or the number.(for example: 'author n, author n, author n. titleOFtheJournal. journalShortName. year;Volume:ThePageRangeOrTheNumber.')"""
 
         elif self.brandName == 'omics.tex':
             return """author names(first name + the remainings name's first letter(ex.: Arupa Nanda Swain then that should be Arupa NS) and there must be 3 to 6 authors and seperated with comma) (year of publishing inside parenthesis) title of that journal. Journal short name Volume of the journal:the page range or the number.(for example: 'author n, author n, author n (year) titleOFtheJournal. journalShortName Volume:ThePageRangeOrTheNumber')"""
 
         else:
-            return """author names(first name + the remainings name's first letter(ex.: Arupa Nanda Swain then that should be Arupa NS) and there must be 3 or less not more authors then that and seperated with comma), title of that journal, Journal short name. year of publishing;Volume of the journal:the page range or the number.(for example: 'author n, author n, author n, titleOFtheJournal, journalShortName. year;Volume:ThePageRangeOrTheNumber')"""
+            return """author names(first name + the remainings name's first letter(ex.: Arupa Nanda Swain then that should be Arupa NS) and there must be 3 or less, not more authors then that and seperated with comma). title of that journal. Journal short name. year of publishing;Volume of the journal:the page range or the number.(for example: 'author n, author n, author n. titleOFtheJournal. journalShortName. year;Volume:ThePageRangeOrTheNumber.')"""
 
 class UpdateInputPartJournal(BaseModel):
     id: Annotated[Optional[str], Field(default=None, title="ID of the Input Journal",
@@ -237,6 +237,7 @@ class PulsusOutputStr(BaseModel):
                                               description="Enter the id for this journal input....")]
     abstract: Annotated[
         str, Field(..., title="ID of the Input Journal", description="Enter the id for this journal input....")]
+    keywords: Annotated[str, Field(..., title="ID of the Input Journal", description="Enter the id for this journal input....")]
     doi: Annotated[
         Optional[str], Field(default=None, title="ID of the Input Journal", description="Enter the id for this journal input....")]
     received: Annotated[
@@ -676,7 +677,7 @@ async def full_journal_pipeline(journal: PulsusInputStr):
         "DOI": "...",
         "url": "...", # pubmed link of the journal
         "parentLink": "..." # the perticular article link
-      }}, # try to achieve the maximum of 10 (C010) counts.
+      }}, # give me exact 10 References(..., C009, C010)
       ...
     }}
 
@@ -733,7 +734,7 @@ async def full_journal_pipeline(journal: PulsusInputStr):
     This is the given data : "{content_data}"
     i want to you to process this data and give me some output:
     1: Give me a brief summary from the given data where the word count lies in between 200 - 400.
-    2: Give me a brief introduction from the given data where it will contain the citation markers as well, and note, you have to take in this way: the "C001" will be 1, "C002": 2...... and each section should have different but sequencial citation markers (for ex: "C001" will be 1, "C002": 2 and so on). and give two linebreak '\n' after the citation marker and also make sure the citation marker must stays before the full stop '.', and the full introduction word count lies in between 600 - 800.
+    2: Give me a brief introduction from the given data where it will contain the citation markers as well, and note, you have to take in this way: the "C001" will be 1, "C002": 2...... and each section should have different but sequencial citation markers (for ex: "C001" will be [1], "C002": [2] and so on). and give two linebreak '\n' after the citation marker and also make sure the citation marker must stays before the full stop '.' and covered with square brackets'[]'(for ex: [1], [2]....., [10]), and the full introduction word count lies in between 600 - 800.
     3: Give me a brief description from the given data and note, the full description contain more then 4 paragraphs with word count lies in between 600 - 800.
     4: Give me a abstract from the given data, and the full abstract word count lies in between 90 - 100.
 
@@ -742,7 +743,8 @@ async def full_journal_pipeline(journal: PulsusInputStr):
       "introduction": '''...''',
       "description" : '''...''',
       "summary" : '''...''',
-      "abstract" : '''...'''
+      "abstract" : '''...''',
+      "keywords" : '''...''' # give me Minimun 5 to 10 keywords joined by comma(,)
       ...
     }}
 
@@ -810,6 +812,7 @@ async def full_journal_pipeline(journal: PulsusInputStr):
             "introduction": gem_info["introduction"],
             "description": gem_info["description"],
             "abstract": gem_info["abstract"],
+            "keywords": gem_info["keywords"],
             "content": content_data,
             "doi": journal.doi,
             "received": journal.received,
@@ -874,7 +877,7 @@ async def full_journal_pipeline(journal: PulsusInputStr):
             i["issues"] = f"({i['issues']})" if i.get("issues") else ""
 
             if journal.brandName == "alliedAcademy.tex":
-                temp = f"""<li><a name="{count}" id="{count}"></a>{i["authors"]} <a href="{i["parentLink"]}" target="_blank">{i["title"]}</a>. {i["journalShortName"]} {i["published"]};{i["volume"]}{i["issues"]}:{i["pageRangeOrNumber"]}.</li>
+                temp = f"""<li><a name="{count}" id="{count}"></a>{i["authors"]}. <a href="{i["parentLink"]}" target="_blank">{i["title"]}</a>. {i["journalShortName"]}. {i["published"]};{i["volume"]}{i["issues"]}:{i["pageRangeOrNumber"]}.</li>
                 <p align="right"><a href="{i["url"]}" target="_blank"><u>Indexed at</u></a>, <a href="https://scholar.google.com/scholar?hl=en&as_sdt=0%2C5&q={'+'.join(i["title"].split(' '))}&btnG=" target="_blank"><u>Google Scholar</u></a>, <a href="https://doi.org/{i["DOI"]}" target="_blank"><u>Crossref</u></a></p>"""
             elif journal.brandName == "omics.tex":
                 temp = f"""<li><a name="{count}" id="{count}"></a>{i["authors"]} ({i["published"]}) <a href="{i["parentLink"]}" target="_blank">{i["title"]}</a>.{i["journalShortName"]} {i["volume"]}:{i["pageRangeOrNumber"]}.</li>
@@ -883,7 +886,7 @@ async def full_journal_pipeline(journal: PulsusInputStr):
                 temp = f"""<li><a name="{count}" id="{count}"></a>{i["authors"]}. <a href="{i["parentLink"]}" target="_blank">"{i["title"]}"</a>.<i>{i["journalShortName"]}</i> {i["volume"]} ({i["published"]}):{i["pageRangeOrNumber"]}.</li>
                 <p align="right"><a href="{i["url"]}" target="_blank"><u>Indexed at</u></a>, <a href="https://scholar.google.com/scholar?hl=en&as_sdt=0%2C5&q={'+'.join(i["title"].split(' '))}&btnG=" target="_blank"><u>Google Scholar</u></a>, <a href="https://doi.org/{i["DOI"]}" target="_blank"><u>Crossref</u></a></p>"""
             else:
-                temp = f"""<li><a name="{count}" id="{count}"></a>{i["authors"]} <a href="{i["parentLink"]}" target="_blank">{i["title"]}</a>. {i["journalShortName"]} {i["published"]};{i["volume"]}{i["issues"]}:{i["pageRangeOrNumber"]}.</li>
+                temp = f"""<li><a name="{count}" id="{count}"></a>{i["authors"]}. <a href="{i["parentLink"]}" target="_blank">{i["title"]}</a>. {i["journalShortName"]}. {i["published"]};{i["volume"]}{i["issues"]}:{i["pageRangeOrNumber"]}.</li>
                 <p align="right"><a href="{i["url"]}" target="_blank"><u>Indexed at</u></a>, <a href="https://scholar.google.com/scholar?hl=en&as_sdt=0%2C5&q={'+'.join(i["title"].split(' '))}&btnG=" target="_blank"><u>Google Scholar</u></a>, <a href="https://doi.org/{i["DOI"]}" target="_blank"><u>Crossref</u></a></p>"""
 
             forHtml["storeRefPart"] = f"""{forHtml['storeRefPart']}\n{temp}"""
