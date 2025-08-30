@@ -17,11 +17,7 @@ import re
 from fastapi.staticfiles import StaticFiles
 from dotenv import load_dotenv
 
-
-
 load_dotenv()
-
-
 
 # API section
 
@@ -973,3 +969,4 @@ async def full_journal_pipeline(journal: PulsusInputStr):
         status_code=200,
         content={"Status": f"Data added and files generated successfully in PDFStorePulsus/{journal.id}/ ✅."}
     )
+
