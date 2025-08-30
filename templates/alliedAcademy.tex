@@ -18,8 +18,8 @@
 \usepackage{hyperref}
 \usepackage{multicol}
 \setlength{\parindent}{0pt}
+\setlength{\parskip}{1em}
 \usepackage{fancyhdr} % For headers/footers
-\setstretch{1.15}
 
 % === COLORS ===
 \definecolor{Dark_Purple}{rgb}{0.286275,0.14902,0.423529}   % Dark_Purple / Indigo
@@ -119,9 +119,8 @@
 % AUTHOR NAME & INFO
 \begin{flushleft}
     \fontsize{12}{15}\selectfont\color{Black}\textbf{\VAR{author | latex_escape}*}\par
-    \vspace{0.2cm}
+    \vspace{0.1cm}
     \fontsize{11}{12}\selectfont\color{Black}\VAR{authorsDepartment | latex_escape}\par
-    \vspace{-0.1cm}\settowidth{\dimen0}{\fontsize{10}{12}\selectfont\color{Black}\VAR{authorsDepartment}}
 \end{flushleft}
 
 
@@ -129,9 +128,11 @@
 \begin{multicols}{2}
 
 \section*{Introduction}
+\vspace{-0.5cm}
 \VAR{introduction | latex_escape}
 
 \section*{Conclusion}
+\vspace{-0.5cm}
 \VAR{conclusion | latex_escape}
 
 \section*{References}
