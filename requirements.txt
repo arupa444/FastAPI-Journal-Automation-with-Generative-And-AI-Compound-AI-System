@@ -11,3 +11,4 @@ pdflatex
 python-multipart
 reportlab
 pydantic[email]
+googletrans
