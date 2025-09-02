@@ -87,13 +87,10 @@
     <p><strong>Citation</strong>: {{ citation }}</p>
     <br />
     <br />
-    <h2 class="post-title">Introduction</h2>
-    <p>{{ introduction }}</p>
-    <h2 class="post-title">Description</h2>
-    <p>{{ description }}</p>
-    <h2 class="post-title">Conclusion</h2>
-    <p>{{ conclusion }}</p>
-    <h2 class="post-title">References</h2>
+    {% for i,j in storeBody.items() %}
+    <h2 class="post-title">{{ i }}</h2>
+    <p>{{ j }}</p>
+    {% endfor %}
     <ol>
         {{ storeRefPart }}
     </ol>
