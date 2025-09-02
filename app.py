@@ -197,7 +197,6 @@ class UpdateInputPartJournal(BaseModel):
 
 class TranslatePage(BaseModel):
     id: Annotated[str, Field(..., title="The id of the page", description="Enter the id of the page....", min_length=3, max_length=6)]
-    imgPath: Annotated[Optional[str], Field(default=None, title="image path", description="Enter the img path....")]
     language: Annotated[str, Field(default=None, title="The language of the page", description="Enter the language of the page....")]
 
 
@@ -393,7 +392,7 @@ async def translate_text(input_dict, dest_lang):
     async with Translator() as translator:
         for i,j in input_dict.items():
             result = await translator.translate(j, dest=dest_lang)
-            input_dict[i] = result
+            input_dict[i] = result.text
     return input_dict
 
 @app.get("/")
@@ -451,9 +450,6 @@ def ui_pipeline(request: Request):
 
 @app.get("/ui/translate")
 def ui_translate(request: Request):
-    image_files = []
-    # Allowed image extensions
-    allowed_ext = (".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp", ".tiff", ".svg")
     languages = {
         'af': 'afrikaans',
         'sq': 'albanian',
@@ -564,13 +560,9 @@ def ui_translate(request: Request):
         'zu': 'zulu'
     }
 
-    for filename in os.listdir("Logo"):
-        if filename.lower().endswith(allowed_ext):
-            image_files.append(filename)
-
     return templates.TemplateResponse(
         "translate.html",
-        {"request": request, "images": image_files, "languages": languages}
+        {"request": request, "languages": languages}
     )
 
 
@@ -1144,21 +1136,29 @@ async def full_journal_pipeline(journal: PulsusInputStr):
 
 @app.post("/pdfs/translate")
 async def pdfs_translate(translatePage : TranslatePage):
+    
+    print("Start the process of translation ✅")
 
     output_data = fetchOutData()
     if translatePage.id not in output_data:
-        raise HTTPException(status_code=404, detail="Journal ID doesn't exists.")
+        details = "Journal ID doesn't exists. id's present are : "
+        for i in output_data.keys():
+            details = f"{details} {i}"
+        raise HTTPException(status_code=404, detail = details)
 
     journal_id = output_data[translatePage.id]
 
     tempStore = {
-    "introduction": journal_id.introduction,
-    "description": journal_id.description,
-    "abstract": journal_id.abstract,
-    "keywords": journal_id.keywords,
-    "conclusion": journal_id.summary
+    "introduction": journal_id['introduction'],
+    "description": journal_id['description'],
+    "abstract": journal_id['abstract'],
+    "keywords": journal_id['keywords'],
+    "conclusion": journal_id['conclusion']
     }
-    tempStore = asyncio.run(translate_text(tempStore, translatePage.language))
+    print("Start Translation")
+    tempStore = await translate_text(tempStore, translatePage.language)
+    print(f"Translation end\n {tempStore}")
+
 
     for i,j in tempStore.items():
         journal_id[i] = j
@@ -1172,7 +1172,7 @@ async def pdfs_translate(translatePage : TranslatePage):
     # --- Centralized Directory Setup ---
     # Create a single directory for all of this journal's output files.
     output_base_dir = pathOfPathLib("PDFStorePulsus")
-    journal_folder = output_base_dir / f"{translatePage.language}_translate_{journal_id.id}"
+    journal_folder = output_base_dir / f"{translatePage.language}_translate_{translatePage.id}"
     journal_folder.mkdir(parents=True, exist_ok=True)
 
     print("step 8 : Final response ✅")
@@ -1196,22 +1196,22 @@ async def pdfs_translate(translatePage : TranslatePage):
 
         storeBody = {}
 
-        if journal_id.brandName == "alliedAcademy.tex":
+        if journal_id['brandName'] == "alliedAcademy.tex":
             storeBody["Introduction"] = forHtml["introduction"]
             storeBody["Conclusion"] = forHtml["conclusion"]
-        elif journal_id.brandName == "omics.tex":
+        elif journal_id['brandName'] == "omics.tex":
             storeBody["Abstract"] = forHtml["abstract"]
             storeBody["Keywords"] = forHtml["keywords"]
             storeBody["Introduction"] = forHtml["introduction"]
             storeBody["Description"] = forHtml["description"]
             storeBody["Conclusion"] = forHtml["conclusion"]
-        elif journal_id.brandName == "hilaris.tex":
+        elif journal_id['brandName'] == "hilaris.tex":
             storeBody["Introduction"] = forHtml["introduction"]
             storeBody["Description"] = forHtml["description"]
             storeBody["Conclusion"] = forHtml["conclusion"]
             storeBody["Acknowledgement"] = None
             storeBody["Conflict_of_Interest"] = None
-        elif journal_id.brandName == "iomc.tex":
+        elif journal_id['brandName'] == "iomc.tex":
             storeBody["Introduction"] = forHtml["introduction"]
             storeBody["Description"] = forHtml["description"]
             storeBody["Conclusion"] = forHtml["conclusion"]
@@ -1228,13 +1228,13 @@ async def pdfs_translate(translatePage : TranslatePage):
             count += 1
             i["issues"] = f"({i['issues']})" if i.get("issues") else ""
 
-            if journal_id.brandName == "alliedAcademy.tex":
+            if journal_id['brandName'] == "alliedAcademy.tex":
                 temp = f"""<li><a name="{count}" id="{count}"></a>{i["authors"]}. <a href="{i["parentLink"]}" target="_blank">{i["title"]}</a>. {i["journalShortName"]}. {i["published"]};{i["volume"]}{i["issues"]}:{i["pageRangeOrNumber"]}.</li>
                 <p align="right"><a href="{i["url"]}" target="_blank"><u>Indexed at</u></a>, <a href="https://scholar.google.com/scholar?hl=en&as_sdt=0%2C5&q={'+'.join(i["title"].split(' '))}&btnG=" target="_blank"><u>Google Scholar</u></a>, <a href="https://doi.org/{i["DOI"]}" target="_blank"><u>Crossref</u></a></p>"""
-            elif journal_id.brandName == "omics.tex":
+            elif journal_id['brandName'] == "omics.tex":
                 temp = f"""<li><a name="{count}" id="{count}"></a>{i["authors"]} ({i["published"]}) <a href="{i["parentLink"]}" target="_blank">{i["title"]}</a>.{i["journalShortName"]} {i["volume"]}:{i["pageRangeOrNumber"]}.</li>
                 <p align="right"><a href="{i["url"]}" target="_blank"><u>Indexed at</u></a>, <a href="https://scholar.google.com/scholar?hl=en&as_sdt=0%2C5&q={'+'.join(i["title"].split(' '))}&btnG=" target="_blank"><u>Google Scholar</u></a>, <a href="https://doi.org/{i["DOI"]}" target="_blank"><u>Crossref</u></a></p>"""
-            elif journal_id.brandName == "hilaris.tex":
+            elif journal_id['brandName'] == "hilaris.tex":
                 temp = f"""<li><a name="{count}" id="{count}"></a>{i["authors"]}. <a href="{i["parentLink"]}" target="_blank">"{i["title"]}"</a>.<i>{i["journalShortName"]}</i> {i["volume"]} ({i["published"]}):{i["pageRangeOrNumber"]}.</li>
                 <p align="right"><a href="{i["url"]}" target="_blank"><u>Indexed at</u></a>, <a href="https://scholar.google.com/scholar?hl=en&as_sdt=0%2C5&q={'+'.join(i["title"].split(' '))}&btnG=" target="_blank"><u>Google Scholar</u></a>, <a href="https://doi.org/{i["DOI"]}" target="_blank"><u>Crossref</u></a></p>"""
             else:
@@ -1254,7 +1254,7 @@ async def pdfs_translate(translatePage : TranslatePage):
         rendered_html = html_template.render(**forHtml)
 
         # Save the HTML file inside the journal's dedicated folder
-        html_file_path = journal_folder / f"{journal_id.id}.html"
+        html_file_path = journal_folder / f"{translatePage.id}.html"
         html_file_path.write_text(rendered_html, encoding="utf-8")
 
     except Exception as e:
@@ -1286,12 +1286,12 @@ async def pdfs_translate(translatePage : TranslatePage):
         return pattern.sub(lambda m: replacements[m.group()], text)
 
     env_latex.filters['latex_escape'] = latex_escape
-    template = env_latex.get_template(journal_id.brandName)
+    template = env_latex.get_template(journal_id['brandName'])
 
-    rendered_latex = template.render(**output_data[journal_id.id])
+    rendered_latex = template.render(**output_data[translatePage.id])
 
     # Save the .tex file inside the journal's dedicated folder
-    tex_file_path = journal_folder / f"{journal_id.id}.tex"
+    tex_file_path = journal_folder / f"{translatePage.id}.tex"
     tex_file_path.write_text(rendered_latex, encoding="utf-8")
 
     # Compile LaTeX to PDF. Run from within the journal's folder.
@@ -1323,5 +1323,5 @@ async def pdfs_translate(translatePage : TranslatePage):
 
     return JSONResponse(
         status_code=200,
-        content={"Status": f"Data added and files generated successfully in PDFStorePulsus/{journal_id.id}/ ✅."}
+        content={"Status": f"Data added and files generated successfully in PDFStorePulsus/{translatePage.id}/ ✅."}
     )
