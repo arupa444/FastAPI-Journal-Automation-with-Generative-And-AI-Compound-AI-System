@@ -97,7 +97,7 @@ class PulsusInputStr(BaseModel):
     issues: Annotated[
         int, Field(..., title="The issue no. of the volume", description="Enter the issue no. of the volume...", gt=0)]
     pdfNo: Annotated[int, Field(..., title="The pdf number", description="Enter the pdf number....", gt=0)]
-    doi: Annotated[Optional[str], Field(default=None, title="DOI for this journal", description="Enter DOI for this Journal....")]
+    doi: Annotated[Optional[str], Field(default="", title="DOI for this journal", description="Enter DOI for this Journal....")]
     ISSN: Annotated[
         Optional[str], Field(default=None, title="ISSN number of this journal", description="Enter the ISSN number for the journal....")]
     imgPath: Annotated[Optional[str], Field(default=None, title="image path", description="Enter the img path....")]
