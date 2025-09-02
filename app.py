@@ -859,12 +859,41 @@ async def full_journal_pipeline(journal: PulsusInputStr):
         forHtml = copy.deepcopy(output_data[journal.id])
 
         # Logic for processing references for HTML
+        
         for i in range(1, len(forHtml["content"]) + 1):
             forHtml["introduction"] = forHtml["introduction"].replace(f"[{i}].",
                                                                       f"[<a href='#{i}' title='{i}'>{i}</a>].</p><p>")
 
         forHtml["description"] = forHtml["description"].replace("\n\n", "</p><p>")
         forHtml["description"] = forHtml["description"].replace("\n", "</p><p>")
+        
+        storeBody = {}
+        
+        if journal.brandName == "alliedAcademy.tex":
+            storeBody["Introduction"] = forHtml["introduction"]
+            storeBody["Conclusion"] = forHtml["conclusion"]
+        elif journal.brandName == "omics.tex":
+            storeBody["Abstract"] = forHtml["abstract"]
+            storeBody["Keywords"] = forHtml["keywords"]
+            storeBody["Introduction"] = forHtml["introduction"]
+            storeBody["Description"] = forHtml["description"]
+            storeBody["Conclusion"] = forHtml["conclusion"]
+        elif journal.brandName == "hilaris.tex":
+            storeBody["Introduction"] = forHtml["introduction"]
+            storeBody["Description"] = forHtml["description"]
+            storeBody["Conclusion"] = forHtml["conclusion"]
+            storeBody["Acknowledgement"] = None
+            storeBody["Conflict_of_Interest"] = None
+        elif journal.brandName == "iomc.tex":
+            storeBody["Introduction"] = forHtml["introduction"]
+            storeBody["Description"] = forHtml["description"]
+            storeBody["Conclusion"] = forHtml["conclusion"]
+        else :
+            storeBody["Introduction"] = forHtml["introduction"]
+            storeBody["Description"] = forHtml["description"]
+            storeBody["Conclusion"] = forHtml["conclusion"]
+            
+        forHtml["storeBody"] = storeBody
 
         count = 0
         forHtml["storeRefPart"] = ""
