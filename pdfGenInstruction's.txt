@@ -1,0 +1,14 @@
+any loaction:
+	->press windows + r
+	->type "CMD"
+	->cd Desktop
+	->cd finalStore
+
+To generate PDF:
+
+	->cd FastAPI-Journal-Automation-with-Generative-And-AI-Compound-AI-System-main
+	->uvicorn app:app --reload
+	#if that won't work then try changing the port
+	->uvicorn app:app --reload --port 8001
+
+	note: you can use port inbetween 8000 to 8005
