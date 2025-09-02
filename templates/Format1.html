@@ -81,8 +81,8 @@
     <p><strong>Received</strong>: {{received}}, Manuscript No. {{manuscriptNo}}; <strong>Editor assigned</strong>:
         {{editorAssigned}},
         PreQC No. {{preQCNo}}(PQ); <strong>Reviewed</strong>: {{reviewed}}, QC No {{QCNo}};
-        <strong>Revised</strong>: {{revised}}, Manuscript No. {{RManuNo}}(R); <strong>Published</strong>: {{published}},
-        DOI:<a href="https://doi.org/{{ doi }}" target="_blank">{{ doi }}</a>
+        <strong>Revised</strong>: {{revised}}, Manuscript No. {{RManuNo}}(R); <strong>Published</strong>: {{published}}
+        {% if doi != "" %}, DOI:<a href="https://doi.org/{{ doi }}" target="_blank">{{ doi }}</a>{% endif %}
     </p>
     <p><strong>Citation</strong>: {{ citation }}</p>
     <br />
