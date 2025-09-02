@@ -7,8 +7,13 @@ google-genai
 groq
 python-dotenv
 httpx
+attrs==18.2.0
 pdflatex
 python-multipart
 reportlab
 pydantic[email]
 googletrans
+h2
+hyperframe
+hpack
+pydantic-settings
