@@ -18,6 +18,10 @@ import re
 from fastapi.staticfiles import StaticFiles
 from dotenv import load_dotenv
 
+# to translate
+import asyncio
+from googletrans import Translator
+
 load_dotenv()
 
 # API section
@@ -189,6 +193,13 @@ class UpdateInputPartJournal(BaseModel):
     imgPath: Annotated[Optional[str], Field(default=None, title="image path", description="Enter the img path....")]
     parentLink: Annotated[Optional[AnyUrl], Field(default=None, title="The url for the centralized link",
                                                   description="Enter the link which will led to the centralized page....")]
+
+
+class TranslatePage(BaseModel):
+    id: Annotated[str, Field(..., title="The id of the page", description="Enter the id of the page....", min_length=3, max_length=6)]
+    imgPath: Annotated[Optional[str], Field(default=None, title="image path", description="Enter the img path....")]
+    language: Annotated[str, Field(default=None, title="The language of the page", description="Enter the language of the page....")]
+
 
 
 class ArticleItem(BaseModel):
@@ -378,6 +389,13 @@ def extract_json_from_markdown(text: str) -> str:
     return text.strip()
 
 
+async def translate_text(input_dict, dest_lang):
+    async with Translator() as translator:
+        for i,j in input_dict.items():
+            result = await translator.translate(j, dest=dest_lang)
+            input_dict[i] = result
+    return input_dict
+
 @app.get("/")
 def ui_index(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
@@ -429,6 +447,130 @@ def ui_pipeline(request: Request):
     return templates.TemplateResponse(
         "pipeline.html",
         {"request": request, "images": image_files}
+    )
+
+@app.get("/ui/translate")
+def ui_translate(request: Request):
+    image_files = []
+    # Allowed image extensions
+    allowed_ext = (".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp", ".tiff", ".svg")
+    languages = {
+        'af': 'afrikaans',
+        'sq': 'albanian',
+        'am': 'amharic',
+        'ar': 'arabic',
+        'hy': 'armenian',
+        'az': 'azerbaijani',
+        'eu': 'basque',
+        'be': 'belarusian',
+        'bn': 'bengali',
+        'bs': 'bosnian',
+        'bg': 'bulgarian',
+        'ca': 'catalan',
+        'ceb': 'cebuano',
+        'ny': 'chichewa',
+        'zh-cn': 'chinese (simplified)',
+        'zh-tw': 'chinese (traditional)',
+        'co': 'corsican',
+        'hr': 'croatian',
+        'cs': 'czech',
+        'da': 'danish',
+        'nl': 'dutch',
+        'en': 'english',
+        'eo': 'esperanto',
+        'et': 'estonian',
+        'tl': 'filipino',
+        'fi': 'finnish',
+        'fr': 'french',
+        'fy': 'frisian',
+        'gl': 'galician',
+        'ka': 'georgian',
+        'de': 'german',
+        'el': 'greek',
+        'gu': 'gujarati',
+        'ht': 'haitian creole',
+        'ha': 'hausa',
+        'haw': 'hawaiian',
+        'iw': 'hebrew',
+        'he': 'hebrew',
+        'hi': 'hindi',
+        'hmn': 'hmong',
+        'hu': 'hungarian',
+        'is': 'icelandic',
+        'ig': 'igbo',
+        'id': 'indonesian',
+        'ga': 'irish',
+        'it': 'italian',
+        'ja': 'japanese',
+        'jw': 'javanese',
+        'kn': 'kannada',
+        'kk': 'kazakh',
+        'km': 'khmer',
+        'ko': 'korean',
+        'ku': 'kurdish (kurmanji)',
+        'ky': 'kyrgyz',
+        'lo': 'lao',
+        'la': 'latin',
+        'lv': 'latvian',
+        'lt': 'lithuanian',
+        'lb': 'luxembourgish',
+        'mk': 'macedonian',
+        'mg': 'malagasy',
+        'ms': 'malay',
+        'ml': 'malayalam',
+        'mt': 'maltese',
+        'mi': 'maori',
+        'mr': 'marathi',
+        'mn': 'mongolian',
+        'my': 'myanmar (burmese)',
+        'ne': 'nepali',
+        'no': 'norwegian',
+        'or': 'odia',
+        'ps': 'pashto',
+        'fa': 'persian',
+        'pl': 'polish',
+        'pt': 'portuguese',
+        'pa': 'punjabi',
+        'ro': 'romanian',
+        'ru': 'russian',
+        'sm': 'samoan',
+        'gd': 'scots gaelic',
+        'sr': 'serbian',
+        'st': 'sesotho',
+        'sn': 'shona',
+        'sd': 'sindhi',
+        'si': 'sinhala',
+        'sk': 'slovak',
+        'sl': 'slovenian',
+        'so': 'somali',
+        'es': 'spanish',
+        'su': 'sundanese',
+        'sw': 'swahili',
+        'sv': 'swedish',
+        'tg': 'tajik',
+        'ta': 'tamil',
+        'te': 'telugu',
+        'th': 'thai',
+        'tr': 'turkish',
+        'uk': 'ukrainian',
+        'ur': 'urdu',
+        'ug': 'uyghur',
+        'uz': 'uzbek',
+        'vi': 'vietnamese',
+        'cy': 'welsh',
+        'xh': 'xhosa',
+        'yi': 'yiddish',
+        'yo': 'yoruba',
+        'zu': 'zulu'
+    }
+
+    for filename in os.listdir("Logo"):
+        if filename.lower().endswith(allowed_ext):
+            image_files.append(filename)
+
+    return templates.TemplateResponse(
+        "translate.html",
+        {"request": request, "images": image_files, "languages": languages}
     )
 
 
@@ -1000,3 +1142,186 @@ async def full_journal_pipeline(journal: PulsusInputStr):
         content={"Status": f"Data added and files generated successfully in PDFStorePulsus/{journal.id}/ ✅."}
     )
 
+@app.post("/pdfs/translate")
+async def pdfs_translate(translatePage : TranslatePage):
+
+    output_data = fetchOutData()
+    if translatePage.id not in output_data:
+        raise HTTPException(status_code=404, detail="Journal ID doesn't exists.")
+
+    journal_id = output_data[translatePage.id]
+
+    tempStore = {
+    "introduction": journal_id.introduction,
+    "description": journal_id.description,
+    "abstract": journal_id.abstract,
+    "keywords": journal_id.keywords,
+    "conclusion": journal_id.summary
+    }
+    tempStore = asyncio.run(translate_text(tempStore, translatePage.language))
+
+    for i,j in tempStore.items():
+        journal_id[i] = j
+
+
+
+    # =========================================================================
+    # File Generation Section
+    # =========================================================================
+
+    # --- Centralized Directory Setup ---
+    # Create a single directory for all of this journal's output files.
+    output_base_dir = pathOfPathLib("PDFStorePulsus")
+    journal_folder = output_base_dir / f"{translatePage.language}_translate_{journal_id.id}"
+    journal_folder.mkdir(parents=True, exist_ok=True)
+
+    print("step 8 : Final response ✅")
+
+    # --- 9: Create HTML file ---
+    env_html = Environment(
+        loader=FileSystemLoader(pathOfPathLib("./templates/"))
+    )
+    try:
+        html_template = env_html.get_template("Format1.html")
+        forHtml = copy.deepcopy(journal_id)
+
+        # Logic for processing references for HTML
+
+        for i in range(1, len(forHtml["content"]) + 1):
+            forHtml["introduction"] = forHtml["introduction"].replace(f"[{i}].",
+                                                                      f"[<a href='#{i}' title='{i}'>{i}</a>].</p><p>")
+
+        forHtml["description"] = forHtml["description"].replace("\n\n", "</p><p>")
+        forHtml["description"] = forHtml["description"].replace("\n", "</p><p>")
+
+        storeBody = {}
+
+        if journal_id.brandName == "alliedAcademy.tex":
+            storeBody["Introduction"] = forHtml["introduction"]
+            storeBody["Conclusion"] = forHtml["conclusion"]
+        elif journal_id.brandName == "omics.tex":
+            storeBody["Abstract"] = forHtml["abstract"]
+            storeBody["Keywords"] = forHtml["keywords"]
+            storeBody["Introduction"] = forHtml["introduction"]
+            storeBody["Description"] = forHtml["description"]
+            storeBody["Conclusion"] = forHtml["conclusion"]
+        elif journal_id.brandName == "hilaris.tex":
+            storeBody["Introduction"] = forHtml["introduction"]
+            storeBody["Description"] = forHtml["description"]
+            storeBody["Conclusion"] = forHtml["conclusion"]
+            storeBody["Acknowledgement"] = None
+            storeBody["Conflict_of_Interest"] = None
+        elif journal_id.brandName == "iomc.tex":
+            storeBody["Introduction"] = forHtml["introduction"]
+            storeBody["Description"] = forHtml["description"]
+            storeBody["Conclusion"] = forHtml["conclusion"]
+        else:
+            storeBody["Introduction"] = forHtml["introduction"]
+            storeBody["Description"] = forHtml["description"]
+            storeBody["Conclusion"] = forHtml["conclusion"]
+
+        forHtml["storeBody"] = storeBody
+
+        count = 0
+        forHtml["storeRefPart"] = ""
+        for i in forHtml["content"].values():
+            count += 1
+            i["issues"] = f"({i['issues']})" if i.get("issues") else ""
+
+            if journal_id.brandName == "alliedAcademy.tex":
+                temp = f"""<li><a name="{count}" id="{count}"></a>{i["authors"]}. <a href="{i["parentLink"]}" target="_blank">{i["title"]}</a>. {i["journalShortName"]}. {i["published"]};{i["volume"]}{i["issues"]}:{i["pageRangeOrNumber"]}.</li>
+                <p align="right"><a href="{i["url"]}" target="_blank"><u>Indexed at</u></a>, <a href="https://scholar.google.com/scholar?hl=en&as_sdt=0%2C5&q={'+'.join(i["title"].split(' '))}&btnG=" target="_blank"><u>Google Scholar</u></a>, <a href="https://doi.org/{i["DOI"]}" target="_blank"><u>Crossref</u></a></p>"""
+            elif journal_id.brandName == "omics.tex":
+                temp = f"""<li><a name="{count}" id="{count}"></a>{i["authors"]} ({i["published"]}) <a href="{i["parentLink"]}" target="_blank">{i["title"]}</a>.{i["journalShortName"]} {i["volume"]}:{i["pageRangeOrNumber"]}.</li>
+                <p align="right"><a href="{i["url"]}" target="_blank"><u>Indexed at</u></a>, <a href="https://scholar.google.com/scholar?hl=en&as_sdt=0%2C5&q={'+'.join(i["title"].split(' '))}&btnG=" target="_blank"><u>Google Scholar</u></a>, <a href="https://doi.org/{i["DOI"]}" target="_blank"><u>Crossref</u></a></p>"""
+            elif journal_id.brandName == "hilaris.tex":
+                temp = f"""<li><a name="{count}" id="{count}"></a>{i["authors"]}. <a href="{i["parentLink"]}" target="_blank">"{i["title"]}"</a>.<i>{i["journalShortName"]}</i> {i["volume"]} ({i["published"]}):{i["pageRangeOrNumber"]}.</li>
+                <p align="right"><a href="{i["url"]}" target="_blank"><u>Indexed at</u></a>, <a href="https://scholar.google.com/scholar?hl=en&as_sdt=0%2C5&q={'+'.join(i["title"].split(' '))}&btnG=" target="_blank"><u>Google Scholar</u></a>, <a href="https://doi.org/{i["DOI"]}" target="_blank"><u>Crossref</u></a></p>"""
+            else:
+                temp = f"""<li><a name="{count}" id="{count}"></a>{i["authors"]}. <a href="{i["parentLink"]}" target="_blank">{i["title"]}</a>. {i["journalShortName"]}. {i["published"]};{i["volume"]}{i["issues"]}:{i["pageRangeOrNumber"]}.</li>
+                <p align="right"><a href="{i["url"]}" target="_blank"><u>Indexed at</u></a>, <a href="https://scholar.google.com/scholar?hl=en&as_sdt=0%2C5&q={'+'.join(i["title"].split(' '))}&btnG=" target="_blank"><u>Google Scholar</u></a>, <a href="https://doi.org/{i["DOI"]}" target="_blank"><u>Crossref</u></a></p>"""
+
+            forHtml["storeRefPart"] = f"""{forHtml['storeRefPart']}\n{temp}"""
+
+        department_parts = forHtml['authorsDepartment'].split(',')
+        if len(department_parts) > 1:
+            forHtml["prefixAuthorDepartment"] = f"{department_parts[0]}<br />"
+            forHtml["suffixAuthorDepartment"] = f"{','.join(department_parts[1:])}.<br />"
+        else:
+            forHtml["prefixAuthorDepartment"] = forHtml['authorsDepartment']
+            forHtml["suffixAuthorDepartment"] = "<br />"
+
+        rendered_html = html_template.render(**forHtml)
+
+        # Save the HTML file inside the journal's dedicated folder
+        html_file_path = journal_folder / f"{journal_id.id}.html"
+        html_file_path.write_text(rendered_html, encoding="utf-8")
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to generate HTML file: {str(e)}")
+
+    print("step 9 : Create HTML file ✅")
+
+    # --- 10: Create PDF file ---
+    env_latex = Environment(
+        block_start_string=r'\BLOCK{',
+        block_end_string='}',
+        variable_start_string=r'\VAR{',
+        variable_end_string='}',
+        comment_start_string=r'\#{',
+        comment_end_string='}',
+        line_statement_prefix='%%',
+        line_comment_prefix='%#',
+        trim_blocks=True,
+        autoescape=False,
+        loader=FileSystemLoader(pathOfPathLib("./templates"))
+    )
+
+    def latex_escape(text):
+        if not isinstance(text, str):
+            return text
+        replacements = {'&': r'\&', '%': r'\%', '$': r'\$', '#': r'\#', '_': r'\_', '{': r'\{', '}': r'\}',
+                        '^': r'\^{}', }
+        pattern = re.compile('|'.join(re.escape(k) for k in replacements.keys()))
+        return pattern.sub(lambda m: replacements[m.group()], text)
+
+    env_latex.filters['latex_escape'] = latex_escape
+    template = env_latex.get_template(journal_id.brandName)
+
+    rendered_latex = template.render(**output_data[journal_id.id])
+
+    # Save the .tex file inside the journal's dedicated folder
+    tex_file_path = journal_folder / f"{journal_id.id}.tex"
+    tex_file_path.write_text(rendered_latex, encoding="utf-8")
+
+    # Compile LaTeX to PDF. Run from within the journal's folder.
+    for i in range(2):
+        result = subprocess.run(
+            ["xelatex", "-interaction=nonstopmode", tex_file_path.name],
+            capture_output=True,  # Capture stdout/stderr
+            text=True,
+            cwd=journal_folder  # CRITICAL: Set the working directory
+        )
+
+        if result.returncode != 0:
+            log_file_path = tex_file_path.with_suffix(".log")
+
+            # The log file is already saved by xelatex, so we just read it for the error message
+            error_text = "Unknown LaTeX error. Check the log file."
+            if log_file_path.exists():
+                with open(log_file_path, 'r') as f:
+                    lines = f.readlines()
+                error_snippets = [line for line in lines if line.startswith("! ")]
+                error_text = "\n".join(error_snippets) or f"LaTeX compilation failed. Full log in {log_file_path}"
+
+            raise HTTPException(
+                status_code=500,
+                detail=f"LaTeX compilation failed on run {i + 1}:\n\n{error_text}"
+            )
+
+    print("step 10 : Create PDF file ✅")
+
+    return JSONResponse(
+        status_code=200,
+        content={"Status": f"Data added and files generated successfully in PDFStorePulsus/{journal_id.id}/ ✅."}
+    )
