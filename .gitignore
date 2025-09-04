@@ -3,3 +3,5 @@ journalDBInput.json
 journalDBOutput.json
 __pycache__
 PDFStorePulsus
+lang_map_full.py
+tryd.py

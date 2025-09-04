@@ -3,14 +3,10 @@
 \usepackage[margin=35pt, top=50pt, bottom=150pt]{geometry}
 \setlength{\headheight}{20pt} % enough for 2-line headers
 \setlength{\footskip}{20pt}   % increase space so footer doesn't overlap
-\usepackage{fontspec}
-\setmainfont{Times New Roman}[
-    Path=../../Fonts/,
-    UprightFont    = *,
-    BoldFont       = * - Bold ,
-    ItalicFont     = * - Italic ,
-    BoldItalicFont = * - Bold Italic
-]
+% === DYNAMIC PREAMBLE ===
+\VAR{preamble | safe}
+% === END DYNAMIC PREAMBLE ===
+
 \usepackage{setspace}
 \usepackage{eso-pic}
 \usepackage{tikz}
@@ -129,11 +125,15 @@
 
 \section*{Introduction}
 \vspace{-0.5cm}
-\VAR{introduction | latex_escape}
+\begin{otherlanguage}{\VAR{lang_name}}
+\VAR{introduction | safe}
+\end{otherlanguage}
 
 \section*{Conclusion}
 \vspace{-0.5cm}
-\VAR{conclusion | latex_escape}
+\begin{otherlanguage}{\VAR{lang_name}}
+\VAR{conclusion | safe}
+\end{otherlanguage}
 
 \section*{References}
 \fontsize{8}{9.6}\selectfont
