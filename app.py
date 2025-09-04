@@ -20,8 +20,171 @@ from dotenv import load_dotenv
 
 # to translate
 import asyncio
-from googletrans import Translator
+# from googletrans import Translator
+from deep_translator import GoogleTranslator
 
+lang_map = {
+    # === Default (English with Times New Roman) ===
+    "default": {
+        "polyglossia": r"\setdefaultlanguage{english}",
+        "font": r"""
+        \usepackage{fontspec}
+        \setmainfont{Times New Roman}[
+        Path=../../Fonts/,
+        UprightFont    = *,
+        BoldFont       = * - Bold ,
+        ItalicFont     = * - Italic ,
+        BoldItalicFont = * - Bold Italic
+        ]"""
+    },
+
+    # === Indic Scripts (Devanagari, Tamil, Bengali, etc.) ===
+    "hi": {"polyglossia": r"\setotherlanguage{hindi}", "font": r"\newfontfamily\hindifont{NotoSansDevanagari-Regular.ttf}[Path=../../Fonts/, Script=Devanagari]"},
+    "mr": {"polyglossia": r"\setotherlanguage{marathi}", "font": r"\newfontfamily\marathifont{NotoSansDevanagari-Regular.ttf}[Path=../../Fonts/, Script=Devanagari]"},
+    "bn": {"polyglossia": r"\setotherlanguage{bengali}", "font": r"\newfontfamily\bengalifont{NotoSansBengali-Regular.ttf}[Path=../../Fonts/, Script=Bengali]"},
+    "gu": {"polyglossia": r"\setotherlanguage{gujarati}", "font": r"\newfontfamily\gujaratifont{NotoSansGujarati-Regular.ttf}[Path=../../Fonts/, Script=Gujarati]"},
+    "kn": {"polyglossia": r"\setotherlanguage{kannada}", "font": r"\newfontfamily\kannadafont{NotoSansKannada-Regular.ttf}[Path=../../Fonts/, Script=Kannada]"},
+    "ta": {"polyglossia": r"\setotherlanguage{tamil}", "font": r"\newfontfamily\tamilfont{NotoSansTamil-Regular.ttf}[Path=../../Fonts/, Script=Tamil]"},
+    "te": {"polyglossia": r"\setotherlanguage{telugu}", "font": r"\newfontfamily\telugufont{NotoSansTelugu-Regular.ttf}[Path=../../Fonts/, Script=Telugu]"},
+    "ml": {"polyglossia": r"\setotherlanguage{malayalam}", "font": r"\newfontfamily\malayalamfont{NotoSansMalayalam-Regular.ttf}[Path=../../Fonts/, Script=Malayalam]"},
+    "or": {"polyglossia": r"\setotherlanguage{odia}", "font": r"\newfontfamily\odiafont{NotoSansOriya-Regular.ttf}[Path=../../Fonts/, Script=Oriya]"},
+    "pa": {"polyglossia": r"\setotherlanguage{punjabi}", "font": r"\newfontfamily\punjabifont{NotoSansGurmukhi-Regular.ttf}[Path=../../Fonts/, Script=Gurmukhi]"},
+    "ne": {"polyglossia": r"\setotherlanguage{nepali}", "font": r"\newfontfamily\nepalifont{NotoSansDevanagari-Regular.ttf}[Path=../../Fonts/, Script=Devanagari]"},
+    "as": {"polyglossia": r"\setotherlanguage{assamese}", "font": r"\newfontfamily\assamesefont{NotoSansBengali-Regular.ttf}[Path=../../Fonts/, Script=Bengali]"},
+    "mai": {"polyglossia": r"\setotherlanguage{maithili}", "font": r"\newfontfamily\maithilifont{NotoSansDevanagari-Regular.ttf}[Path=../../Fonts/, Script=Devanagari]"},
+    "bho": {"polyglossia": r"\setotherlanguage{bhojpuri}", "font": r"\newfontfamily\bhojpurifont{NotoSansDevanagari-Regular.ttf}[Path=../../Fonts/, Script=Devanagari]"},
+    "gom": {"polyglossia": r"\setotherlanguage{konkani}", "font": r"\newfontfamily\konkanifont{NotoSansDevanagari-Regular.ttf}[Path=../../Fonts/, Script=Devanagari]"},
+    "sa": {"polyglossia": r"\setotherlanguage{sanskrit}", "font": r"\newfontfamily\sanskritfont{NotoSansDevanagari-Regular.ttf}[Path=../../Fonts/, Script=Devanagari]"},
+    "mni-Mtei": {"polyglossia": r"\setotherlanguage{manipuri}", "font": r"\newfontfamily\manipurifont{NotoSansMeeteiMayek-Regular.ttf}[Path=../../Fonts/, Script=MeeteiMayek]"},
+
+    # === Arabic Script (Urdu, Persian, Arabic, Pashto, Sindhi, Kashmiri) ===
+    "ur": {"polyglossia": r"\setotherlanguage{urdu}", "font": r"\newfontfamily\urdufont{NotoNastaliqUrdu-Regular.ttf}[Path=../../Fonts/, Script=Arabic]"},
+    "ar": {"polyglossia": r"\setotherlanguage{arabic}", "font": r"\newfontfamily\arabicfont{NotoNaskhArabic-Regular.ttf}[Path=../../Fonts/, Script=Arabic]"},
+    "fa": {"polyglossia": r"\setotherlanguage{farsi}", "font": r"\newfontfamily\farifont{NotoNaskhArabic-Regular.ttf}[Path=../../Fonts/, Script=Arabic]"},
+    "ps": {"polyglossia": r"\setotherlanguage{pashto}", "font": r"\newfontfamily\pashtofont{NotoNaskhArabic-Regular.ttf}[Path=../../Fonts/, Script=Arabic]"},
+    "sd": {"polyglossia": r"\setotherlanguage{sindhi}", "font": r"\newfontfamily\sindhifont{NotoNaskhArabic-Regular.ttf}[Path=../../Fonts/, Script=Arabic]"},
+    "ks": {"polyglossia": r"\setotherlanguage{kashmiri}", "font": r"\newfontfamily\kashmirifont{NotoNaskhArabic-Regular.ttf}[Path=../../Fonts/, Script=Arabic]"},
+
+    # === CJK Languages ===
+    "zh-CN": {"polyglossia": r"\setdefaultlanguage{chinese}", "font": r"\newfontfamily\chinesefont{NotoSansSC-Regular.ttf}[Path=../../Fonts/]"},
+    "zh-TW": {"polyglossia": r"\setdefaultlanguage{chinese}", "font": r"\newfontfamily\chinesefont{NotoSansTC-Regular.ttf}[Path=../../Fonts/]"},
+    "ja": {"polyglossia": r"\usepackage{xeCJK}\setdefaultlanguage{japanese}", "font": r"\newfontfamily\japanesefont{NotoSansJP-Regular.ttf}[Path=../../Fonts/]"},
+    "ko": {"polyglossia": r"\setdefaultlanguage{korean}", "font": r"\newfontfamily\koreanfont{NotoSansKR-Regular.ttf}[Path=../../Fonts/]"},
+
+    # === Other scripts (Amharic, Armenian, Georgian, etc.) ===
+    "am": {"polyglossia": r"\setotherlanguage{amharic}", "font": r"\newfontfamily\amharicfont{NotoSansEthiopic-Regular.ttf}[Path=../../Fonts/, Script=Ethiopic]"},
+    "hy": {"polyglossia": r"\setotherlanguage{armenian}", "font": r"\newfontfamily\armenianfont{NotoSansArmenian-Regular.ttf}[Path=../../Fonts/, Script=Armenian]"},
+    "ka": {"polyglossia": r"\setotherlanguage{georgian}", "font": r"\newfontfamily\georgianfont{NotoSansGeorgian-Regular.ttf}[Path=../../Fonts/, Script=Georgian]"},
+    "si": {"polyglossia": r"\setotherlanguage{sinhala}", "font": r"\newfontfamily\sinhfont{NotoSansSinhala-Regular.ttf}[Path=../../Fonts/, Script=Sinhala]"},
+    "my": {"polyglossia": r"\setotherlanguage{burmese}", "font": r"\newfontfamily\burmesefont{NotoSansMyanmar-Regular.ttf}[Path=../../Fonts/, Script=Myanmar]"},
+    "km": {"polyglossia": r"\setotherlanguage{khmer}", "font": r"\newfontfamily\khmerfont{NotoSansKhmer-Regular.ttf}[Path=../../Fonts/, Script=Khmer]"},
+    "lo": {"polyglossia": r"\setotherlanguage{lao}", "font": r"\newfontfamily\laofont{NotoSansLao-Regular.ttf}[Path=../../Fonts/, Script=Lao]"},
+    "mn": {"polyglossia": r"\setotherlanguage{mongolian}", "font": r"\newfontfamily\mongolfont{NotoSans-Regular.ttf}[Path=../../Fonts/, Script=Cyrillic"},
+    "ti": {"polyglossia": r"\setotherlanguage{tigrinya}", "font": r"\newfontfamily\tigrinyafont{NotoSansEthiopic-Regular.ttf}[Path=../../Fonts/, Script=Ethiopic]"},
+
+    # === Latin alphabet languages (Default fallback to NotoSans-Regular) ===
+    "af": {"polyglossia": r"\setdefaultlanguage{afrikaans}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "sq": {"polyglossia": r"\setdefaultlanguage{albanian}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "ay": {"polyglossia": r"\setdefaultlanguage{aymara}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "az": {"polyglossia": r"\setdefaultlanguage{azerbaijani}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "bm": {"polyglossia": r"\setdefaultlanguage{bambara}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "eu": {"polyglossia": r"\setdefaultlanguage{basque}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "be": {"polyglossia": r"\setdefaultlanguage{belarusian}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "bs": {"polyglossia": r"\setdefaultlanguage{bosnian}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "bg": {"polyglossia": r"\setdefaultlanguage{bulgarian}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "ca": {"polyglossia": r"\setdefaultlanguage{catalan}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "ceb": {"polyglossia": r"\setdefaultlanguage{cebuano}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "ny": {"polyglossia": r"\setdefaultlanguage{chichewa}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "co": {"polyglossia": r"\setdefaultlanguage{corsican}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "hr": {"polyglossia": r"\setdefaultlanguage{croatian}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "cs": {"polyglossia": r"\setdefaultlanguage{czech}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "da": {"polyglossia": r"\setdefaultlanguage{danish}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "dv": {"polyglossia": r"\setdefaultlanguage{dhivehi}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "doi": {"polyglossia": r"\setdefaultlanguage{dogri}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "nl": {"polyglossia": r"\setdefaultlanguage{dutch}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "en": {"polyglossia": r"\setdefaultlanguage{english}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "eo": {"polyglossia": r"\setdefaultlanguage{esperanto}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "et": {"polyglossia": r"\setdefaultlanguage{estonian}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "ee": {"polyglossia": r"\setdefaultlanguage{ewe}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "tl": {"polyglossia": r"\setdefaultlanguage{filipino}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "fi": {"polyglossia": r"\setdefaultlanguage{finnish}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "fr": {"polyglossia": r"\setdefaultlanguage{french}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "fy": {"polyglossia": r"\setdefaultlanguage{frisian}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "gl": {"polyglossia": r"\setdefaultlanguage{galician}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "de": {"polyglossia": r"\setdefaultlanguage{german}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "el": {"polyglossia": r"\setdefaultlanguage{greek}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "gn": {"polyglossia": r"\setdefaultlanguage{guarani}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "ht": {"polyglossia": r"\setdefaultlanguage{haitian creole}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "ha": {"polyglossia": r"\setdefaultlanguage{hausa}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "haw": {"polyglossia": r"\setdefaultlanguage{hawaiian}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "iw": {"polyglossia": r"\setdefaultlanguage{hebrew}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "hmn": {"polyglossia": r"\setdefaultlanguage{hmong}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "hu": {"polyglossia": r"\setdefaultlanguage{hungarian}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "is": {"polyglossia": r"\setdefaultlanguage{icelandic}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "ig": {"polyglossia": r"\setdefaultlanguage{igbo}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "ilo": {"polyglossia": r"\setdefaultlanguage{ilocano}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "id": {"polyglossia": r"\setdefaultlanguage{indonesian}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "ga": {"polyglossia": r"\setdefaultlanguage{irish}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "it": {"polyglossia": r"\setdefaultlanguage{italian}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "jw": {"polyglossia": r"\setdefaultlanguage{javanese}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "kk": {"polyglossia": r"\setdefaultlanguage{kazakh}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "rw": {"polyglossia": r"\setdefaultlanguage{kinyarwanda}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "kri": {"polyglossia": r"\setdefaultlanguage{krio}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "ku": {"polyglossia": r"\setdefaultlanguage{kurdish (kurmanji)}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "ckb": {"polyglossia": r"\setdefaultlanguage{kurdish (sorani)}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "ky": {"polyglossia": r"\setdefaultlanguage{kyrgyz}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "la": {"polyglossia": r"\setdefaultlanguage{latin}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "lv": {"polyglossia": r"\setdefaultlanguage{latvian}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "ln": {"polyglossia": r"\setdefaultlanguage{lingala}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "lt": {"polyglossia": r"\setdefaultlanguage{lithuanian}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "lg": {"polyglossia": r"\setdefaultlanguage{luganda}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "lb": {"polyglossia": r"\setdefaultlanguage{luxembourgish}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "mk": {"polyglossia": r"\setdefaultlanguage{macedonian}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "mg": {"polyglossia": r"\setdefaultlanguage{malagasy}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "ms": {"polyglossia": r"\setdefaultlanguage{malay}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "mt": {"polyglossia": r"\setdefaultlanguage{maltese}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "mi": {"polyglossia": r"\setdefaultlanguage{maori}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "lus": {"polyglossia": r"\setdefaultlanguage{mizo}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "no": {"polyglossia": r"\setdefaultlanguage{norwegian}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "om": {"polyglossia": r"\setdefaultlanguage{oromo}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "pl": {"polyglossia": r"\setdefaultlanguage{polish}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "pt": {"polyglossia": r"\setdefaultlanguage{portuguese}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "qu": {"polyglossia": r"\setdefaultlanguage{quechua}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "ro": {"polyglossia": r"\setdefaultlanguage{romanian}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "ru": {"polyglossia": r"\setdefaultlanguage{russian}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "sm": {"polyglossia": r"\setdefaultlanguage{samoan}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "gd": {"polyglossia": r"\setdefaultlanguage{scots gaelic}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "nso": {"polyglossia": r"\setdefaultlanguage{sepedi}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "sr": {"polyglossia": r"\setdefaultlanguage{serbian}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "st": {"polyglossia": r"\setdefaultlanguage{sesotho}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "sn": {"polyglossia": r"\setdefaultlanguage{shona}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "sk": {"polyglossia": r"\setdefaultlanguage{slovak}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "sl": {"polyglossia": r"\setdefaultlanguage{slovenian}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "so": {"polyglossia": r"\setdefaultlanguage{somali}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "es": {"polyglossia": r"\setdefaultlanguage{spanish}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "su": {"polyglossia": r"\setdefaultlanguage{sundanese}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "sw": {"polyglossia": r"\setdefaultlanguage{swahili}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "sv": {"polyglossia": r"\setdefaultlanguage{swedish}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "tg": {"polyglossia": r"\setdefaultlanguage{tajik}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "tt": {"polyglossia": r"\setdefaultlanguage{tatar}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "th": {"polyglossia": r"\setdefaultlanguage{thai}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "ts": {"polyglossia": r"\setdefaultlanguage{tsonga}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "tr": {"polyglossia": r"\setdefaultlanguage{turkish}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "tk": {"polyglossia": r"\setdefaultlanguage{turkmen}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "ak": {"polyglossia": r"\setdefaultlanguage{twi}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "uk": {"polyglossia": r"\setdefaultlanguage{ukrainian}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "ug": {"polyglossia": r"\setdefaultlanguage{uyghur}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "uz": {"polyglossia": r"\setdefaultlanguage{uzbek}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "vi": {"polyglossia": r"\setdefaultlanguage{vietnamese}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "cy": {"polyglossia": r"\setdefaultlanguage{welsh}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "xh": {"polyglossia": r"\setdefaultlanguage{xhosa}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "yi": {"polyglossia": r"\setdefaultlanguage{yiddish}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "yo": {"polyglossia": r"\setdefaultlanguage{yoruba}", "font": r"\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+    "zu": {"polyglossia": r"\setdefaultlanguage{zulu}", "font": r"\\newfontfamily\notosans{NotoSans-Regular.ttf}[Path=../../Fonts/]"},
+}
+
+
+# Load environment variables from .env file
 load_dotenv()
 
 # API section
@@ -388,11 +551,10 @@ def extract_json_from_markdown(text: str) -> str:
     return text.strip()
 
 
-async def translate_text(input_dict, dest_lang):
-    async with Translator() as translator:
-        for i,j in input_dict.items():
-            result = await translator.translate(j, dest=dest_lang)
-            input_dict[i] = result.text
+def translate_text(input_dict, dest_lang):
+    for i,j in input_dict.items():
+        translate = GoogleTranslator(source="auto", target=dest_lang)
+        input_dict[i]  = translate.translate(j)
     return input_dict
 
 @app.get("/")
@@ -450,114 +612,139 @@ def ui_pipeline(request: Request):
 
 @app.get("/ui/translate")
 def ui_translate(request: Request):
-    languages = {
-        'af': 'afrikaans',
-        'sq': 'albanian',
-        'am': 'amharic',
-        'ar': 'arabic',
-        'hy': 'armenian',
-        'az': 'azerbaijani',
-        'eu': 'basque',
-        'be': 'belarusian',
-        'bn': 'bengali',
-        'bs': 'bosnian',
-        'bg': 'bulgarian',
-        'ca': 'catalan',
-        'ceb': 'cebuano',
-        'ny': 'chichewa',
-        'zh-cn': 'chinese (simplified)',
-        'zh-tw': 'chinese (traditional)',
-        'co': 'corsican',
-        'hr': 'croatian',
-        'cs': 'czech',
-        'da': 'danish',
-        'nl': 'dutch',
-        'en': 'english',
-        'eo': 'esperanto',
-        'et': 'estonian',
-        'tl': 'filipino',
-        'fi': 'finnish',
-        'fr': 'french',
-        'fy': 'frisian',
-        'gl': 'galician',
-        'ka': 'georgian',
-        'de': 'german',
-        'el': 'greek',
-        'gu': 'gujarati',
-        'ht': 'haitian creole',
-        'ha': 'hausa',
-        'haw': 'hawaiian',
-        'iw': 'hebrew',
-        'he': 'hebrew',
-        'hi': 'hindi',
-        'hmn': 'hmong',
-        'hu': 'hungarian',
-        'is': 'icelandic',
-        'ig': 'igbo',
-        'id': 'indonesian',
-        'ga': 'irish',
-        'it': 'italian',
-        'ja': 'japanese',
-        'jw': 'javanese',
-        'kn': 'kannada',
-        'kk': 'kazakh',
-        'km': 'khmer',
-        'ko': 'korean',
-        'ku': 'kurdish (kurmanji)',
-        'ky': 'kyrgyz',
-        'lo': 'lao',
-        'la': 'latin',
-        'lv': 'latvian',
-        'lt': 'lithuanian',
-        'lb': 'luxembourgish',
-        'mk': 'macedonian',
-        'mg': 'malagasy',
-        'ms': 'malay',
-        'ml': 'malayalam',
-        'mt': 'maltese',
-        'mi': 'maori',
-        'mr': 'marathi',
-        'mn': 'mongolian',
-        'my': 'myanmar (burmese)',
-        'ne': 'nepali',
-        'no': 'norwegian',
-        'or': 'odia',
-        'ps': 'pashto',
-        'fa': 'persian',
-        'pl': 'polish',
-        'pt': 'portuguese',
-        'pa': 'punjabi',
-        'ro': 'romanian',
-        'ru': 'russian',
-        'sm': 'samoan',
-        'gd': 'scots gaelic',
-        'sr': 'serbian',
-        'st': 'sesotho',
-        'sn': 'shona',
-        'sd': 'sindhi',
-        'si': 'sinhala',
-        'sk': 'slovak',
-        'sl': 'slovenian',
-        'so': 'somali',
-        'es': 'spanish',
-        'su': 'sundanese',
-        'sw': 'swahili',
-        'sv': 'swedish',
-        'tg': 'tajik',
-        'ta': 'tamil',
-        'te': 'telugu',
-        'th': 'thai',
-        'tr': 'turkish',
-        'uk': 'ukrainian',
-        'ur': 'urdu',
-        'ug': 'uyghur',
-        'uz': 'uzbek',
-        'vi': 'vietnamese',
-        'cy': 'welsh',
-        'xh': 'xhosa',
-        'yi': 'yiddish',
-        'yo': 'yoruba',
-        'zu': 'zulu'
+    languages = {"af" : "afrikaans",
+    "sq" : "albanian",
+    "am" : "amharic",
+    "ar" : "arabic",
+    "hy" : "armenian",
+    "as" : "assamese",
+    "ay" : "aymara",
+    "az" : "azerbaijani",
+    "bm" : "bambara",
+    "eu" : "basque",
+    "be" : "belarusian",
+    "bn" : "bengali",
+    "bho" : "bhojpuri",
+    "bs" : "bosnian",
+    "bg" : "bulgarian",
+    "ca" : "catalan",
+    "ceb" : "cebuano",
+    "ny" : "chichewa",
+    "zh-CN" : "chinese (simplified)",
+    "zh-TW" : "chinese (traditional)",
+    "co" : "corsican",
+    "hr" : "croatian",
+    "cs" : "czech",
+    "da" : "danish",
+    "dv" : "dhivehi",
+    "doi" : "dogri",
+    "nl" : "dutch",
+    "en" : "english",
+    "eo" : "esperanto",
+    "et" : "estonian",
+    "ee" : "ewe",
+    "tl" : "filipino",
+    "fi" : "finnish",
+    "fr" : "french",
+    "fy" : "frisian",
+    "gl" : "galician",
+    "ka" : "georgian",
+    "de" : "german",
+    "el" : "greek",
+    "gn" : "guarani",
+    "gu" : "gujarati",
+    "ht" : "haitian creole",
+    "ha" : "hausa",
+    "haw" : "hawaiian",
+    "iw" : "hebrew",
+    "hi" : "hindi",
+    "hmn" : "hmong",
+    "hu" : "hungarian",
+    "is" : "icelandic",
+    "ig" : "igbo",
+    "ilo" : "ilocano",
+    "id" : "indonesian",
+    "ga" : "irish",
+    "it" : "italian",
+    "ja" : "japanese",
+    "jw" : "javanese",
+    "kn" : "kannada",
+    "kk" : "kazakh",
+    "km" : "khmer",
+    "rw" : "kinyarwanda",
+    "gom" : "konkani",
+    "ko" : "korean",
+    "kri" : "krio",
+    "ku" : "kurdish (kurmanji)",
+    "ckb" : "kurdish (sorani)",
+    "ky" : "kyrgyz",
+    "lo" : "lao",
+    "la" : "latin",
+    "lv" : "latvian",
+    "ln" : "lingala",
+    "lt" : "lithuanian",
+    "lg" : "luganda",
+    "lb" : "luxembourgish",
+    "mk" : "macedonian",
+    "mai" : "maithili",
+    "mg" : "malagasy",
+    "ms" : "malay",
+    "ml" : "malayalam",
+    "mt" : "maltese",
+    "mi" : "maori",
+    "mr" : "marathi",
+    "mni-Mtei" : "meiteilon (manipuri)",
+    "lus" : "mizo",
+    "mn" : "mongolian",
+    "my" : "myanmar",
+    "ne" : "nepali",
+    "no" : "norwegian",
+    "or" : "odia (oriya)",
+    "om" : "oromo",
+    "ps" : "pashto",
+    "fa" : "persian",
+    "pl" : "polish",
+    "pt" : "portuguese",
+    "pa" : "punjabi",
+    "qu" : "quechua",
+    "ro" : "romanian",
+    "ru" : "russian",
+    "sm" : "samoan",
+    "sa" : "sanskrit",
+    "gd" : "scots gaelic",
+    "nso" : "sepedi",
+    "sr" : "serbian",
+    "st" : "sesotho",
+    "sn" : "shona",
+    "sd" : "sindhi",
+    "si" : "sinhala",
+    "sk" : "slovak",
+    "sl" : "slovenian",
+    "so" : "somali",
+    "es" : "spanish",
+    "su" : "sundanese",
+    "sw" : "swahili",
+    "sv" : "swedish",
+    "tg" : "tajik",
+    "ta" : "tamil",
+    "tt" : "tatar",
+    "te" : "telugu",
+    "th" : "thai",
+    "ti" : "tigrinya",
+    "ts" : "tsonga",
+    "tr" : "turkish",
+    "tk" : "turkmen",
+    "ak" : "twi",
+    "uk" : "ukrainian",
+    "ur" : "urdu",
+    "ug" : "uyghur",
+    "uz" : "uzbek",
+    "vi" : "vietnamese",
+    "cy" : "welsh",
+    "xh" : "xhosa",
+    "yi" : "yiddish",
+    "yo" : "yoruba",
+    "zu" : "zulu"
     }
 
     return templates.TemplateResponse(
@@ -747,7 +934,7 @@ async def full_journal_pipeline(journal: PulsusInputStr):
         raise HTTPException(status_code=400, detail="Journal ID already exists.")
     data[journal.id] = journal.model_dump(exclude=["id"])
 
-    print("step 1 : Save journal input ✅")
+    print("Step 1 : Save journal input ✅")
 
     # # Step 2: Use the topic to search CORE articles
     # CORE_API_URL = "https://api.core.ac.uk/v3/search/works"
@@ -782,7 +969,7 @@ async def full_journal_pipeline(journal: PulsusInputStr):
     # except Exception as e:
     #     raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
-    print("step 2 : Use the topic to search CORE articles ✅")
+    print("Step 2 : Use the topic to search CORE articles ✅")
 
     # Step 3: Create universal prompt
     prompt = f"""
@@ -824,7 +1011,7 @@ async def full_journal_pipeline(journal: PulsusInputStr):
     IMPORTANT: Your response must be ONLY a valid JSON object with no additional text, 
         explanations, or markdown formatting. Do not include any text before or after the JSON.
     """
-    print("step 3 : Create universal prompt ✅")
+    print("Step 3 : Create universal prompt ✅")
     # Step 4: Ask Gemini
     try:
         gem_response = gemClient.models.generate_content(
@@ -834,7 +1021,7 @@ async def full_journal_pipeline(journal: PulsusInputStr):
     except Exception as e:
         gem_summary = f"Gemini API failed: {str(e)}"
 
-    print("step 4 : ask Gemini ✅")
+    print("Step 4 : ask Gemini ✅")
 
     # Step 5: Clean and parse JSON output from Gemini
     raw_json = extract_json_from_markdown(gem_summary)
@@ -858,7 +1045,7 @@ async def full_journal_pipeline(journal: PulsusInputStr):
         content_data[kk]["authors"] = ", ".join(store)
 
 
-    print("step 5 : Clean and parse JSON output from Gemini ✅")
+    print("Step 5 : Clean and parse JSON output from Gemini ✅")
 
     # Step 6: Conclusion content using Gemini
     prompt = f"""
@@ -897,7 +1084,7 @@ async def full_journal_pipeline(journal: PulsusInputStr):
     except Exception as e:
         gem_info = f"Gemini API failed: {str(e)}"
 
-    print("step 6 : Conclusion content using Gemini ✅")
+    print("Step 6 : Conclusion content using Gemini ✅")
 
     # Step 6.5: Clean and parse JSON output from Gemini or Groq
     raw_json = extract_json_from_markdown(gem_info)
@@ -908,7 +1095,7 @@ async def full_journal_pipeline(journal: PulsusInputStr):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to parse structured JSON from LLM output: {str(e)}")
 
-    print("step 6.5 : Clean and parse JSON output from Gemini or Groq ✅")
+    print("Step 6.5 : Clean and parse JSON output from Gemini or Groq ✅")
 
     # Step 7: Title content using Gemini
     
@@ -926,7 +1113,7 @@ async def full_journal_pipeline(journal: PulsusInputStr):
     except Exception as e:
         gem_title = f"Gemini API failed: {str(e)}"
 
-    print("step 7 : Title content using Gemini ✅")
+    print("Step 7 : Title content using Gemini ✅")
 
     # Step 8: Final response
     final_output = {
@@ -983,7 +1170,7 @@ async def full_journal_pipeline(journal: PulsusInputStr):
     journal_folder = output_base_dir / journal.id
     journal_folder.mkdir(parents=True, exist_ok=True)
 
-    print("step 8 : Final response ✅")
+    print("Step 8 : Final response ✅")
 
     # --- 9: Create HTML file ---
     env_html = Environment(
@@ -1068,7 +1255,7 @@ async def full_journal_pipeline(journal: PulsusInputStr):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to generate HTML file: {str(e)}")
 
-    print("step 9 : Create HTML file ✅")
+    print("Step 9 : Create HTML file ✅")
 
     # --- 10: Create PDF file ---
     env_latex = Environment(
@@ -1092,9 +1279,18 @@ async def full_journal_pipeline(journal: PulsusInputStr):
                         '^': r'\^{}', }
         pattern = re.compile('|'.join(re.escape(k) for k in replacements.keys()))
         return pattern.sub(lambda m: replacements[m.group()], text)
-
+    
     env_latex.filters['latex_escape'] = latex_escape
     template = env_latex.get_template(journal.brandName)
+
+    # --- ensure initial PDF has an English preamble and mark language in saved record ---
+    default_cfg = lang_map.get("default")
+    # Build preamble: polyglossia + the font block stored in default_cfg
+    preamble = "\\usepackage{polyglossia}\n" + default_cfg["polyglossia"] + "\n" + default_cfg["font"]
+    output_data[journal.id]["preamble"] = preamble
+    output_data[journal.id]["lang_name"] = "english"
+    # record original language so later translation flow can detect existing language if needed
+    output_data[journal.id]["lang"] = "en"
 
     rendered_latex = template.render(**output_data[journal.id])
 
@@ -1127,7 +1323,7 @@ async def full_journal_pipeline(journal: PulsusInputStr):
                 detail=f"LaTeX compilation failed on run {i + 1}:\n\n{error_text}"
             )
 
-    print("step 10 : Create PDF file ✅")
+    print("Step 10 : Create PDF file ✅")
 
     return JSONResponse(
         status_code=200,
@@ -1155,9 +1351,8 @@ async def pdfs_translate(translatePage : TranslatePage):
     "keywords": journal_id['keywords'],
     "conclusion": journal_id['conclusion']
     }
-    print("Start Translation")
-    tempStore = await translate_text(tempStore, translatePage.language)
-    print(f"Translation end\n {tempStore}")
+    print("Step 1: Start Translation ✅")
+    tempStore = translate_text(tempStore, translatePage.language)
 
 
     for i,j in tempStore.items():
@@ -1175,7 +1370,7 @@ async def pdfs_translate(translatePage : TranslatePage):
     journal_folder = output_base_dir / f"{translatePage.language}_translate_{translatePage.id}"
     journal_folder.mkdir(parents=True, exist_ok=True)
 
-    print("step 8 : Final response ✅")
+    print("Step 2: Final response ✅")
 
     # --- 9: Create HTML file ---
     env_html = Environment(
@@ -1260,7 +1455,7 @@ async def pdfs_translate(translatePage : TranslatePage):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to generate HTML file: {str(e)}")
 
-    print("step 9 : Create HTML file ✅")
+    print("Step 3 : Create HTML file ✅")
 
     # --- 10: Create PDF file ---
     env_latex = Environment(
@@ -1288,6 +1483,31 @@ async def pdfs_translate(translatePage : TranslatePage):
     env_latex.filters['latex_escape'] = latex_escape
     template = env_latex.get_template(journal_id['brandName'])
 
+    # Use the language passed in request (translatePage.language) as the target
+    target_lang = translatePage.language or output_data[translatePage.id].get("lang", "en")
+    lang_config = lang_map.get(target_lang, lang_map["default"])
+
+    # Extract a language name (e.g. 'hindi' from '\setotherlanguage{hindi}' etc.)
+    match = re.search(r"\{(.*?)\}", lang_config.get("polyglossia",""))
+    lang_name = match.group(1) if match else target_lang
+
+    # Build preamble for the translated PDF:
+    # For translated files we want the document default language to be the target language
+    if target_lang in ("default", "en", "english"):
+        # keep english default (Times New Roman main font is already present in template)
+        preamble = "\\usepackage{polyglossia}\n" + r"\setdefaultlanguage{english}" + "\n" + lang_map["default"]["font"]
+    else:
+        # Set the document's default to the target language and include the font declarations
+        preamble = "\\usepackage{polyglossia}\n" + f"\\setdefaultlanguage{{{lang_name}}}\n" + lang_config["font"]
+
+    # Inject into template variables (so template sees \VAR{preamble} and \VAR{lang_name})
+    output_data[translatePage.id]["preamble"] = preamble
+    output_data[translatePage.id]["lang_name"] = lang_name
+
+    # (Optional) record that the output is now in this language:
+    output_data[translatePage.id]["lang"] = target_lang
+
+
     rendered_latex = template.render(**output_data[translatePage.id])
 
     # Save the .tex file inside the journal's dedicated folder
@@ -1300,6 +1520,7 @@ async def pdfs_translate(translatePage : TranslatePage):
             ["xelatex", "-interaction=nonstopmode", tex_file_path.name],
             capture_output=True,  # Capture stdout/stderr
             text=True,
+            encoding="utf-8",
             cwd=journal_folder  # CRITICAL: Set the working directory
         )
 
@@ -1309,17 +1530,18 @@ async def pdfs_translate(translatePage : TranslatePage):
             # The log file is already saved by xelatex, so we just read it for the error message
             error_text = "Unknown LaTeX error. Check the log file."
             if log_file_path.exists():
-                with open(log_file_path, 'r') as f:
+                with open(log_file_path, 'r', encoding='utf-8', errors='ignore') as f:
                     lines = f.readlines()
                 error_snippets = [line for line in lines if line.startswith("! ")]
                 error_text = "\n".join(error_snippets) or f"LaTeX compilation failed. Full log in {log_file_path}"
+
 
             raise HTTPException(
                 status_code=500,
                 detail=f"LaTeX compilation failed on run {i + 1}:\n\n{error_text}"
             )
 
-    print("step 10 : Create PDF file ✅")
+    print("Final Step: Create PDF file ✅")
 
     return JSONResponse(
         status_code=200,
