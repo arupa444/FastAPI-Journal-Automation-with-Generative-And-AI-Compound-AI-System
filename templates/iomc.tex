@@ -2,16 +2,12 @@
 
 % === PACKAGES ===
 \usepackage[margin=35pt, top=69pt, bottom=90pt]{geometry}
-\usepackage{fontspec}
-\setmainfont{ArchivoNarrow}[
-    Path=../../Fonts/,
-    UprightFont = *-Regular,
-    BoldFont = *-Bold,
-    ItalicFont = *-Italic,
-    BoldItalicFont = *-BoldItalic
-]
-\usepackage{titlesec} % for heading sizes
-\usepackage[english]{babel}
+
+% === DYNAMIC PREAMBLE ===
+\VAR{preamble | safe}
+% === END DYNAMIC PREAMBLE ===
+
+\usepackage{titlesec} % for heading sizes   
 \usepackage{fancyhdr}
 \usepackage{multicol}
 \usepackage{hyperref}
@@ -28,25 +24,25 @@
 
 
 % === COLORS ===
-\definecolor{Dark_Purple}{rgb}{0.286275,0.14902,0.423529}   % Dark Purple / Indigo | color_101230
+\definecolor{DarkPurple}{rgb}{0.286275,0.14902,0.423529}   % Dark Purple / Indigo | color_101230
 \definecolor{White}{rgb}{1,1,1}                       % White | color_283006
-\definecolor{Dark_Violet}{rgb}{0.282353,0.145098,0.423529}  % Dark Violet / Eggplant | color_100238
+\definecolor{DarkViolet}{rgb}{0.282353,0.145098,0.423529}  % Dark Violet / Eggplant | color_100238
 \definecolor{Black}{rgb}{0,0,0}                        % Black | color_29791
-\definecolor{Off_White}{rgb}{1,0.996078,0.996078}         % Very Light Pink / Off-White | color_282974
-\definecolor{Dark_Green}{rgb}{0.121569,0.372549,0.364706}
+\definecolor{OffWhite}{rgb}{1,0.996078,0.996078}         % Very Light Pink / Off-White | color_282974
+\definecolor{DarkGreen}{rgb}{0.121569,0.372549,0.364706}
 
 % === LINK COLORS ===
 \hypersetup{
     colorlinks=true,
     urlcolor=Black,
-    citecolor=Dark_Green,
-    linkcolor=Dark_Green
+    citecolor=DarkGreen,
+    linkcolor=DarkGreen
 }
 
 % === TITLE & SECTION FONT SIZES ===
 % Section headings (15pt)
 \titleformat{name=\section,numberless}[block]%
-  {\bfseries\fontsize{15}{17}\selectfont\color{Dark_Green}}
+  {\bfseries\fontsize{15}{17}\selectfont\color{DarkGreen}}
   {} % no numbering
   {0pt}
   {}
@@ -131,14 +127,14 @@
 \fontsize{9}{10.8}\selectfont\color{Black}
 
 \begin{flushleft}
-\color{Dark_Green}\textbf{\underline{\textit{Corresponding Authors*}}} \\
+\color{DarkGreen}\textbf{\underline{\textit{Corresponding Authors*}}} \\
 \vspace{0.3cm}
 \color{Black}\VAR{author | latex_escape}\\
 \color{Black}\VAR{authorsDepartment | latex_escape}\\
 E-mail: \href{mailto:\VAR{email}}{\VAR{email}}\\
 \vspace{0.1cm}
 \rule{\linewidth}{1pt}
-\color{Dark_Green}\textbf{Copyright:} 
+\color{DarkGreen}\textbf{Copyright:} 
 \color{Black} 2021 \VAR{author}. This is an open-access article distributed under the 
 terms of the Creative Commons Attribution License, which permits unrestricted 
 use, distribution, and reproduction in any medium, provided the original author 
@@ -155,15 +151,24 @@ and source are credited.
 
 \section*{Introduction}
 \vspace{-0.5cm}
+\begin{otherlanguage}{\VAR{lang_name}}
 \VAR{introduction | latex_escape}
+\end{otherlanguage}
+
 
 \section*{Description}
 \vspace{-0.5cm}
+\begin{otherlanguage}{\VAR{lang_name}}
 \VAR{description | latex_escape}
+\end{otherlanguage}
+
 
 \section*{Conclusion}
 \vspace{-0.5cm}
+\begin{otherlanguage}{\VAR{lang_name}}
 \VAR{conclusion | latex_escape}
+\end{otherlanguage}
+
 
 \section*{References}
 \fontsize{8}{9.6}\selectfont
