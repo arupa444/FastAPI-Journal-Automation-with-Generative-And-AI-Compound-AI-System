@@ -2,19 +2,13 @@
 
 % === PACKAGES ===
 \usepackage[margin=35pt, top=69pt, bottom=90pt]{geometry}
-\usepackage{fontspec}
-\setmainfont{ArchivoNarrow}[
-    Path=../../Fonts/,
-    UprightFont = *-Regular,
-    BoldFont = *-Bold,
-    ItalicFont = *-Italic,
-    BoldItalicFont = *-BoldItalic
-]
+% === DYNAMIC PREAMBLE ===
+\VAR{preamble | safe}
+% === END DYNAMIC PREAMBLE ===
 \usepackage{titlesec} % for heading sizes
 \usepackage{latexsym}
 \usepackage{pict2e}
 \usepackage{wasysym}
-\usepackage[english]{babel}
 \usepackage{tikz}
 \usetikzlibrary{calc}
 \usepackage{fancyhdr}
@@ -31,29 +25,29 @@
 
 
 % === COLORS ===
-\definecolor{Dark_Purple}{rgb}{0.286275,0.14902,0.423529}   % Dark Purple / Indigo | color_101230
+\definecolor{DarkPurple}{rgb}{0.286275,0.14902,0.423529}   % Dark Purple / Indigo | color_101230
 \definecolor{White}{rgb}{1,1,1}                       % White | color_283006
-\definecolor{Dark_Violet}{rgb}{0.282353,0.145098,0.423529}  % Dark Violet / Eggplant | color_100238
+\definecolor{DarkViolet}{rgb}{0.282353,0.145098,0.423529}  % Dark Violet / Eggplant | color_100238
 \definecolor{Black}{rgb}{0,0,0}                        % Black | color_29791
-\definecolor{Off_White}{rgb}{1,0.996078,0.996078}         % Very Light Pink / Off-White | color_282974
+\definecolor{OffWhite}{rgb}{1,0.996078,0.996078}         % Very Light Pink / Off-White | color_282974
 
 
 % === LINK COLORS ===
 \hypersetup{
     colorlinks=true,
     urlcolor=Black,
-    citecolor=Dark_Violet,
-    linkcolor=Dark_Violet
+    citecolor=DarkViolet,
+    linkcolor=DarkViolet
 }
 
 % === TITLE & SECTION FONT SIZES ===
 % Section headings (15pt)
 \titleformat{name=\section,numberless}[block]%
-  {\bfseries\fontsize{15}{17}\selectfont\color{Dark_Violet}} % 15pt section
+  {\bfseries\fontsize{15}{17}\selectfont\color{DarkViolet}} % 15pt section
   {} % no numbering
   {0pt}
   {}
-  [\vspace{-0.5cm}\noindent\color{Dark_Violet}\rule{\linewidth}{1pt}\vspace{-0.5cm}]
+  [\vspace{-0.5cm}\noindent\color{DarkViolet}\rule{\linewidth}{1pt}\vspace{-0.5cm}]
 
 % === TITLE STYLE ===
 \newcommand{\articletitle}[1]{%
@@ -73,14 +67,14 @@
         \fontsize{10}{12}\selectfont\color{Black}Volume 0\VAR{volume}:0\VAR{issues}, \VAR{year}
     }
     \fancyhead[R]{%
-        \fontsize{15}{16.8}\selectfont\color{Dark_Violet}\textbf{\VAR{journalName}}
+        \fontsize{15}{16.8}\selectfont\color{DarkViolet}\textbf{\VAR{journalName}}
     }
 
     % === Second row: Purple bar with ISSN & Open Access ===
     \fancyhead[C]{%
     \begin{tikzpicture}[overlay, remember picture]
         % Purple bar
-        \fill[Dark_Violet] 
+        \fill[DarkViolet] 
             ($(current page.north west) + (0,-74pt)$) 
             rectangle 
             ($(current page.north east) + (0,-95pt)$);
@@ -98,7 +92,7 @@
     % Footer stays same
     \fancyfoot[L]{%
     \begin{tikzpicture}[baseline=(text.base)]
-        \fill[Dark_Violet] (0,0) rectangle (76.56pt, -16.3pt);
+        \fill[DarkViolet] (0,0) rectangle (76.56pt, -16.3pt);
         \node[white, font=\fontsize{8}{9.6}\selectfont] (text)
             at (38.28pt, -8.15pt) {Page~\thepage~of~\getpagerefnumber{TotPages}};
     \end{tikzpicture}%
@@ -113,12 +107,12 @@
     \fancyhead[L]{\fontsize{8.5}{10}\selectfont\color{Black}\VAR{author | latex_escape}}
     \fancyhead[R]{\fontsize{8.5}{10}\selectfont\color{Black}\VAR{journalYearVolumeIssue}}
     % \renewcommand{\headrule}{%
-    %   \vbox to 0pt{\hbox to\headwidth{\color{Dark_Violet}\leaders\hrule height 0.5pt\hfill}\vss}%
+    %   \vbox to 0pt{\hbox to\headwidth{\color{DarkViolet}\leaders\hrule height 0.5pt\hfill}\vss}%
     % }
     % Footer
     \fancyfoot[L]{%
     \begin{tikzpicture}[baseline=(text.base)]
-        \fill[Dark_Violet] (0,0) rectangle (76.56pt, -16.3pt);
+        \fill[DarkViolet] (0,0) rectangle (76.56pt, -16.3pt);
         \node[white, font=\fontsize{8}{9.6}\selectfont] (text)
             at (38.28pt, -8.15pt) 
             {Page~\thepage~of~\getpagerefnumber{TotPages}};
@@ -140,7 +134,7 @@
 
 \begin{flushleft}
     \articletitle{\VAR{title | latex_escape}}
-    \vspace{-0.3cm}\color{Dark_Violet}\rule{0.97\textwidth}{1pt}
+    \vspace{-0.3cm}\color{DarkViolet}\rule{0.97\textwidth}{1pt}
     \vspace{0.1cm}
 \end{flushleft}
 
@@ -153,30 +147,44 @@
     % Measure the width of the department text
     \settowidth{\dimen0}{\fontsize{9}{10.8}\selectfont\color{Black}\VAR{authorsDepartment}}%
     % Draw a rule with that width
-    \vspace{-0.3cm}\color{Dark_Violet}\rule{\dimen0}{1pt}
+    \vspace{-0.3cm}\color{DarkViolet}\rule{\dimen0}{1pt}
 \end{flushleft}
 
 \begin{multicols}{2}
 \fontsize{9}{10.8}\selectfont\color{Black}
 
 \section*{Introduction}
+\begin{otherlanguage}{\VAR{lang_name}}
 \VAR{introduction | latex_escape}
+\end{otherlanguage}
+
 
 \vspace{-0.4cm}
 \section*{Description}
+\begin{otherlanguage}{\VAR{lang_name}}
 \VAR{description | latex_escape}
+\end{otherlanguage}
+
 
 \vspace{-0.4cm}
 \section*{Conclusion}
+\begin{otherlanguage}{\VAR{lang_name}}
 \VAR{conclusion | latex_escape}
+\end{otherlanguage}
+
 
 \vspace{-0.4cm}
 \section*{Acknowledgement}
+\begin{otherlanguage}{\VAR{lang_name}}
 None.
+\end{otherlanguage}
 
 \vspace{-0.4cm}
 \section*{Conflict of Interest}
+\begin{otherlanguage}{\VAR{lang_name}}
 None.
+\end{otherlanguage}
+
 
 \vspace{-0.4cm}
 \section*{References}
@@ -200,15 +208,15 @@ None.
 \noindent
 \begin{minipage}{\textwidth} % keep everything together
 
-\noindent\color{Dark_Violet}\rule{\textwidth}{1pt}
+\noindent\color{DarkViolet}\rule{\textwidth}{1pt}
 
 \begin{justify}
 \fontsize{8.5}{10.2}\selectfont
-\color{Dark_Violet}\textbf{*Address for Correspondence:} 
+\color{DarkViolet}\textbf{*Address for Correspondence:} 
 \color{Black}\VAR{author}, \VAR{authorsDepartment},
 E-mail: \href{mailto:\VAR{email}}{\VAR{email}} \\
 
-\noindent\color{Dark_Violet}\textbf{Copyright:} 
+\noindent\color{DarkViolet}\textbf{Copyright:} 
 \color{Black}© 2024 \VAR{author} This is an open-access article distributed under the terms of the Creative Commons Attribution License, which permits unrestricted use, distribution and reproduction in any medium, provided the original author and source are credited. \\
 
 \noindent\color{Black}\textbf{Received:} \VAR{received}, Manuscript No. \VAR{manuscriptNo}; 
@@ -218,7 +226,7 @@ E-mail: \href{mailto:\VAR{email}}{\VAR{email}} \\
 \textbf{Published:} \VAR{published}, 
 DOI: \href{\VAR{parentLink}}{\VAR{doi}}
 
-\noindent\color{Dark_Violet}\rule{\linewidth}{1pt}
+\noindent\color{DarkViolet}\rule{\linewidth}{1pt}
 
 \end{justify}
 \end{minipage}

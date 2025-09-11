@@ -3,19 +3,14 @@
 % === PACKAGES ===
 \usepackage[margin=35pt, top=70pt, bottom=90pt]{geometry}
 % === FONT SETUP ===
-\usepackage{fontspec}
-\setmainfont{Times New Roman}[
-    Path=../../Fonts/,
-    UprightFont    = *,
-    BoldFont       = * - Bold ,
-    ItalicFont     = * - Italic ,
-    BoldItalicFont = * - Bold Italic
-]
+% === DYNAMIC PREAMBLE ===
+\VAR{preamble | safe}
+% === END DYNAMIC PREAMBLE ===
+
 \usepackage{titlesec} % for heading sizes
 \usepackage{latexsym}
 \usepackage{pict2e}
 \usepackage{wasysym}
-\usepackage[english]{babel}
 \usepackage{tikz}
 \usetikzlibrary{calc}
 \usepackage{fancyhdr}
@@ -29,14 +24,16 @@
 \usepackage{ragged2e}
 \usepackage{indentfirst}
 \usepackage{atbegshi}
+\usepackage{mdframed}
+
 % \setlength{\parindent}{0pt}
 \setlength{\parskip}{6pt}
 
 % === COLORS ===
 \definecolor{White}{rgb}{1,1,1}% White - color_283006
 \definecolor{Black}{rgb}{0,0,0}% Black - Black
-\definecolor{Off_white}{rgb}{1,0.996078,0.996078}% Very Light Pink / Off-White - color_282974
-\definecolor{Light_navy_blue}{rgb}{0,0.349,0.588}
+\definecolor{OffWhite}{rgb}{1,0.996078,0.996078}% Very Light Pink / Off-White - color_282974
+\definecolor{LightNavyBlue}{rgb}{0,0.349,0.588}
 
 
 
@@ -44,8 +41,8 @@
 \hypersetup{
     colorlinks=true,
     urlcolor=Black,
-    citecolor=Light_navy_blue,
-    linkcolor=Light_navy_blue
+    citecolor=LightNavyBlue,
+    linkcolor=LightNavyBlue
 }
 
 % === Global font size control ===
@@ -83,7 +80,7 @@
     % --- Footer Rule Line ---
     \renewcommand{\footrulewidth}{0pt} % disable default
     \renewcommand{\footrule}{%
-      \hbox to\headwidth{\color{Light_navy_blue}\leaders\hrule height 0.5pt\hfill}\vss
+      \hbox to\headwidth{\color{LightNavyBlue}\leaders\hrule height 0.5pt\hfill}\vss
     }
 
     % === Header with logo + title + citation + blue bar ===
@@ -98,7 +95,7 @@
 	    \begin{minipage}[t]{0.70\textwidth}
 	    \raggedright
             \setlength{\parskip}{0pt} % no extra spacing
-            \fontsize{15}{17}\selectfont\color{Light_navy_blue}\textbf{%  
+            \fontsize{15}{17}\selectfont\color{LightNavyBlue}\textbf{%  
 	    \sloppy 
 	    \VAR{journalName}}
 	    \end{minipage}%
@@ -111,7 +108,7 @@
     };
     
         % --- Blue bar inside text margins ---
-        \fill[Light_navy_blue] 
+        \fill[LightNavyBlue] 
             ($(current page.north west) + (35pt,-90pt)$) 
             rectangle 
             ($(current page.north east) + (-35pt,-105pt)$);
@@ -145,7 +142,7 @@
     % --- Footer Rule Line ---
     \renewcommand{\footrulewidth}{0pt} % disable default
     \renewcommand{\footrule}{%
-      \hbox to\headwidth{\color{Light_navy_blue}\leaders\hrule height 0.5pt\hfill}\vss
+      \hbox to\headwidth{\color{LightNavyBlue}\leaders\hrule height 0.5pt\hfill}\vss
     }
 
     \fancyhead[L]{\fontsize{8}{10}\selectfont\color{Black}\textbf{Citation:} \VAR{citation | latex_escape}}
@@ -172,8 +169,10 @@
 \vspace*{0.2cm} % adjust this value until it clears the purple bar
 
 \begin{flushleft}
-    \articletitle{\VAR{title | latex_escape}}
-    \vspace{0.5cm}
+  \begin{otherlanguage}{\VAR{lang_name}}
+  \articletitle{\VAR{title | latex_escape}}
+  \end{otherlanguage}
+  \vspace{0.5cm}
 \end{flushleft}
 
 \begin{flushleft}
@@ -185,17 +184,23 @@
 \end{flushleft}
 
 % --- Abstract Box ---
-\begin{center}
-\fbox{%
-  \begin{minipage}{0.9\textwidth}
-    \abstractsection{Abstract} % <-- uses same style
-    \vspace{0.2cm}
-    \justifying
-    \fontsize{9}{11}\selectfont
-    \VAR{abstract | latex_escape}
-  \end{minipage}
-}
-\end{center}
+\newmdenv[
+  linecolor=LightNavyBlue,
+  linewidth=0.5pt,
+  innertopmargin=8pt,
+  innerbottommargin=8pt,
+  innerleftmargin=8pt,
+  innerrightmargin=8pt,
+  skipabove=10pt,
+  skipbelow=10pt
+]{abstractbox}
+
+\begin{abstractbox}
+\abstractsection{Abstract}
+\begin{otherlanguage}{\VAR{lang_name}}
+\VAR{abstract | latex_escape}
+\end{otherlanguage}
+\end{abstractbox}
 
 \vspace{0.5cm} % space before main text
 
@@ -204,21 +209,30 @@
 
 \section*{Keywords}
 \vspace{-0.3cm}
+\begin{otherlanguage}{\VAR{lang_name}}
 \noindent \VAR{keywords | latex_escape}
+\end{otherlanguage}
+
 
 \section*{Introduction}
 \vspace{-0.3cm}
+\begin{otherlanguage}{\VAR{lang_name}}
 \VAR{introduction | latex_escape}
+\end{otherlanguage}
 
 
 \section*{Description}
 \vspace{-0.3cm}
+\begin{otherlanguage}{\VAR{lang_name}}
 \VAR{description | latex_escape}
+\end{otherlanguage}
 
 
 \section*{Conclusion}
 \vspace{-0.3cm}
+\begin{otherlanguage}{\VAR{lang_name}}
 \VAR{conclusion | latex_escape}
+\end{otherlanguage}
 
 
 \section*{References}
@@ -236,16 +250,16 @@
 \noindent
 \begin{minipage}{\textwidth} % keep everything together
 % Horizontal line spanning the full text width, aligned properly
-\noindent\color{Light_navy_blue}\rule{\linewidth}{1pt} 
+\noindent\color{LightNavyBlue}\rule{\linewidth}{1pt} 
 
 \begin{justify} % start justification
 \fontsize{8.5}{10.2}\selectfont
 
-\color{Light_navy_blue}\textbf{*Corresponding Author:}  
+\color{LightNavyBlue}\textbf{*Corresponding Author:}  
 \color{Black}\VAR{author}, \VAR{authorsDepartment},
 E-mail: \href{mailto:\VAR{email}}{\VAR{email}} \\
 
-\noindent\color{Light_navy_blue}\textbf{Copyright:} 
+\noindent\color{LightNavyBlue}\textbf{Copyright:} 
 \color{Black}© 2024 \VAR{author} This is an open-access article distributed under the terms of the Creative Commons Attribution License, which permits unrestricted use, distribution and reproduction in any medium, provided the original author and source are credited. \\
 
 \vspace{0.1cm}
@@ -256,7 +270,7 @@ E-mail: \href{mailto:\VAR{email}}{\VAR{email}} \\
 \textbf{Published:} \VAR{published}, 
 DOI: \href{\VAR{parentLink}}{\VAR{doi}}
 
-\noindent\color{Light_navy_blue}\rule{\linewidth}{1pt}
+\noindent\color{LightNavyBlue}\rule{\linewidth}{1pt}
 
 \end{justify}
 \end{minipage}
