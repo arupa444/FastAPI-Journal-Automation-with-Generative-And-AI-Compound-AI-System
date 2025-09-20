@@ -1,9 +1,8 @@
-from ast import Break
 from math import e
 from fastapi import FastAPI, Path, HTTPException, Query, Request, Form
 from fastapi.responses import JSONResponse, HTMLResponse
 from fastapi.templating import Jinja2Templates
-import json
+import json, time, datetime, httpx, copy, re
 from pydantic import BaseModel, Field, field_validator, computed_field, AnyUrl, EmailStr
 from typing import Annotated, Literal, Optional, List, Dict
 import subprocess, uuid, os
@@ -11,10 +10,6 @@ from pathlib import Path as pathOfPathLib
 from jinja2 import Environment, FileSystemLoader
 from google import genai
 from groq import Groq
-
-import httpx
-import copy
-import re
 from fastapi.staticfiles import StaticFiles
 from dotenv import load_dotenv
 
@@ -239,6 +234,19 @@ templates = Jinja2Templates(directory="webTemplates")
 # class PulsusOutputStr(BaseModel):
 #     content:  Annotated[ContentBlock,Field(..., title="This is the content block", description="Enter the stacks in the content blocks....")]
 
+def add_business_days(start_date: datetime.date, days: int) -> datetime.date:
+    current_date = start_date
+    added_days = 0
+    while added_days < days:
+        current_date += datetime.timedelta(days=1)
+        if current_date.weekday() < 5:  # Monday=0, Sunday=6
+            added_days += 1
+    return current_date
+
+
+def format_date(date_obj: datetime.date) -> str:
+    return date_obj.strftime("%d-%b-%Y")
+
 
 class PulsusInputStr(BaseModel):
     id: Annotated[
@@ -257,14 +265,6 @@ class PulsusInputStr(BaseModel):
         str, Field(..., title="Department of the authour", description="Enter the department of the author....")]
     received: Annotated[
         str, Field(..., title="The receiving date", description="Enter the receiving date in DD-Mon format....")]
-    editorAssigned: Annotated[str, Field(..., title="The Editor Assigned date",
-                                         description="Enter the editor assigned date in DD-Mon format....")]
-    reviewed: Annotated[str, Field(..., title="The journal review date",
-                                   description="Enter the journal review date in DD-Mon format....")]
-    revised: Annotated[str, Field(..., title="The journal revised date",
-                                  description="Enter the journal revised date in DD-Mon format....")]
-    published: Annotated[str, Field(..., title="The publishing date of journal",
-                                    description="Enter the publishing date of the journal in DD-Mon format....")]
     manuscriptNo: Annotated[str, Field(..., title="The manuscriptNo of this journal",
                                        description="Enter the manuscriptNo for this journal....")]
     volume: Annotated[
@@ -279,21 +279,20 @@ class PulsusInputStr(BaseModel):
     parentLink: Annotated[AnyUrl, Field(..., title="The url for the centralized link",
                                         description="Enter the link which will led to the centralized page....")]
 
-    @field_validator('received', "editorAssigned", "reviewed", "revised", "published")
-    @classmethod
-    def validateDates(cls, value):
-        months = {'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'}
-        newVal = value.split("-")
-        if len(newVal) != 3:
-            raise ValueError("Enter Correct date formate DD-Mmm-YYYY")
-        newVal[1] = newVal[1].capitalize()
-        if newVal[1] not in months:
-            raise ValueError(
-                "Enter the correct months['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']")
-        if int(newVal[0]) > 31 or int(newVal[0]) < 1:
-            raise ValueError("invalid date, keep that inbetween 1-31")
-        value = '-'.join(newVal)
-        return value
+
+    editorAssigned: Optional[str] = None
+    reviewed: Optional[str] = None
+    revised: Optional[str] = None
+    published: Optional[str] = None
+
+    # Auto-populate extra dates after model init
+    def model_post_init(self, __context):
+        received_date = datetime.datetime.strptime(self.received, "%Y-%m-%d").date()
+        self.editorAssigned = format_date(add_business_days(received_date, 2))
+        self.reviewed = format_date(add_business_days(received_date, 2 + 14))
+        self.revised = format_date(add_business_days(received_date, 2 + 14 + 7))
+        self.published = format_date(add_business_days(received_date, 2 + 14 + 7 + 7))
+        self.received = format_date(received_date)
 
     @field_validator('pdfNo')
     @classmethod
@@ -835,7 +834,7 @@ def viewTheData():
 
 
 @app.get("/journalInputData/{JournalInputID}")
-def fetchOneP(JournalInputID: str = Path(..., description='Enter your journal input index here....', example="J001",
+def fetchOneP(JournalInputID: str = Path(..., description='Enter your journal input index here....', examples="J001",
                                          max_length=4)):
     data = fetchInpData()
     if JournalInputID in data:
@@ -1073,26 +1072,47 @@ async def full_journal_pipeline(journal: PulsusInputStr):
     print("Step 3 : Create universal prompt ✅")
     # Step 4: Ask Gemini
     for i in range(3):
+        gem_response = None
+        for j in range(3):
+            try:
+                gem_response = gemClient.models.generate_content(
+                    model="gemini-2.5-flash", contents=prompt
+                )
+                gem_summary = gem_response.text
+                print(f"The text generation attempt{j}")
+                break
+            except Exception as e:
+                print(f"The text generation attempt{j} failed {str(e)}")
+                gem_summary = f"Gemini API failed: {str(e)}"
+                print("WAITING FOR 3 SECONDS...")
+                time.sleep(3)
+                if j == 2:
+                    raise HTTPException(status_code=500, detail=gem_summary)
+
+        print("step 4 : ask Gemini ✅")
+
+        # Step 5: Clean and parse JSON output from Gemini
+        raw_json = extract_json_from_markdown(gem_summary)
+        print(f"The parsing attempt{i}")
+
         try:
-            gem_response = gemClient.models.generate_content(
-                model="gemini-2.5-flash", contents=prompt
+            parsed = json.loads(raw_json)
+            content_data = parsed["content"]
+            gemClient.models.generate_content(
+                model="gemini-2.5-flash", contents="the previous response was on point respond me in (my pleasure / i am happy)"
             )
-            gem_summary = gem_response.text
             break
         except Exception as e:
-            gem_summary = f"Gemini API failed: {str(e)}"
+            print(f"The parsing attempt{i} failed {str(e)}")
+            prompt = (
+                """Your last response was not valid JSON.
+                IMPORTANT: Respond with valid JSON. No additional text, explanations, or formatting."""
+            )
+            if i == 2:
+                raise HTTPException(status_code=500, detail=f"Failed to parse structured JSON from LLM output: {str(e)}")
+    
 
-    print("Step 4 : ask Gemini ✅")
-
-    # Step 5: Clean and parse JSON output from Gemini
-    raw_json = extract_json_from_markdown(gem_summary)
-
-    try:
-        parsed = json.loads(raw_json)
-        content_data = parsed["content"]
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to parse structured JSON from LLM output: {str(e)}")
-
+    
     for kk in content_data.keys():
         store = []
         for i in content_data[kk]["authors"]:
@@ -1137,29 +1157,47 @@ async def full_journal_pipeline(journal: PulsusInputStr):
     IMPORTANT: Your response must be ONLY a valid JSON object with no additional text, 
         explanations, or markdown formatting. Do not include any text before or after the JSON.
 """
-
     for i in range(3):
+        gem_response = None
+        for j in range(3):
+            try:
+                gem_response = gemClient.models.generate_content(
+                    model="gemini-2.5-flash", contents=prompt
+                )
+                print(f"The text generation attempt{j}")
+                gem_info = gem_response.text
+                break
+            except Exception as e:
+                gem_info = f"Gemini API failed: {str(e)}"
+                print(f"The text generation attempt{j} failed: {str(e)}")
+                print("WAITING FOR 3 SECONDS...")
+                time.sleep(3)
+                if j == 2:
+                    raise HTTPException(status_code=500, detail=f"Gemini API failed: {str(e)}")
+
+        print("step 6 : Conclusion content using Gemini ✅")
+
+        # Step 6.5: Clean and parse JSON output from Gemini or Groq
+        raw_json = extract_json_from_markdown(gem_info)
+        print(f"The parsing attempt{i}")
+
         try:
-            gem_response = gemClient.models.generate_content(
-                model="gemini-2.5-flash", contents=prompt
-            )
-            gem_info = gem_response.text
+            parsed = json.loads(raw_json)
+            gem_info = parsed["content"]
             break
         except Exception as e:
-            gem_info = f"Gemini API failed: {str(e)}"
-
-    print("Step 6 : Conclusion content using Gemini ✅")
-
-    # Step 6.5: Clean and parse JSON output from Gemini or Groq
-    raw_json = extract_json_from_markdown(gem_info)
-
-    try:
-        parsed = json.loads(raw_json)
-        gem_info = parsed["content"]
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to parse structured JSON from LLM output: {str(e)}")
-
-    print("Step 6.5 : Clean and parse JSON output from Gemini or Groq ✅")
+            print(f"The parsing attempt{i} failed {str(e)}")
+            prompt = (
+                "Your last response was not valid JSON. "
+                "Please return ONLY valid JSON, no markdown, no extra text."
+            )
+            if i == 2:
+                raise HTTPException(status_code=500, detail=f"Failed to parse structured JSON from LLM output: {str(e)}")
+            
+    gemClient.models.generate_content(
+        model="gemini-2.5-flash", contents="the previous response was on point respond me in (my pleasure / i am happy)"
+    )
+    print("step 6.5 : Clean and parse JSON output from Gemini or Groq ✅")
 
     # Step 7: Title content using Gemini
     
@@ -1168,18 +1206,34 @@ async def full_journal_pipeline(journal: PulsusInputStr):
     
     IMPORTANT: Respond with ONLY the title. No additional text, explanations, or formatting.
     """
-    
+    gem_response = None
     for i in range(3):
         try:
+            print(f"The text generation attempt{j}")
             gem_response = gemClient.models.generate_content(
                 model="gemini-2.5-flash", contents=prompt
             )
             gem_title = gem_response.text
             break
         except Exception as e:
+            print(f"The text generation attempt{j} failed: {str(e)}")
+            print("WAITING FOR 3 SECONDS...")
+            time.sleep(3)
             gem_title = f"Gemini API failed: {str(e)}"
+            if i == 2:
+                raise HTTPException(status_code=500, detail=f"Gemini API failed: {str(e)}")
 
-    print("Step 7 : Title content using Gemini ✅")
+    print("step 7 : Title content using Gemini ✅")
+    storeTempTitle = gem_title.split(": ")
+    if len(storeTempTitle) != 1:
+        count = 0
+        for i in storeTempTitle:
+            storeTempTitle[count] = i.capitalize()
+            count += 1
+        gem_title = ": ".join(storeTempTitle)
+    else:
+        gem_title = gem_title.capitalize()
+    storeTempTitle = None
 
     # Step 8: Final response
     final_output = {
