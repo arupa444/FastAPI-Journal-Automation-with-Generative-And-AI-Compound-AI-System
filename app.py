@@ -287,11 +287,16 @@ class PulsusInputStr(BaseModel):
 
     # Auto-populate extra dates after model init
     def model_post_init(self, __context):
+        tempDate = []
+        if self.brandName == "alliedAcademy.tex":
+            tempDate = [2,14,7,7]
+        else:
+            tempDate = [2,14,5,7]
         received_date = datetime.datetime.strptime(self.received, "%Y-%m-%d").date()
-        self.editorAssigned = format_date(add_business_days(received_date, 2))
-        self.reviewed = format_date(add_business_days(received_date, 2 + 14))
-        self.revised = format_date(add_business_days(received_date, 2 + 14 + 7))
-        self.published = format_date(add_business_days(received_date, 2 + 14 + 7 + 7))
+        self.editorAssigned = format_date(add_business_days(received_date, tempDate[0]))
+        self.reviewed = format_date(add_business_days(received_date, tempDate[0] + tempDate[1]))
+        self.revised = format_date(add_business_days(received_date, tempDate[0] + tempDate[1] + tempDate[2]))
+        self.published = format_date(add_business_days(received_date, tempDate[0] + tempDate[1] + tempDate[2] + tempDate[3]))
         self.received = format_date(received_date)
 
     @field_validator('pdfNo')
@@ -433,9 +438,9 @@ class PulsusOutputStr(BaseModel):
     preQCNo: Annotated[str, Field(..., title="The preQC number", description="Enter the preQC number....")]
     RManuNo: Annotated[str, Field(..., title="The RManuNo number", description="Enter the RManuNo number....")]
     volume: Annotated[
-        int, Field(..., title="The volume for the issue", description="Enter the Volume of the issue...", gt=0)]
+        str, Field(..., title="The volume for the issue", description="Enter the Volume of the issue...")]
     issues: Annotated[
-        int, Field(..., title="The issue no. of the volume", description="Enter the issue no. of the volume...", gt=0)]
+        str, Field(..., title="The issue no. of the volume", description="Enter the issue no. of the volume...")]
     ISSN: Annotated[Optional[str], Field(default="", title="ISSN Number", description="Enter the ISSN Number....")]
     imgPath: Annotated[Optional[str], Field(default=None, title="image path", description="Enter the img path....")]
     pdfNo: Annotated[int, Field(..., title="Pdf Number", description="Enter the PDF Number....")]
@@ -455,6 +460,14 @@ class PulsusOutputStr(BaseModel):
         for k in keys_to_delete:
             del value[k]
         return value
+    
+    @computed_field
+    @property
+    def copyrightAuthor(self) -> str:
+        copyAuth = self.author.split(' ')
+        copyAuth = copyAuth[::-1]
+        copyAuth[1] = f"{copyAuth[1][0]}."
+        return " ".join(copyAuth)
 
 
 
@@ -465,7 +478,7 @@ class PulsusOutputStr(BaseModel):
             justToCite = self.author.split(' ')
             justToCite.insert(0, justToCite[-1])
             justToCite = justToCite[0:-1]
-            justToCite[0] = f"{justToCite[0]},"
+            justToCite[0] = f"{justToCite[0]}"
             justToCite[1] = " " + justToCite[1]
             justToCite = "".join(justToCite)
             return f"""{justToCite}. "{self.title}." {self.shortJournalName} {self.volume} ({self.published.split("-")[-1]}):{self.pdfNo}."""
@@ -1133,8 +1146,8 @@ async def full_journal_pipeline(journal: PulsusInputStr):
     This is the given data : "{content_data}"
     i want to you to process this data and give me some output:
     1: Give me a brief summary from the given data where the word count lies in between 200 - 400.
-    2: Give me a brief introduction from the given data where it will contain the citation markers as well, and note, you have to take in this way: the "C001" will be 1, "C002": 2...... and each section should have different but sequencial citation markers (for ex: "C001" will be [1], "C002": [2] and so on). and give two linebreak '\n' after the citation marker and also make sure the citation marker must stays before the full stop '.' and covered with square brackets'[]'(for ex: [1], [2]....., [10]), and the full introduction word count lies in between 600 - 800.
-    3: Give me a brief description from the given data and note, the full description contain more then 4 paragraphs with word count lies in between 600 - 800.
+    2: Give me a brief introduction from the given data where it will contain the citation markers as well, and note, you have to take in this way: the "C001" will be 1, "C002": 2...... and each section should have different but sequential citation markers (for ex: "C001" will be [1], "C002": [2] and so on). and give two linebreak '\n' after the citation marker and also make sure the citation marker must stays before the full stop '.' and covered with square brackets'[]'(for ex: [1], [2]....., [10]), and the full introduction word count lies in between 600 - 800.
+    3: Give me a brief description from the given data and note, the full description contain more then 4 paragraphs with word count lies in between 600 - 800 NOTE: Add citation markers(Inside square brackets).
     4: Give me a abstract from the given data, and the full abstract word count lies in between 90 - 100.
 
     The final structure should look like:
@@ -1153,7 +1166,7 @@ async def full_journal_pipeline(journal: PulsusInputStr):
         Avoid robotic phrases like 'in today's fast-paced world', 'leveraging synergies', 'furthermore'.....
         Skip unnecessary dashes (-), quotation marks (''), and corporate buzzwords like 'cutting-edge', 'robust', or 'seamless experience. No Al tone. No fluff. No filler.
         Use natural transitions like 'here's the thing', ‘let's break it down; or ‘what this really means is’ Keep sentences varied in length and rhythm, like how real people speak or write. Prioritize clarity, personality, and usefulness.
-        Every sentence should feel intentional, not generated
+        Every sentence should feel intentional, not generated. And Short names/abbreviations should be in Title case (e.g., Artificial Intelligence (AI))
     IMPORTANT: Your response must be ONLY a valid JSON object with no additional text, 
         explanations, or markdown formatting. Do not include any text before or after the JSON.
 """
@@ -1264,7 +1277,7 @@ async def full_journal_pipeline(journal: PulsusInputStr):
             "QCNo": f"Q-{journal.manuscriptNo.split('-')[-1]}" if journal.brandName == "hilaris.tex" else journal.manuscriptNo,
             "preQCNo": f"P-{journal.manuscriptNo.split('-')[-1]}" if journal.brandName == "hilaris.tex" else journal.manuscriptNo,
             "RManuNo": f"R-{journal.manuscriptNo.split('-')[-1]}" if journal.brandName == "hilaris.tex" else journal.manuscriptNo,
-            "volume": journal.volume,
+            "volume": f"0{journal.volume}" if len(str(journal.volume))==1 else str(journal.volume),
             "issues": journal.issues,
             "pdfNo": journal.pdfNo,
             "ISSN": journal.ISSN,
@@ -1298,7 +1311,7 @@ async def full_journal_pipeline(journal: PulsusInputStr):
         loader=FileSystemLoader(pathOfPathLib("./templates/"))
     )
     try:
-        html_template = env_html.get_template("Format1.html")
+        html_template = env_html.get_template("Format.html")
         forHtml = copy.deepcopy(output_data[journal.id])
 
         # Logic for processing references for HTML
@@ -1516,6 +1529,8 @@ async def pdfs_translate(translatePage : TranslatePage):
         for i in range(1, len(forHtml["content"]) + 1):
             forHtml["introduction"] = forHtml["introduction"].replace(f"[{i}].",
                                                                       f"[<a href='#{i}' title='{i}'>{i}</a>].</p><p>")
+            forHtml["description"] = forHtml["description"].replace(f"[{i}].",
+                                                                      f"[<a href='#{i}' title='{i}'>{i}</a>].")
 
         forHtml["description"] = forHtml["description"].replace("\n\n", "</p><p>")
         forHtml["description"] = forHtml["description"].replace("\n", "</p><p>")
@@ -1555,16 +1570,16 @@ async def pdfs_translate(translatePage : TranslatePage):
             i["issues"] = f"({i['issues']})" if i.get("issues") else ""
 
             if journal_id['brandName'] == "alliedAcademy.tex":
-                temp = f"""<li><a name="{count}" id="{count}"></a>{i["authors"]}. <a href="{i["parentLink"]}" target="_blank">{i["title"]}</a>. {i["journalShortName"]}. {i["published"]};{i["volume"]}{i["issues"]}:{i["pageRangeOrNumber"]}.</li>
+                temp = f"""<li><i><a name="{count}" id="{count}"></a>{i["authors"]}. <a href="{i["parentLink"]}" target="_blank">{i["title"]}</a>. {i["journalShortName"]}. {i["published"]};{i["volume"]}{i["issues"]}:{i["pageRangeOrNumber"]}.</i></li>
                 <p align="right"><a href="{i["url"]}" target="_blank"><u>Indexed at</u></a>, <a href="https://scholar.google.com/scholar?hl=en&as_sdt=0%2C5&q={'+'.join(i["title"].split(' '))}&btnG=" target="_blank"><u>Google Scholar</u></a>, <a href="https://doi.org/{i["DOI"]}" target="_blank"><u>Crossref</u></a></p>"""
             elif journal_id['brandName'] == "omics.tex":
-                temp = f"""<li><a name="{count}" id="{count}"></a>{i["authors"]} ({i["published"]}) <a href="{i["parentLink"]}" target="_blank">{i["title"]}</a>.{i["journalShortName"]} {i["volume"]}:{i["pageRangeOrNumber"]}.</li>
+                temp = f"""<li><i><a name="{count}" id="{count}"></a>{i["authors"]} ({i["published"]}) <a href="{i["parentLink"]}" target="_blank">{i["title"]}</a>.{i["journalShortName"]} {i["volume"]}:{i["pageRangeOrNumber"]}.</i></li>
                 <p align="right"><a href="{i["url"]}" target="_blank"><u>Indexed at</u></a>, <a href="https://scholar.google.com/scholar?hl=en&as_sdt=0%2C5&q={'+'.join(i["title"].split(' '))}&btnG=" target="_blank"><u>Google Scholar</u></a>, <a href="https://doi.org/{i["DOI"]}" target="_blank"><u>Crossref</u></a></p>"""
             elif journal_id['brandName'] == "hilaris.tex":
-                temp = f"""<li><a name="{count}" id="{count}"></a>{i["authors"]}. <a href="{i["parentLink"]}" target="_blank">"{i["title"]}"</a>.<i>{i["journalShortName"]}</i> {i["volume"]} ({i["published"]}):{i["pageRangeOrNumber"]}.</li>
+                temp = f"""<li><i><a name="{count}" id="{count}"></a>{i["authors"]}. <a href="{i["parentLink"]}" target="_blank">"{i["title"]}"</a>.<i>{i["journalShortName"]}</i> {i["volume"]} ({i["published"]}):{i["pageRangeOrNumber"]}.</i></li>
                 <p align="right"><a href="{i["url"]}" target="_blank"><u>Indexed at</u></a>, <a href="https://scholar.google.com/scholar?hl=en&as_sdt=0%2C5&q={'+'.join(i["title"].split(' '))}&btnG=" target="_blank"><u>Google Scholar</u></a>, <a href="https://doi.org/{i["DOI"]}" target="_blank"><u>Crossref</u></a></p>"""
             else:
-                temp = f"""<li><a name="{count}" id="{count}"></a>{i["authors"]}. <a href="{i["parentLink"]}" target="_blank">{i["title"]}</a>. {i["journalShortName"]}. {i["published"]};{i["volume"]}{i["issues"]}:{i["pageRangeOrNumber"]}.</li>
+                temp = f"""<li><i><a name="{count}" id="{count}"></a>{i["authors"]}. <a href="{i["parentLink"]}" target="_blank">{i["title"]}</a>. {i["journalShortName"]}. {i["published"]};{i["volume"]}{i["issues"]}:{i["pageRangeOrNumber"]}.</i></li>
                 <p align="right"><a href="{i["url"]}" target="_blank"><u>Indexed at</u></a>, <a href="https://scholar.google.com/scholar?hl=en&as_sdt=0%2C5&q={'+'.join(i["title"].split(' '))}&btnG=" target="_blank"><u>Google Scholar</u></a>, <a href="https://doi.org/{i["DOI"]}" target="_blank"><u>Crossref</u></a></p>"""
 
             forHtml["storeRefPart"] = f"""{forHtml['storeRefPart']}\n{temp}"""
