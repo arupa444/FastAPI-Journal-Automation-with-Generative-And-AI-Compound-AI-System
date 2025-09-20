@@ -67,7 +67,7 @@
         \fontsize{10}{12}\selectfont\color{Black}Volume 0\VAR{volume}:0\VAR{issues}, \VAR{year}
     }
     \fancyhead[R]{%
-        \fontsize{15}{16.8}\selectfont\color{DarkViolet}\textbf{\VAR{journalName}}
+        \fontsize{15}{16.8}\selectfont\color{DarkViolet}\textbf{\VAR{journalName | latex_escape}}
     }
 
     % === Second row: Purple bar with ISSN & Open Access ===
@@ -145,7 +145,7 @@
     \vspace{0cm}
     \fontsize{9}{10.8}\selectfont\color{Black}\VAR{authorsDepartment | latex_escape}\par
     % Measure the width of the department text
-    \settowidth{\dimen0}{\fontsize{9}{10.8}\selectfont\color{Black}\VAR{authorsDepartment}}%
+    \settowidth{\dimen0}{\fontsize{9}{10.8}\selectfont\color{Black}\VAR{authorsDepartment | latex_escape}}%
     % Draw a rule with that width
     \vspace{-0.3cm}\color{DarkViolet}\rule{\dimen0}{1pt}
 \end{flushleft}
@@ -213,7 +213,7 @@ None.
 \begin{justify}
 \fontsize{8.5}{10.2}\selectfont
 \color{DarkViolet}\textbf{*Address for Correspondence:} 
-\color{Black}\VAR{author}, \VAR{authorsDepartment},
+\color{Black}\VAR{author}, \VAR{authorsDepartment | latex_escape},
 E-mail: \href{mailto:\VAR{email}}{\VAR{email}} \\
 
 \noindent\color{DarkViolet}\textbf{Copyright:} 

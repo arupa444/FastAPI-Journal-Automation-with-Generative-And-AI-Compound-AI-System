@@ -1224,21 +1224,22 @@ async def full_journal_pipeline(journal: PulsusInputStr):
                 raise HTTPException(status_code=500, detail=f"Gemini API failed: {str(e)}")
 
     print("step 7 : Title content using Gemini ✅")
-    storeTempTitle = gem_title.split(": ")
-    if len(storeTempTitle) != 1:
-        count = 0
-        for i in storeTempTitle:
-            storeTempTitle[count] = i.capitalize()
-            count += 1
-        gem_title = ": ".join(storeTempTitle)
-    else:
-        gem_title = gem_title.capitalize()
-    storeTempTitle = None
+    if journal.brandName == "alliedAcademy.tex":
+        storeTempTitle = gem_title.split(": ")
+        if len(storeTempTitle) != 1:
+            count = 0
+            for i in storeTempTitle:
+                storeTempTitle[count] = i.capitalize()
+                count += 1
+            gem_title = ": ".join(storeTempTitle)
+        else:
+            gem_title = gem_title.capitalize()
+        storeTempTitle = None
 
     # Step 8: Final response
     final_output = {
         journal.id: {
-            "title": gem_title,
+            "title": gem_title[:-1],
             "journalName": journal.journalName,
             "shortJournalName": journal.shortJournalName,
             "type": journal.type,

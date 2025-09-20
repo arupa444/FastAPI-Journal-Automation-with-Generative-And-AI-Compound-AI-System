@@ -104,7 +104,7 @@
       % Right side citation info
       \node[anchor=east] at 
           ($(current page.north east) + (-35pt,-30pt)$) {%
-          \fontsize{8}{10}\selectfont\color{Black}{\VAR{author}, \VAR{journalName}, \VAR{volume}:\VAR{issues}}%
+          \fontsize{8}{10}\selectfont\color{Black}{\VAR{author | latex_escape}, \VAR{journalName | latex_escape}, \VAR{volume}:\VAR{issues}}%
     };
     
         % --- Blue bar inside text margins ---
@@ -124,7 +124,7 @@
 }
 
     % Left footer
-    \fancyfoot[L]{\fontsize{8}{10}\selectfont\color{Black}\VAR{journalName}}
+    \fancyfoot[L]{\fontsize{8}{10}\selectfont\color{Black}\VAR{journalName | latex_escape}}
 
     % Right footer: volume info BELOW the rule line
     \fancyfoot[R]{\fontsize{8.5}{10}\selectfont\color{Black}%
@@ -150,7 +150,7 @@
       Page~\thepage~of~\getpagerefnumber{TotPages}}
 
     % Left footer
-    \fancyfoot[L]{\fontsize{8}{10}\selectfont\color{Black}\VAR{journalName}}
+    \fancyfoot[L]{\fontsize{8}{10}\selectfont\color{Black}\VAR{journalName | latex_escape}}
 
     % Right footer: volume info BELOW the rule line
     \fancyfoot[R]{\fontsize{8.5}{10}\selectfont\color{Black}%
