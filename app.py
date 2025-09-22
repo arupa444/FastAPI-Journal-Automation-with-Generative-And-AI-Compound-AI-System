@@ -234,14 +234,21 @@ templates = Jinja2Templates(directory="webTemplates")
 # class PulsusOutputStr(BaseModel):
 #     content:  Annotated[ContentBlock,Field(..., title="This is the content block", description="Enter the stacks in the content blocks....")]
 
-def add_business_days(start_date: datetime.date, days: int) -> datetime.date:
+def add_business_days(start_date: datetime.date, days: int, brand: str) -> datetime.date:
     current_date = start_date
     added_days = 0
-    while added_days < days:
-        current_date += datetime.timedelta(days=1)
-        if current_date.weekday() < 5:  # Monday=0, Sunday=6
-            added_days += 1
-    return current_date
+    if brand == 'hilaris.tex':
+        while added_days < days:
+            current_date += datetime.timedelta(days=1)
+        while current_date.weekday() > 4: # Monday=0, Sunday=6
+            current_date += datetime.timedelta(days=1)
+        return current_date
+    else:
+        while added_days < days:
+            current_date += datetime.timedelta(days=1)
+            if current_date.weekday() < 5:  # Monday=0, Sunday=6
+                added_days += 1
+        return current_date
 
 
 def format_date(date_obj: datetime.date) -> str:
@@ -293,10 +300,10 @@ class PulsusInputStr(BaseModel):
         else:
             tempDate = [2,14,5,7]
         received_date = datetime.datetime.strptime(self.received, "%Y-%m-%d").date()
-        self.editorAssigned = format_date(add_business_days(received_date, tempDate[0]))
-        self.reviewed = format_date(add_business_days(received_date, tempDate[0] + tempDate[1]))
-        self.revised = format_date(add_business_days(received_date, tempDate[0] + tempDate[1] + tempDate[2]))
-        self.published = format_date(add_business_days(received_date, tempDate[0] + tempDate[1] + tempDate[2] + tempDate[3]))
+        self.editorAssigned = format_date(add_business_days(received_date, tempDate[0]), self.brandName)
+        self.reviewed = format_date(add_business_days(received_date, tempDate[0] + tempDate[1], self.brandName))
+        self.revised = format_date(add_business_days(received_date, tempDate[0] + tempDate[1] + tempDate[2], self.brandName))
+        self.published = format_date(add_business_days(received_date, tempDate[0] + tempDate[1] + tempDate[2] + tempDate[3], self.brandName))
         self.received = format_date(received_date)
 
     @field_validator('pdfNo')
@@ -1278,7 +1285,7 @@ async def full_journal_pipeline(journal: PulsusInputStr):
             "preQCNo": f"P-{journal.manuscriptNo.split('-')[-1]}" if journal.brandName == "hilaris.tex" else journal.manuscriptNo,
             "RManuNo": f"R-{journal.manuscriptNo.split('-')[-1]}" if journal.brandName == "hilaris.tex" else journal.manuscriptNo,
             "volume": f"0{journal.volume}" if len(str(journal.volume))==1 else str(journal.volume),
-            "issues": journal.issues,
+            "issues": f"0{journal.issues}" if len(str(journal.issues))==1 else str(journal.issues),
             "pdfNo": journal.pdfNo,
             "ISSN": journal.ISSN,
             "imgPath": journal.imgPath,
