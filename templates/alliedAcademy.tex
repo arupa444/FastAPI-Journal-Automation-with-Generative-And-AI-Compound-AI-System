@@ -61,7 +61,7 @@
         % Top rule
         \rule{\textwidth}{0.4pt}
         % Correspondence + received/published info
-        {\footnotesize\textbf{*Correspondence to:} \VAR{author | latex_escape}, \VAR{authorsDepartment | latex_escape}.
+        {\footnotesize\textbf{*Correspondence to:} \VAR{author | format_reference | safe}, \VAR{authorsDepartment | format_reference | safe}.
         E-mail: \href{mailto:\VAR{email}}{\VAR{email}}}\\[0.3em]
         {\footnotesize \textbf{Received:} \VAR{received}, Manuscript No. \VAR{manuscriptNo}; 
         \textbf{Editor assigned:} \VAR{editorAssigned}, Pre QC No. \VAR{preQCNo} \textit{(PQ)}; 
@@ -73,7 +73,7 @@
         \vspace{-0.35cm}
         \rule{\textwidth}{0.4pt}
         \begin{flushleft}
-        \textit{Citation: \VAR{citation | latex_escape}}
+        \textit{Citation: \VAR{citation | format_reference | safe}}
         \end{flushleft}
         % Bottom line: page left, journal right
         \noindent\makebox[\textwidth]{%
@@ -92,7 +92,7 @@
         % Citation centered
         \vspace*{4em}
         \begin{flushleft}
-        \textit{\textbf{Citation:} \VAR{citation | latex_escape}}
+        \textit{\textbf{Citation:} \VAR{citation | format_reference | safe}}
         \end{flushleft}
 
         % Bottom line: page left, journal right
@@ -109,14 +109,14 @@
 
 % ARTICLE TITLE (20pt)
 \begin{flushleft}
-    \articletitle{\VAR{title | latex_escape}.}
+    \articletitle{\VAR{title | format_reference | safe}.}
     \vspace{0.1cm}
 \end{flushleft}
 % AUTHOR NAME & INFO
 \begin{flushleft}
-    \fontsize{12}{15}\selectfont\color{Black}\textbf{\VAR{author | latex_escape}*}\par
+    \fontsize{12}{15}\selectfont\color{Black}\textbf{\VAR{author | format_reference | safe}*}\par
     \vspace{0.1cm}
-    \fontsize{11}{12}\selectfont\color{Black}\VAR{authorsDepartment | latex_escape}\par
+    \fontsize{11}{12}\selectfont\color{Black}\VAR{authorsDepartment | format_reference | safe}\par
 \end{flushleft}
 
 
@@ -139,7 +139,7 @@
 \fontsize{8}{9.6}\selectfont
 \begin{enumerate}
     \BLOCK{ for key, item in content.items() }
-        \item \href{\VAR{item.url}}{ \VAR{item.references | latex_escape}}
+        \item \href{\VAR{item.url}}{ \VAR{item.references | format_reference | safe}}
     \BLOCK{ endfor }
 \end{enumerate}
 

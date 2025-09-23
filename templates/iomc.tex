@@ -61,10 +61,10 @@
     
     % Main header row
     \fancyhead[L]{%
-        \selectfont\color{Black}\textbf{\VAR{journalName | latex_escape}: Open Access \VAR{year}, \VAR{volume}, \VAR{issues}, \VAR{pdfNo}.}
+        \selectfont\color{Black}\textbf{\VAR{journalName | format_reference | safe}: Open Access \VAR{year}, \VAR{volume}, \VAR{issues}, \VAR{pdfNo}.}
     }
     \fancyhead[R]{%
-        \selectfont\color{Black}\textbf{\VAR{type | latex_escape}}
+        \selectfont\color{Black}\textbf{\VAR{type | format_reference | safe}}
     }
     
     % Footer
@@ -72,7 +72,7 @@
         \begin{tcolorbox}[colback=white, colframe=black, arc=2pt, boxrule=1pt, left=2pt, right=2pt, top=2pt, bottom=2pt]
     
         \centering % centers all content inside the box
-        \textbf{Cite this article: }\VAR{citation | latex_escape}
+        \textbf{Cite this article: }\VAR{citation | format_reference | safe}
         \end{tcolorbox}
         \begin{flushright}
             \textbf{\thepage}
@@ -91,7 +91,7 @@
         \begin{tcolorbox}[colback=white, colframe=black, arc=2pt, boxrule=1pt, left=2pt, right=2pt, top=2pt, bottom=2pt]
     
         \centering % centers all content inside the box
-        \textbf{Cite this article: }\VAR{citation | latex_escape}
+        \textbf{Cite this article: }\VAR{citation | format_reference | safe}
         \end{tcolorbox}
     }
     \fancyfoot[R]{
@@ -114,12 +114,12 @@
     
     \centering % centers all content inside the box
     
-    \articletitle{\VAR{title | latex_escape}}
+    \articletitle{\VAR{title | format_reference | safe}}
     
     \vspace{0.2cm}
-    \fontsize{11}{13.2}\selectfont\color{Black}\textbf{\VAR{author | latex_escape}}\par
+    \fontsize{11}{13.2}\selectfont\color{Black}\textbf{\VAR{author | format_reference | safe}}\par
     \vspace{0cm}
-    \fontsize{9}{10.8}\selectfont\color{Black}\VAR{authorsDepartment | latex_escape}\par
+    \fontsize{9}{10.8}\selectfont\color{Black}\VAR{authorsDepartment | format_reference | safe}\par
 \end{tcolorbox}
 
 
@@ -129,8 +129,8 @@
 \begin{flushleft}
 \color{DarkGreen}\textbf{\underline{\textit{Corresponding Authors*}}} \\
 \vspace{0.3cm}
-\color{Black}\VAR{author | latex_escape}\\
-\color{Black}\VAR{authorsDepartment | latex_escape}\\
+\color{Black}\VAR{author | format_reference | safe}\\
+\color{Black}\VAR{authorsDepartment | format_reference | safe}\\
 E-mail: \href{mailto:\VAR{email}}{\VAR{email}}\\
 \vspace{0.1cm}
 \rule{\linewidth}{1pt}
@@ -141,9 +141,9 @@ use, distribution, and reproduction in any medium, provided the original author
 and source are credited.
 \vspace{0.1cm}
 \rule{\linewidth}{1pt}
-\color{Black}\textbf{Received:} \VAR{received | latex_escape};
-\textbf{Accepted:} \VAR{published | latex_escape}; 
-\textbf{Published:} \VAR{published | latex_escape}
+\color{Black}\textbf{Received:} \VAR{received | format_reference | safe};
+\textbf{Accepted:} \VAR{published | format_reference | safe}; 
+\textbf{Published:} \VAR{published | format_reference | safe}
 \rule{\linewidth}{1pt}
 \end{flushleft}
 
@@ -152,21 +152,21 @@ and source are credited.
 \section*{Introduction}
 \vspace{-0.5cm}
 \begin{otherlanguage}{\VAR{lang_name}}
-\VAR{introduction | latex_escape}
+\VAR{introduction | format_reference | safe}
 \end{otherlanguage}
 
 
 \section*{Description}
 \vspace{-0.5cm}
 \begin{otherlanguage}{\VAR{lang_name}}
-\VAR{description | latex_escape}
+\VAR{description | format_reference | safe}
 \end{otherlanguage}
 
 
 \section*{Conclusion}
 \vspace{-0.5cm}
 \begin{otherlanguage}{\VAR{lang_name}}
-\VAR{conclusion | latex_escape}
+\VAR{conclusion | format_reference | safe}
 \end{otherlanguage}
 
 
@@ -174,7 +174,7 @@ and source are credited.
 \fontsize{8}{9.6}\selectfont
 \begin{enumerate}
     \BLOCK{ for key, item in content.items() }
-        \item \href{\VAR{item.url}}{ \VAR{item.references | latex_escape}}
+        \item \href{\VAR{item.url}}{ \VAR{item.references | format_reference | safe}}
     \BLOCK{ endfor }
 \end{enumerate}
 
