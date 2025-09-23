@@ -1714,6 +1714,7 @@ async def pdfs_translate(translatePage : TranslatePage):
     }
         pattern = re.compile('|'.join(re.escape(k) for k in replacements.keys()))
         return pattern.sub(lambda m: replacements[m.group()], text)
+    
     def format_reference(ref: str) -> str:
             if not isinstance(ref, str):
                 return ref
