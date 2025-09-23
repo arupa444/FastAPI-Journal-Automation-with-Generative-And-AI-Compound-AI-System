@@ -104,7 +104,7 @@
       % Right side citation info
       \node[anchor=east] at 
           ($(current page.north east) + (-35pt,-30pt)$) {%
-          \fontsize{8}{10}\selectfont\color{Black}{\VAR{author | latex_escape}, \VAR{journalName | latex_escape}, \VAR{volume}:\VAR{issues}}%
+          \fontsize{8}{10}\selectfont\color{Black}{\VAR{author | format_reference | safe}, \VAR{journalName | format_reference | safe}, \VAR{volume}:\VAR{issues}}%
     };
     
         % --- Blue bar inside text margins ---
@@ -124,7 +124,7 @@
 }
 
     % Left footer
-    \fancyfoot[L]{\fontsize{8}{10}\selectfont\color{Black}\VAR{journalName | latex_escape}}
+    \fancyfoot[L]{\fontsize{8}{10}\selectfont\color{Black}\VAR{journalName | format_reference | safe}}
 
     % Right footer: volume info BELOW the rule line
     \fancyfoot[R]{\fontsize{8.5}{10}\selectfont\color{Black}%
@@ -145,12 +145,12 @@
       \hbox to\headwidth{\color{LightNavyBlue}\leaders\hrule height 0.5pt\hfill}\vss
     }
 
-    \fancyhead[L]{\fontsize{8}{10}\selectfont\color{Black}\textbf{Citation:} \VAR{citation | latex_escape}}
+    \fancyhead[L]{\fontsize{8}{10}\selectfont\color{Black}\textbf{Citation:} \VAR{citation | format_reference | safe}}
     \fancyhead[R]{\fontsize{8.5}{10}\selectfont\color{Black}%
       Page~\thepage~of~\getpagerefnumber{TotPages}}
 
     % Left footer
-    \fancyfoot[L]{\fontsize{8}{10}\selectfont\color{Black}\VAR{journalName | latex_escape}}
+    \fancyfoot[L]{\fontsize{8}{10}\selectfont\color{Black}\VAR{journalName | format_reference | safe}}
 
     % Right footer: volume info BELOW the rule line
     \fancyfoot[R]{\fontsize{8.5}{10}\selectfont\color{Black}%
@@ -170,16 +170,16 @@
 
 \begin{flushleft}
   \begin{otherlanguage}{\VAR{lang_name}}
-  \articletitle{\VAR{title | latex_escape}}
+  \articletitle{\VAR{title | format_reference | safe}}
   \end{otherlanguage}
   \vspace{0.5cm}
 \end{flushleft}
 
 \begin{flushleft}
 \vspace*{-0.5cm}
-    \fontsize{10}{13.2}\selectfont\color{Black}\textbf{\VAR{author | latex_escape}}\par
+    \fontsize{10}{13.2}\selectfont\color{Black}\textbf{\VAR{author | format_reference | safe}}\par
     \vspace{0cm}
-    \fontsize{8}{10.8}\selectfont\color{Black}\VAR{authorsDepartment | latex_escape}\par
+    \fontsize{8}{10.8}\selectfont\color{Black}\VAR{authorsDepartment | format_reference | safe}\par
     \vspace{0.1cm}
 \end{flushleft}
 
@@ -198,7 +198,7 @@
 \begin{abstractbox}
 \abstractsection{Abstract}
 \begin{otherlanguage}{\VAR{lang_name}}
-\VAR{abstract | latex_escape}
+\VAR{abstract | format_reference | safe}
 \end{otherlanguage}
 \end{abstractbox}
 
@@ -210,35 +210,35 @@
 \section*{Keywords}
 \vspace{-0.3cm}
 \begin{otherlanguage}{\VAR{lang_name}}
-\noindent \VAR{keywords | latex_escape}
+\noindent \VAR{keywords | format_reference | safe}
 \end{otherlanguage}
 
 
 \section*{Introduction}
 \vspace{-0.3cm}
 \begin{otherlanguage}{\VAR{lang_name}}
-\VAR{introduction | latex_escape}
+\VAR{introduction | format_reference | safe}
 \end{otherlanguage}
 
 
 \section*{Description}
 \vspace{-0.3cm}
 \begin{otherlanguage}{\VAR{lang_name}}
-\VAR{description | latex_escape}
+\VAR{description | format_reference | safe}
 \end{otherlanguage}
 
 
 \section*{Conclusion}
 \vspace{-0.3cm}
 \begin{otherlanguage}{\VAR{lang_name}}
-\VAR{conclusion | latex_escape}
+\VAR{conclusion | format_reference | safe}
 \end{otherlanguage}
 
 
 \section*{References}
 \begin{enumerate}
     \BLOCK{ for key, item in content.items() }
-        \item \href{\VAR{item.url}}{ \VAR{item.references | latex_escape}}
+        \item \href{\VAR{item.url}}{ \VAR{item.references | format_reference | safe}}
     \BLOCK{ endfor }
 \end{enumerate}
 
