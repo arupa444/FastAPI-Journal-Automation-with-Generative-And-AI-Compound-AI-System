@@ -280,17 +280,21 @@ templates = Jinja2Templates(directory="webTemplates")
 
 def add_business_days(start_date: datetime.date, days: int, brand: str) -> datetime.date:
     current_date = start_date
-    added_days = 0
+
     if brand == 'hilaris.tex':
-        while added_days < days:
-            current_date += datetime.timedelta(days=1)
-        while current_date.weekday() > 4: # Monday=0, Sunday=6
+        # Just add calendar days
+        current_date += datetime.timedelta(days=days)
+        # If it lands on Saturday/Sunday, move to Monday
+        while current_date.weekday() > 4:
             current_date += datetime.timedelta(days=1)
         return current_date
+
     else:
+        # Count only weekdays
+        added_days = 0
         while added_days < days:
             current_date += datetime.timedelta(days=1)
-            if current_date.weekday() < 5:  # Monday=0, Sunday=6
+            if current_date.weekday() < 5:  # Mon-Fri
                 added_days += 1
         return current_date
 
@@ -344,10 +348,10 @@ class PulsusInputStr(BaseModel):
         else:
             tempDate = [2,14,5,7]
         received_date = datetime.datetime.strptime(self.received, "%Y-%m-%d").date()
-        self.editorAssigned = format_date(add_business_days(received_date, tempDate[0]))
-        self.reviewed = format_date(add_business_days(received_date, tempDate[0] + tempDate[1]))
-        self.revised = format_date(add_business_days(received_date, tempDate[0] + tempDate[1] + tempDate[2]))
-        self.published = format_date(add_business_days(received_date, tempDate[0] + tempDate[1] + tempDate[2] + tempDate[3]))
+        self.editorAssigned = format_date(add_business_days(received_date, tempDate[0], self.brandName))
+        self.reviewed = format_date(add_business_days(received_date, tempDate[0] + tempDate[1], self.brandName))
+        self.revised = format_date(add_business_days(received_date, tempDate[0] + tempDate[1] + tempDate[2], self.brandName))
+        self.published = format_date(add_business_days(received_date, tempDate[0] + tempDate[1] + tempDate[2] + tempDate[3], self.brandName))
         self.received = format_date(received_date)
 
     @field_validator('pdfNo')
@@ -1329,7 +1333,7 @@ async def full_journal_pipeline(journal: PulsusInputStr):
             "preQCNo": f"P-{journal.manuscriptNo.split('-')[-1]}" if journal.brandName == "hilaris.tex" else journal.manuscriptNo,
             "RManuNo": f"R-{journal.manuscriptNo.split('-')[-1]}" if journal.brandName == "hilaris.tex" else journal.manuscriptNo,
             "volume": f"0{journal.volume}" if len(str(journal.volume))==1 else str(journal.volume),
-            "issues": str(journal.issues),
+            "issues": f"0{journal.issues}" if len(str(journal.issues))==1 else str(journal.issues),
             "pdfNo": journal.pdfNo,
             "ISSN": journal.ISSN,
             "imgPath": journal.imgPath,
@@ -1440,7 +1444,7 @@ async def full_journal_pipeline(journal: PulsusInputStr):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to generate HTML file: {str(e)}")
 
-    print("Step 9 : Create HTML file ✅")
+    print("Step 9 : Created HTML file ✅")
 
     # --- 10: Create PDF file ---
     env_latex = Environment(
@@ -1475,7 +1479,23 @@ async def full_journal_pipeline(journal: PulsusInputStr):
         pattern = re.compile('|'.join(re.escape(k) for k in replacements.keys()))
         return pattern.sub(lambda m: replacements[m.group()], text)
     
-    env_latex.filters['latex_escape'] = latex_escape
+    def format_reference(ref: str) -> str:
+        if not isinstance(ref, str):
+            return ref
+        
+        # First escape LaTeX
+        ref = latex_escape(ref)
+
+        # Regex: Find journal short name (before year/volume/semicolon/parenthesis)
+        # Example match: " J. Biomol. Struct. Dyn"
+        pattern = r"(\s)([A-Z][A-Za-z\.\s]+)(?=\s\d|\s\(|;)"
+        
+        def repl(match):
+            return f" \\textit{{{match.group(2).strip()}}}"
+
+        return re.sub(pattern, repl, ref, count=1)
+    
+    env_latex.filters['format_reference'] = format_reference
     template = env_latex.get_template(journal.brandName)
     
     brand_key = journal.brandName.replace(".tex", "")
@@ -1527,6 +1547,11 @@ async def full_journal_pipeline(journal: PulsusInputStr):
         status_code=200,
         content={"Status": f"Data added and files generated successfully in PDFStorePulsus/{journal.id}/ ✅."}
     )
+    
+
+#-----------------------------------------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------------------------------------
+
 
 @app.post("/pdfs/translate")
 async def pdfs_translate(translatePage : TranslatePage):
