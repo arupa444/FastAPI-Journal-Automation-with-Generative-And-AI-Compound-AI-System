@@ -67,7 +67,7 @@
         \fontsize{10}{12}\selectfont\color{Black}Volume \VAR{volume}:\VAR{issues}, \VAR{year}
     }
     \fancyhead[R]{%
-        \fontsize{15}{16.8}\selectfont\color{DarkViolet}\textbf{\VAR{journalName | latex_escape}}
+        \fontsize{15}{16.8}\selectfont\color{DarkViolet}\textbf{\VAR{journalName | format_reference | safe}}
     }
 
     % === Second row: Purple bar with ISSN & Open Access ===
@@ -104,7 +104,7 @@
 \fancypagestyle{subsequent}{
     \fancyhf{}
     % Header
-    \fancyhead[L]{\fontsize{8.5}{10}\selectfont\color{Black}\VAR{copyrightAuthor | latex_escape}}
+    \fancyhead[L]{\fontsize{8.5}{10}\selectfont\color{Black}\VAR{copyrightAuthor | format_reference | safe}}
     \fancyhead[R]{\fontsize{8.5}{10}\selectfont\color{Black}\VAR{journalYearVolumeIssue}}
     % \renewcommand{\headrule}{%
     %   \vbox to 0pt{\hbox to\headwidth{\color{DarkViolet}\leaders\hrule height 0.5pt\hfill}\vss}%
@@ -133,7 +133,7 @@
 \vspace*{1cm} % adjust this value until it clears the purple bar
 
 \begin{flushleft}
-    \articletitle{\VAR{title | latex_escape}}
+    \articletitle{\VAR{title | format_reference | safe}}
     \vspace{-0.3cm}\color{DarkViolet}\rule{0.97\textwidth}{1pt}
     \vspace{0.1cm}
 \end{flushleft}
@@ -141,11 +141,11 @@
 
 \begin{flushleft}
 \vspace*{-0.5cm}
-    \fontsize{11}{13.2}\selectfont\color{Black}\textbf{\VAR{author | latex_escape}}\par
+    \fontsize{11}{13.2}\selectfont\color{Black}\textbf{\VAR{author | format_reference | safe}}\par
     \vspace{0cm}
-    \fontsize{9}{10.8}\selectfont\color{Black}\VAR{authorsDepartment | latex_escape}\par
+    \fontsize{9}{10.8}\selectfont\color{Black}\VAR{authorsDepartment | format_reference | safe}\par
     % Measure the width of the department text
-    \settowidth{\dimen0}{\fontsize{9}{10.8}\selectfont\color{Black}\VAR{authorsDepartment | latex_escape}}%
+    \settowidth{\dimen0}{\fontsize{9}{10.8}\selectfont\color{Black}\VAR{authorsDepartment | format_reference | safe}}%
     % Draw a rule with that width
     \vspace{-0.3cm}\color{DarkViolet}\rule{\dimen0}{1pt}
 \end{flushleft}
@@ -155,21 +155,21 @@
 
 \section*{Introduction}
 \begin{otherlanguage}{\VAR{lang_name}}
-\VAR{introduction | latex_escape}
+\VAR{introduction | format_reference | safe}
 \end{otherlanguage}
 
 
 \vspace{-0.4cm}
 \section*{Description}
 \begin{otherlanguage}{\VAR{lang_name}}
-\VAR{description | latex_escape}
+\VAR{description | format_reference | safe}
 \end{otherlanguage}
 
 
 \vspace{-0.4cm}
 \section*{Conclusion}
 \begin{otherlanguage}{\VAR{lang_name}}
-\VAR{conclusion | latex_escape}
+\VAR{conclusion | format_reference | safe}
 \end{otherlanguage}
 
 
@@ -191,13 +191,13 @@ None.
 \fontsize{8}{9.6}\selectfont
 \begin{enumerate}
     \BLOCK{ for key, item in content.items() }
-        \item \href{\VAR{item.url}}{ \VAR{item.references | latex_escape}}
+        \item \href{\VAR{item.url}}{ \VAR{item.references | format_reference | safe}}
     \BLOCK{ endfor }
 \end{enumerate}
 
 \begin{framed}
 \noindent\fontsize{8.5}{10.2}\selectfont
-\textbf{How to cite this article:} \VAR{citation | latex_escape}
+\textbf{How to cite this article:} \VAR{citation | format_reference | safe}
 \end{framed}
 
 
@@ -213,7 +213,7 @@ None.
 \begin{justify}
 \fontsize{8.5}{10.2}\selectfont
 \color{DarkViolet}\textbf{*Address for Correspondence:} 
-\color{Black}\VAR{author}, \VAR{authorsDepartment | latex_escape},
+\color{Black}\VAR{author}, \VAR{authorsDepartment | format_reference | safe},
 E-mail: \href{mailto:\VAR{email}}{\VAR{email}} \\
 
 \noindent\color{DarkViolet}\textbf{Copyright:} 
