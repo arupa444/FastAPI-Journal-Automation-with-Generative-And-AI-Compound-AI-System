@@ -1504,10 +1504,12 @@ async def full_journal_pipeline(journal: PulsusInputStr):
 
     # --- ensure initial PDF has an English preamble and mark language in saved record ---
     default_cfg = lang_map.get("default")
+    
     # Build preamble: polyglossia + the font block stored in default_cfg
     preamble = "\\usepackage{polyglossia}\n" + default_cfg["polyglossia"] + "\n" + default_cfg["font"]
     output_data[journal.id]["preamble"] = preamble
     output_data[journal.id]["lang_name"] = "english"
+    
     # record original language so later translation flow can detect existing language if needed
     output_data[journal.id]["lang"] = "en"
 
