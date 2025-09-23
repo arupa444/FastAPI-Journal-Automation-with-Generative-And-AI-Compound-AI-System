@@ -1495,6 +1495,7 @@ async def full_journal_pipeline(journal: PulsusInputStr):
 
         return re.sub(pattern, repl, ref, count=1)
     
+
     env_latex.filters['format_reference'] = format_reference
     template = env_latex.get_template(journal.brandName)
     
@@ -1731,6 +1732,7 @@ async def pdfs_translate(translatePage : TranslatePage):
 
             return re.sub(pattern, repl, ref, count=1)
         
+
     env_latex.filters['format_reference'] = format_reference
     template = env_latex.get_template(journal_id['brandName'])
 
