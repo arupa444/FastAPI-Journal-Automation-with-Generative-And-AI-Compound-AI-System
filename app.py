@@ -1714,8 +1714,23 @@ async def pdfs_translate(translatePage : TranslatePage):
     }
         pattern = re.compile('|'.join(re.escape(k) for k in replacements.keys()))
         return pattern.sub(lambda m: replacements[m.group()], text)
+    def format_reference(ref: str) -> str:
+            if not isinstance(ref, str):
+                return ref
+            
+            # First escape LaTeX
+            ref = latex_escape(ref)
 
-    env_latex.filters['latex_escape'] = latex_escape
+            # Regex: Find journal short name (before year/volume/semicolon/parenthesis)
+            # Example match: " J. Biomol. Struct. Dyn"
+            pattern = r"(\s)([A-Z][A-Za-z\.\s]+)(?=\s\d|\s\(|;)"
+            
+            def repl(match):
+                return f" \\textit{{{match.group(2).strip()}}}"
+
+            return re.sub(pattern, repl, ref, count=1)
+        
+    env_latex.filters['format_reference'] = format_reference
     template = env_latex.get_template(journal_id['brandName'])
 
     brand_key = journal_id['brandName'].replace(".tex", "")
