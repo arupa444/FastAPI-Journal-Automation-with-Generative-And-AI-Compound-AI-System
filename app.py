@@ -367,7 +367,7 @@ class PulsusInputStr(BaseModel):
     @property
     def citeAuthorFormate(self) -> str:
         if self.brandName == 'hilaris.tex':
-            return """author names(first name + the remainings name's first letter(ex.: Arupa Nanda Swain then that should be Arupa NS) and there must be 3 to 6 authors and seperated with comma). title of that journal inside double quotation. Journal short name Volume of the journal (year of publishing inside parenthesis):the page range or the number.end it with a full stop (for example: 'author n, author n, author n. "titleOFtheJournal." journalShortName Volume (year):ThePageRangeOrTheNumber.')"""
+            return """author names(there must be 3 to 6 authors and seperated with comma). title of that journal inside double quotation(“ ”). Journal short name Volume of the journal (year of publishing inside parenthesis):the page range or the number.end it with a full stop (for example: 'author n, author n, author n. “titleOFtheJournal.” journalShortName Volume (year):ThePageRangeOrTheNumber.')"""
 
         elif self.brandName == 'alliedAcademy.tex':
             return """author names(first name + the remainings name's first letter(ex.: Arupa Nanda Swain then that should be Arupa NS) and there must be 3 or less, not more authors then that and seperated with comma). title of that journal. Journal short name. year of publishing;Volume of the journal:the page range or the number.(for example: 'author n, author n, author n. titleOFtheJournal. journalShortName. year;Volume:ThePageRangeOrTheNumber.')"""
@@ -523,6 +523,13 @@ class PulsusOutputStr(BaseModel):
         copyAuth = copyAuth[::-1]
         copyAuth[1] = f"{copyAuth[1][0]}."
         return " ".join(copyAuth)
+    
+    @computed_field
+    @property
+    def addressForCorres(self) -> str:
+        copyAuth = self.author.split(' ')
+        copyAuth[0] = f"{copyAuth[0]},"
+        return " ".join(copyAuth)
 
 
 
@@ -533,9 +540,9 @@ class PulsusOutputStr(BaseModel):
             justToCite = self.author.split(' ')
             justToCite.insert(0, justToCite[-1])
             justToCite = justToCite[0:-1]
-            justToCite[0] = f"{justToCite[0]}"
-            justToCite[1] = " " + justToCite[1]
-            justToCite = "".join(justToCite)
+            justToCite[0] = f"{justToCite[0]},"
+            justToCite[1] = justToCite[1]
+            justToCite = " ".join(justToCite)
             return f"""{justToCite}. "{self.title}." {self.shortJournalName} {self.volume} ({self.published.split("-")[-1]}):{self.pdfNo}."""
 
         elif self.brandName == 'alliedAcademy.tex':
