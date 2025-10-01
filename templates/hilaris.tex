@@ -143,7 +143,7 @@
 \vspace*{-0.5cm}
     \fontsize{11}{13.2}\selectfont\color{Black}\textbf{\VAR{author | format_reference | safe}}\par
     \vspace{0cm}
-    \fontsize{9}{10.8}\selectfont\color{Black}\VAR{authorsDepartment | format_reference | safe}\par
+    \fontsize{9}{10.8}\selectfont\color{Black}\textit{\VAR{authorsDepartment | format_reference | safe}}\par
     % Measure the width of the department text
     \settowidth{\dimen0}{\fontsize{9}{10.8}\selectfont\color{Black}\VAR{authorsDepartment | format_reference | safe}}%
     % Draw a rule with that width
@@ -155,21 +155,21 @@
 
 \section*{Introduction}
 \begin{otherlanguage}{\VAR{lang_name}}
-\VAR{introduction | format_reference | safe}
+\VAR{introduction | latex_escape | safe}
 \end{otherlanguage}
 
 
 \vspace{-0.4cm}
 \section*{Description}
 \begin{otherlanguage}{\VAR{lang_name}}
-\VAR{description | format_reference | safe}
+\VAR{description | latex_escape | safe}
 \end{otherlanguage}
 
 
 \vspace{-0.4cm}
 \section*{Conclusion}
 \begin{otherlanguage}{\VAR{lang_name}}
-\VAR{conclusion | format_reference | safe}
+\VAR{conclusion | latex_escape | safe}
 \end{otherlanguage}
 
 
@@ -212,12 +212,12 @@ None.
 
 \begin{justify}
 \fontsize{8.5}{10.2}\selectfont
-\color{DarkViolet}\textbf{*Address for Correspondence:} 
+\textit{\color{DarkViolet}\textbf{*Address for Correspondence:} 
 \color{Black}\VAR{author}, \VAR{authorsDepartment | format_reference | safe},
-E-mail: \href{mailto:\VAR{email}}{\VAR{email}} \\
+E-mail: \href{mailto:\VAR{email}}{\VAR{email}}} \\
 
-\noindent\color{DarkViolet}\textbf{Copyright:} 
-\color{Black}© \VAR{year}  \VAR{copyrightAuthor} This is an open-access article distributed under the terms of the Creative Commons Attribution License, which permits unrestricted use, distribution and reproduction in any medium, provided the original author and source are credited. \\
+\noindent\textit{\color{DarkViolet}\textbf{Copyright:} 
+\color{Black}© \VAR{year}  \VAR{copyrightAuthor} This is an open-access article distributed under the terms of the Creative Commons Attribution License, which permits unrestricted use, distribution and reproduction in any medium, provided the original author and source are credited.} \\
 
 \noindent\color{Black}\textbf{Received:} \VAR{received}, Manuscript No. \VAR{manuscriptNo}; 
 \textbf{Editor assigned:} \VAR{editorAssigned}, PreQC No. \VAR{preQCNo}; 
