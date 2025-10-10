@@ -59,7 +59,7 @@ brand_fonts = {
         BoldItalicFont = *-BoldItalic
     ]""",
 
-    "bromicsandC": r"""
+    "omics": r"""
     \usepackage{fontspec}
     \setmainfont{Times New Roman}[
         Path=../../Fonts/,
