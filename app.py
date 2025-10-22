@@ -1504,6 +1504,7 @@ async def full_journal_pipeline(journal: PulsusInputStr):
     
 
     env_latex.filters['format_reference'] = format_reference
+    env_latex.filters['latex_escape'] = latex_escape
     template = env_latex.get_template(journal.brandName)
     
     brand_key = journal.brandName.replace(".tex", "")
@@ -1743,6 +1744,7 @@ async def pdfs_translate(translatePage : TranslatePage):
         
 
     env_latex.filters['format_reference'] = format_reference
+    env_latex.filters['latex_escape'] = latex_escape
     template = env_latex.get_template(journal_id['brandName'])
 
     brand_key = journal_id['brandName'].replace(".tex", "")
@@ -1811,3 +1813,5 @@ async def pdfs_translate(translatePage : TranslatePage):
         status_code=200,
         content={"Status": f"Data added and files generated successfully in PDFTranslatedStorePulsus/{translatePage.id}/ ✅."}
     )
+
+
