@@ -93,6 +93,8 @@ This application requires API keys for **Google Gemini**, **Groq**, and **CORE**
 
 ### Run the FastAPI Application
 
+Run the runServer.bat file to start pipeline OR
+
 ```bash
 uvicorn main:app --reload
 ```
