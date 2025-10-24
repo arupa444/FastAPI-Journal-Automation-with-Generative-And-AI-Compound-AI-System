@@ -1,3 +1,3 @@
-echo off
-start run.py
-end
+@echo off
+python run.py
+pause
