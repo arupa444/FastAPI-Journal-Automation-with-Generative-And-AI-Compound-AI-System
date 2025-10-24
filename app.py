@@ -1314,7 +1314,7 @@ async def full_journal_pipeline(journal: PulsusInputStr):
     # Step 8: Final response
     final_output = {
         journal.id: {
-            "title": gem_title[:-1],
+            "title": gem_title,
             "journalName": journal.journalName,
             "shortJournalName": journal.shortJournalName,
             "type": journal.type,
@@ -1813,6 +1813,7 @@ async def pdfs_translate(translatePage : TranslatePage):
         status_code=200,
         content={"Status": f"Data added and files generated successfully in PDFTranslatedStorePulsus/{translatePage.id}/ ✅."}
     )
+
 
 
 
