@@ -373,7 +373,7 @@ class PulsusInputStr(BaseModel):
             return """author names(first name + the remainings name's first letter(ex.: Arupa Nanda Swain then that should be Arupa NS) and there must be 3 or less, not more authors then that and seperated with comma). title of that journal. Journal short name. year of publishing;Volume of the journal:the page range or the number.(for example: 'author n, author n, author n. titleOFtheJournal. journalShortName. year;Volume:ThePageRangeOrTheNumber.')"""
 
         elif self.brandName == 'omics.tex':
-            return """author names(first name + the remainings name's first letter(ex.: Arupa Nanda Swain then that should be Arupa NS) and there must be 3 to 6 authors and seperated with comma) (year of publishing inside parenthesis) title of that journal. Journal short name Volume of the journal:the page range or the number.(for example: 'author n, author n, author n (year) titleOFtheJournal. journalShortName Volume:ThePageRangeOrTheNumber')"""
+            return """author names(first name + the remainings name's first letter(ex.: Arupa Nanda Swain then that should be Arupa NS) and there must be 5 authors and seperated with comma) et al. (year of publishing inside parenthesis) title of that journal. Journal short name Volume of the journal:the page range or the number.(for example: 'author n, author n, author n, author n, author n et al. (year) titleOFtheJournal. journalShortName Volume:ThePageRangeOrTheNumber')"""
 
         else:
             return """author names(first name + the remainings name's first letter(ex.: Arupa Nanda Swain then that should be Arupa NS) and there must be 3 or less, not more authors then that and seperated with comma). title of that journal. Journal short name. year of publishing;Volume of the journal:the page range or the number.(for example: 'author n, author n, author n. titleOFtheJournal. journalShortName. year;Volume:ThePageRangeOrTheNumber.')"""
@@ -563,7 +563,7 @@ class PulsusOutputStr(BaseModel):
                 justToCite[i] = justToCite[i][0]
             justToCite[1] = " " + justToCite[1]
             justToCite = "".join(justToCite)
-            return f"""{justToCite},({self.published.split("-")[-1]}) {self.title}. {self.shortJournalName} {self.volume}: {self.pdfNo}. DOI: {self.doi}"""
+            return f"""{justToCite} ({self.published.split("-")[-1]}) {self.title}. {self.shortJournalName} {self.volume}: {self.pdfNo}."""
         
         else:
             justToCite = self.author.split(' ')
@@ -1813,5 +1813,6 @@ async def pdfs_translate(translatePage : TranslatePage):
         status_code=200,
         content={"Status": f"Data added and files generated successfully in PDFTranslatedStorePulsus/{translatePage.id}/ ✅."}
     )
+
 
 
