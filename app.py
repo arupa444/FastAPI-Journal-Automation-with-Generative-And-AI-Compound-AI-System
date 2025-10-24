@@ -1218,7 +1218,7 @@ async def full_journal_pipeline(journal: PulsusInputStr):
       "description" : '''...''',
       "summary" : '''...''',
       "abstract" : '''...''',
-      "keywords" : '''...''' # give me Minimun 5 to 10 keywords joined by comma(,)
+      "keywords" : '''...''' # give me Minimun 5 to 10 keywords saparated by semi-colon(;)
       ...
     }}
 
@@ -1813,6 +1813,7 @@ async def pdfs_translate(translatePage : TranslatePage):
         status_code=200,
         content={"Status": f"Data added and files generated successfully in PDFTranslatedStorePulsus/{translatePage.id}/ ✅."}
     )
+
 
 
 
