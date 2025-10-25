@@ -967,7 +967,7 @@ def deletePatient(JournalInputID):
 def pulsus_ask_gemini(gem: GeminiRequest):
     try:
         response = gemClient.models.generate_content(
-            model="gemini-2.5-flash", contents=gem.prompt
+            model="gemini-2.5-pro", contents=gem.prompt
         )
         return {"response": response.text}
     except Exception as e:
@@ -1151,7 +1151,7 @@ async def full_journal_pipeline(journal: PulsusInputStr):
         for j in range(3):
             try:
                 gem_response = gemClient.models.generate_content(
-                    model="gemini-2.5-flash", contents=prompt
+                    model="gemini-2.5-pro", contents=prompt
                 )
                 gem_summary = gem_response.text
                 print(f"The text generation attempt{j}")
@@ -1174,7 +1174,7 @@ async def full_journal_pipeline(journal: PulsusInputStr):
             parsed = json.loads(raw_json)
             content_data = parsed["content"]
             gemClient.models.generate_content(
-                model="gemini-2.5-flash", contents="the previous response was on point respond me in (my pleasure / i am happy)"
+                model="gemini-2.5-pro", contents="the previous response was on point respond me in (my pleasure / i am happy)"
             )
             break
         except Exception as e:
@@ -1237,7 +1237,7 @@ async def full_journal_pipeline(journal: PulsusInputStr):
         for j in range(3):
             try:
                 gem_response = gemClient.models.generate_content(
-                    model="gemini-2.5-flash", contents=prompt
+                    model="gemini-2.5-pro", contents=prompt
                 )
                 print(f"The text generation attempt{j}")
                 gem_info = gem_response.text
@@ -1270,7 +1270,7 @@ async def full_journal_pipeline(journal: PulsusInputStr):
                 raise HTTPException(status_code=500, detail=f"Failed to parse structured JSON from LLM output: {str(e)}")
             
     gemClient.models.generate_content(
-        model="gemini-2.5-flash", contents="the previous response was on point respond me in (my pleasure / i am happy)"
+        model="gemini-2.5-pro", contents="the previous response was on point respond me in (my pleasure / i am happy)"
     )
     print("step 6.5 : Clean and parse JSON output from Gemini or Groq ✅")
 
@@ -1286,7 +1286,7 @@ async def full_journal_pipeline(journal: PulsusInputStr):
         try:
             print(f"The text generation attempt{j}")
             gem_response = gemClient.models.generate_content(
-                model="gemini-2.5-flash", contents=prompt
+                model="gemini-2.5-pro", contents=prompt
             )
             gem_title = gem_response.text
             break
@@ -1813,6 +1813,7 @@ async def pdfs_translate(translatePage : TranslatePage):
         status_code=200,
         content={"Status": f"Data added and files generated successfully in PDFTranslatedStorePulsus/{translatePage.id}/ ✅."}
     )
+
 
 
 
