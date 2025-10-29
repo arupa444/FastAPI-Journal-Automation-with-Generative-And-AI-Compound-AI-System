@@ -22,7 +22,7 @@ def run_server():
 
     # Start uvicorn server
     process = subprocess.Popen(
-        [sys.executable, "-m", "uvicorn", "app:app", "--reload", "--port", str(port)]
+        [sys.executable, "-m", "uvicorn", "Apps.app:app", "--reload", "--port", str(port)]
     )
 
     # Give server a moment to start
