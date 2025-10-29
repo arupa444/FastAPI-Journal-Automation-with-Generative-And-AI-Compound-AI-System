@@ -1,0 +1,40 @@
+{% extends "universalLayout.html" %}
+{% block title %}About Us{% endblock %}
+
+{% block content %}
+<div class="py-5">
+    <h2 class="fw-bold mb-4">Pulsus Journal Automation</h2>
+    <p class="lead text-muted">
+        This platform was built to simplify the complex workflows involved in managing research journals.
+        By integrating AI models like <strong>Gemini</strong> and <strong>Groq</strong>, along with
+        <strong>CORE’s Research API</strong>, the system automates tasks such as:
+    </p>
+
+    <ul class="list-group list-group-flush mb-4">
+        <li class="list-group-item">✔ Collecting and storing journal input data</li>
+        <li class="list-group-item">✔ Automatically generating structured summaries, references, and insights</li>
+        <li class="list-group-item">✔ Searching related articles using CORE</li>
+        <li class="list-group-item">✔ Producing professional outputs in both <strong>HTML</strong> and
+            <strong>PDF</strong>
+        </li>
+    </ul>
+
+    <p>
+        Our goal is to empower editors, reviewers, and researchers by reducing manual work and improving the quality
+        of knowledge dissemination.
+    </p>
+
+    <div class="alert alert-secondary mt-4">
+        <h5 class="mb-2">Contact</h5>
+        <p class="mb-1">For inquiries, reach us at: <a
+                href="mailto:ashutoshmoney843@gmail.com">ashutoshmoney843@gmail.com</a><br><a
+                href="mailto:arupaswain7735@gmail.com">arupaswain7735@gmail.com</a><br>
+            <a href="tel:+917735460467" class="text-decoration-none text-dark lh-sm"><i
+                    class="fas fa-phone text-decoration-none text-dark"></i> +91 7735460467</a><br>
+            <a href="tel:+919571821291" class="text-decoration-none text-dark lh-sm"><i
+                    class="fas fa-phone text-decoration-none text-dark"></i> +91 9571821291</a>
+        </p>
+        <p class="mb-0">Version: <strong>1.0</strong> | Year: {{ 2025 }}</p>
+    </div>
+</div>
+{% endblock %}

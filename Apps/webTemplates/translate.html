@@ -1,0 +1,68 @@
+{% extends "universalLayout.html" %}
+{% block title %}Pipeline Process{% endblock %}
+
+{% block content %}
+<h2>Run Full Journal Pipeline</h2>
+<p class="text-muted">Fill in all journal details. This will save the journal and also run the pipeline process (Gemini
+    + Groq + CORE + PDF/HTML generation).</p>
+
+<form id="runTranslatePipeline" class="row g-3">
+
+    <!-- Basic IDs -->
+    <div class="col-md-4">
+        <label class="form-label">Journal ID</label>
+        <input type="text" name="id" class="form-control" placeholder="J001" required>
+    </div>
+
+
+    <div class="col-md-6">
+        <label class="form-label">Language</label>
+        <select name="language" class="form-select" required>
+            <option value="" selected disabled>Choose Language</option>
+            {% for language_code, language in languages.items() %}
+            <option value="{{ language_code }}">{{ language }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <!-- Submit -->
+    <div class="col-12">
+        <button type="submit" class="btn btn-danger">Run Translation Pipeline</button>
+    </div>
+</form>
+
+<div id="responseBox" class="mt-4"></div>
+
+<script>
+
+    // Handle form submit
+    document.getElementById("runTranslatePipeline").addEventListener("submit", async function (e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        let data = {};
+        formData.forEach((value, key) => data[key] = value);
+
+        showLoading();
+
+        try {
+            const response = await fetch("/pdfs/translate", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+            document.getElementById("responseBox").innerHTML = `
+              <div class="alert alert-${response.ok ? 'success' : 'danger'}">
+                <h5>Response body:</h5>
+                <pre>${JSON.stringify(result, null, 2)}</pre>
+              </div>`;
+        } catch (error) {
+            document.getElementById("responseBox").innerHTML = `
+              <div class="alert alert-danger">Error: ${error}</div>`;
+        } finally {
+            hideLoading();
+        }
+    });
+</script>
+{% endblock %}
