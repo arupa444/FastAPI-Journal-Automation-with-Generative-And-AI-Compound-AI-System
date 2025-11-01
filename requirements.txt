@@ -10,3 +10,4 @@ httpx>=0.27,<0.29
 python-multipart>=0.0.9,<0.1.0
 reportlab>=4.0,<4.2
 deep-translator>=1.11,<1.14
+pydantic[email]
