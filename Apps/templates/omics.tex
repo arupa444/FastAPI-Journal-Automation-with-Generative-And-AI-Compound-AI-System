@@ -90,36 +90,36 @@
         % --- Top row: Logo + Journal title ---
          \node[anchor=west] at 
             ($(current page.north west) + (25pt,-55pt)$) {%
-            \includegraphics[height=50pt]{../../../Logo/\VAR{imgPath}}%
+            \includegraphics[height=50pt]{../../Logo/\VAR{imgPath}}%
             };
         \node[anchor=west] at ($(current page.north west) + (90pt,-55pt)$) {%
 	    \begin{minipage}[t]{0.70\textwidth}
 	    \raggedright
             \setlength{\parskip}{0pt} % no extra spacing
-            \fontsize{15}{17}\selectfont\color{LightNavyBlue}\textbf{%  
-	    \sloppy 
+            \fontsize{15}{17}\selectfont\color{LightNavyBlue}\textbf{%
+	    \sloppy
 	    \VAR{journalName | format_reference | safe}}
 	    \end{minipage}%
         };
-    
+
       % Right side citation info
-      \node[anchor=east] at 
+      \node[anchor=east] at
           ($(current page.north east) + (-35pt,-30pt)$) {%
-          \fontsize{8}{10}\selectfont\color{Black}{\VAR{author | latex_escape | safe}, \VAR{shortJournalName | format_reference | safe} \VAR{year}, \VAR{volume}:\VAR{issues}}%
+          \fontsize{8}{10}\selectfont\color{Black}{\VAR{firstNameAuthor | latex_escape | safe}, \VAR{shortJournalName | format_reference | safe} \VAR{year}, \VAR{volume}:\VAR{issues}}%
     };
-    
+
         % --- Blue bar inside text margins ---
-        \fill[LightNavyBlue] 
-            ($(current page.north west) + (35pt,-90pt)$) 
-            rectangle 
+        \fill[LightNavyBlue]
+            ($(current page.north west) + (35pt,-90pt)$)
+            rectangle
             ($(current page.north east) + (-35pt,-105pt)$);
-    
+
         % Article type - left
-        \node[anchor=west, font=\fontsize{11}{11}\selectfont\bfseries, text=white] 
+        \node[anchor=west, font=\fontsize{11}{11}\selectfont\bfseries, text=white]
             at ($(current page.north west) + (1in+\oddsidemargin,-97.5pt)$) {\VAR{type}};
-    
+
         % Open Access - right
-        \node[anchor=east, font=\fontsize{11}{11}\selectfont\bfseries, text=white] 
+        \node[anchor=east, font=\fontsize{11}{11}\selectfont\bfseries, text=white]
             at ($(current page.north east) + (-1in-\oddsidemargin,-97.5pt)$) {Open Access};
     \end{tikzpicture}%
 }
@@ -129,8 +129,10 @@
 
     % Right footer: volume info BELOW the rule line
     \fancyfoot[R]{\fontsize{8.5}{10}\selectfont\color{Black}%
-    {Volume} \VAR{volume} • {Issue} \VAR{issues} • \the\numexpr \VAR{pdfNo} + 100000\relax}
+    {Volume} \VAR{volume} • {Issue} \VAR{issues} • \the\numexpr1000000+\VAR{pdfNo}\relax}
 }
+
+
 
 
 % --- Header and Footer for all subsequent pages ---
@@ -149,7 +151,7 @@
     }
 
     \fancyhead[L]{\fontsize{8}{10}\selectfont\color{Black}\textbf{Citation:} \VAR{citation | format_reference | safe}}
-    \fancyhead[R]{\fontsize{8.5}{10}\selectfont\color{Black}% 
+    \fancyhead[R]{\fontsize{8.5}{10}\selectfont\color{Black}%
       Page~\thepage~of~\getpagerefnumber{TotPages}}
 
     % Left footer
@@ -157,7 +159,7 @@
 
     % Right footer: volume info BELOW the rule line
     \fancyfoot[R]{\fontsize{8.5}{10}\selectfont\color{Black}%
-      {Volume} \VAR{volume} • {Issue} \VAR{issues} • \the\numexpr \VAR{pdfNo} + 100000\relax}
+      {Volume} \VAR{volume} • {Issue} \VAR{issues} • \the\numexpr1000000+\VAR{pdfNo}\relax}
 }
 
 \setlength{\headheight}{28pt}  % Fix fancyhdr warning & allow purple bar display
@@ -186,18 +188,18 @@
     \vspace{0.1cm}
 
     \noindent\color{LightNavyBlue}\rule{\linewidth}{1pt}
-    \color{LightNavyBlue}\textbf{*Corresponding Author:}  
+    \color{Black}\textbf{*Corresponding Author:}
     \color{Black}\VAR{author}, \VAR{authorsDepartment},
     E-mail: \href{mailto:\VAR{email}}{\VAR{email}} \\
     \vspace{0.1cm}
-    \noindent\color{Black}\textbf{Received:} \VAR{received}, Manuscript No. \VAR{manuscriptNo}; 
-    \textbf{Editor assigned:} \VAR{editorAssigned}, PreQC No. \VAR{preQCNo}(PQ); 
-    \textbf{Reviewed:} \VAR{reviewed}, QC No. \VAR{QCNo}; 
-    \textbf{Revised:} \VAR{revised}, Manuscript No. \VAR{RManuNo}(R); 
-    \textbf{Published:} \VAR{published}, 
+    \noindent\color{Black}\textbf{Received:} \VAR{received}, Manuscript No. \VAR{manuscriptNo};
+    \textbf{Editor assigned:} \VAR{editorAssigned}, PreQC No. \VAR{preQCNo}(PQ);
+    \textbf{Reviewed:} \VAR{reviewed}, QC No. \VAR{QCNo};
+    \textbf{Revised:} \VAR{revised}, Manuscript No. \VAR{RManuNo}(R);
+    \textbf{Published:} \VAR{published},
     \textbf{DOI}: \href{\VAR{parentLink}}{\VAR{doi}}\\
-    \noindent\color{LightNavyBlue}\textbf{Citation:}\color{Black}\VAR{citation | format_reference | safe} \\
-    \noindent\color{LightNavyBlue}\textbf{Copyright:} 
+    \noindent\color{Black}\textbf{Citation:}\color{Black}\VAR{citation | safe} \\
+    \noindent\color{Black}\textbf{Copyright:}
     \color{Black}© \VAR{year} \VAR{author} This is an open-access article distributed under the terms of the Creative Commons Attribution License, which permits unrestricted use, distribution and reproduction in any medium, provided the original author and source are credited. \\
 
     \noindent\color{LightNavyBlue}\rule{\linewidth}{1pt}
@@ -258,7 +260,7 @@
 \section*{References}
 \begin{enumerate}
     \BLOCK{ for key, item in content.items() }
-        \item \href{\VAR{item.url}}{ \VAR{item.references | format_reference | safe}}
+        \item \href{\VAR{item.url}}{ \VAR{item.references | safe}}
     \BLOCK{ endfor }
 \end{enumerate}
 
