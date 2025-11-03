@@ -71,6 +71,9 @@ class PipelineService:
         gem_title = PipelineService._generate_title(
             processed_sections["content"]["summary"], journal
         )
+        if gem_title[-1] == '.':
+            gem_title = gem_title[:-1]
+
         print("Step 6 : Generated title ✅")
 
         # ---------- Step 6: Save structured data ----------
