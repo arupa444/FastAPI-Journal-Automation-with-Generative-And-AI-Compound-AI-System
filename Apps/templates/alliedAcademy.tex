@@ -73,11 +73,11 @@
         \vspace{-0.35cm}
         \rule{\textwidth}{0.4pt}
         \begin{flushleft}
-        \textit{Citation: \VAR{citation | format_reference | safe}}
+        \textit{Citation: \VAR{citation | format_reference | latex_escape | safe}}
         \end{flushleft}
         % Bottom line: page left, journal right
         \noindent\makebox[\textwidth]{%
-            \thepage \hfill \textit{\VAR{journalYearVolumeIssue}}%
+            \thepage \hfill \textit{\VAR{journalYearVolumeIssue | latex_escape | safe}}%
         }
     }
 }
@@ -92,12 +92,12 @@
         % Citation centered
         \vspace*{4em}
         \begin{flushleft}
-        \textit{\textbf{Citation:} \VAR{citation | format_reference | safe}}
+        \textit{\textbf{Citation:} \VAR{citation | format_reference | latex_escape | safe}}
         \end{flushleft}
 
         % Bottom line: page left, journal right
         \noindent\makebox[\textwidth]{%
-        \textit{\VAR{journalYearVolumeIssue}}   \hfill \thepage
+        \textit{\VAR{journalYearVolumeIssue | latex_escape | safe}}   \hfill \thepage
         }
     }
 }
@@ -109,14 +109,14 @@
 
 % ARTICLE TITLE (20pt)
 \begin{flushleft}
-    \articletitle{\VAR{title | format_reference | safe}.}
+    \articletitle{\VAR{title | format_reference | latex_escape | safe}.}
     \vspace{0.1cm}
 \end{flushleft}
 % AUTHOR NAME & INFO
 \begin{flushleft}
     \fontsize{12}{15}\selectfont\color{Black}\textbf{\VAR{author | format_reference | safe}*}\par
     \vspace{0.1cm}
-    \fontsize{11}{12}\selectfont\color{Black}\VAR{authorsDepartment | format_reference | safe}\par
+    \fontsize{11}{12}\selectfont\color{Black}\VAR{authorsDepartment | format_reference | latex_escape | safe}\par
 \end{flushleft}
 
 
@@ -139,7 +139,7 @@
 \fontsize{8}{9.6}\selectfont
 \begin{enumerate}
     \BLOCK{ for key, item in content.items() }
-        \item \href{\VAR{item.url}}{ \VAR{item.references | format_reference | safe}}
+        \item \href{\VAR{item.url}}{ \VAR{item.references | format_reference | latex_escape | safe}}
     \BLOCK{ endfor }
 \end{enumerate}
 
