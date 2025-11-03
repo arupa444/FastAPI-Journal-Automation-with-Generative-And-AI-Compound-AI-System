@@ -61,10 +61,10 @@
     
     % Main header row
     \fancyhead[L]{%
-        \selectfont\color{Black}\textbf{\VAR{journalName | format_reference | safe}: Open Access \VAR{year}, \VAR{volume}, \VAR{issues}, \VAR{pdfNo}.}
+        \selectfont\color{Black}\textbf{\VAR{journalName | format_reference | latex_escape | safe}: Open Access \VAR{year}, \VAR{volume}, \VAR{issues}, \VAR{pdfNo}.}
     }
     \fancyhead[R]{%
-        \selectfont\color{Black}\textbf{\VAR{type | format_reference | safe}}
+        \selectfont\color{Black}\textbf{\VAR{type | format_reference | latex_escape | safe}}
     }
     
     % Footer
@@ -114,7 +114,7 @@
     
     \centering % centers all content inside the box
     
-    \articletitle{\VAR{title | format_reference | safe}}
+    \articletitle{\VAR{title | format_reference | latex_escape | safe}}
     
     \vspace{0.2cm}
     \fontsize{11}{13.2}\selectfont\color{Black}\textbf{\VAR{author | format_reference | safe}}\par
@@ -130,7 +130,7 @@
 \color{DarkGreen}\textbf{\underline{\textit{Corresponding Authors*}}} \\
 \vspace{0.3cm}
 \color{Black}\VAR{author | format_reference | safe}\\
-\color{Black}\VAR{authorsDepartment | format_reference | safe}\\
+\color{Black}\VAR{authorsDepartment | format_reference | latex_escape | safe}\\
 E-mail: \href{mailto:\VAR{email}}{\VAR{email}}\\
 \vspace{0.1cm}
 \rule{\linewidth}{1pt}
@@ -174,7 +174,7 @@ and source are credited.
 \fontsize{8}{9.6}\selectfont
 \begin{enumerate}
     \BLOCK{ for key, item in content.items() }
-        \item \href{\VAR{item.url}}{ \VAR{item.references | format_reference | safe}}
+        \item \href{\VAR{item.url}}{ \VAR{item.references | format_reference | latex_escape | safe}}
     \BLOCK{ endfor }
 \end{enumerate}
 
