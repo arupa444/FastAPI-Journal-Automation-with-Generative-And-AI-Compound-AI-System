@@ -82,19 +82,19 @@ class DateUtils:
         """Add business days (or calendar days for hilaris)."""
         current_date = start_date
 
-        if brand == "hilaris.tex":
-            # Just add calendar days
-            current_date += datetime.timedelta(days=days)
-            # If it lands on Saturday/Sunday, move to Monday
-            while current_date.weekday() > 4:
-                current_date += datetime.timedelta(days=1)
-        else:
-            # Count only weekdays
+        if brand == "alliedAcademy.tex":
+           # Count only weekdays
             added_days = 0
             while added_days < days:
                 current_date += datetime.timedelta(days=1)
                 if current_date.weekday() < 5:
                     added_days += 1
+        else:
+             # Just add calendar days
+            current_date += datetime.timedelta(days=days)
+            # If it lands on Saturday/Sunday, move to Monday
+            while current_date.weekday() > 4:
+                current_date += datetime.timedelta(days=1)
         return current_date
 
     @staticmethod
