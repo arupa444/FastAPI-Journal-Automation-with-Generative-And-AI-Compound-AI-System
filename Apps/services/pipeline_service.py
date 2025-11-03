@@ -43,6 +43,24 @@ class PipelineService:
         content_data = PipelineService._parse_gemini_response(prompt)
         print("Step 3,4 : Generation with Parsing the structured JSON ✅")
 
+        for kk, data in content_data.items():
+            authors = data.get("authors")
+            if not authors:
+                continue  # skip if missing or empty
+
+            store = []
+            for author in authors:
+                parts = author.split(' ')
+                if len(parts) > 1:
+                    for j in range(1, len(parts)):
+                        parts[j] = parts[j][0]
+                    parts[1] = " " + parts[1]
+                name = "".join(parts)
+                store.append(name)
+
+            data["authors"] = ", ".join(store)
+
+
         # ---------- Step 5: Create title, abstract, summary ----------
         processed_sections = PipelineService._process_sections(content_data)
         processed_sections = PipelineService._normalize_content_structure(
