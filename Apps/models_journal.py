@@ -270,17 +270,7 @@ class PulsusInputStr(BaseModel):
         )
         self.received = DateUtils.format_date(received_date)
 
-    @field_validator("pdfNo")
-    @classmethod
-    def validatePDFNo(cls, value):
-        data = IOService.fetchInputData()
-        for i in data.values():
-            if value == i["pdfNo"]:
-                raise ValueError(
-                    f"Change the pdf page no. it is similar to the pdf artical name{i['topic']}"
-                )
-        return value
-
+    
     @computed_field
     @property
     def citeAuthorFormate(self) -> str:
@@ -782,6 +772,11 @@ class PulsusOutputStr(BaseModel):
             description="Enter the id for this journal input....",
         ),
     ]
+    @computed_field
+    @property
+    def firstNameAuthor(self) -> str:
+        copyAuth = self.author.split(' ')
+        return copyAuth[0]
 
     @field_validator("content")
     @classmethod
