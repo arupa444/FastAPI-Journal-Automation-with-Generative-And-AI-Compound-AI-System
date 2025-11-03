@@ -63,11 +63,11 @@
     
     % Main header row
     \fancyhead[L]{%
-        \fontsize{12}{15}\selectfont\color{Black}\textbf{\VAR{type}}\\
+        \fontsize{12}{15}\selectfont\color{Black}\textbf{\VAR{type | latex_escape | safe}}\\
         \fontsize{10}{12}\selectfont\color{Black}Volume \VAR{volume}:\VAR{issues}, \VAR{year}
     }
     \fancyhead[R]{%
-        \fontsize{15}{16.8}\selectfont\color{DarkViolet}\textbf{\VAR{journalName | format_reference | safe}}
+        \fontsize{15}{16.8}\selectfont\color{DarkViolet}\textbf{\VAR{journalName | format_reference | latex_escape | safe}}
     }
 
     % === Second row: Purple bar with ISSN & Open Access ===
@@ -81,7 +81,7 @@
 
         % ISSN - shifted to match left margin
         \node[anchor=west, font=\fontsize{9}{11}\selectfont\bfseries, text=white] 
-            at ($(current page.north west) + (\dimexpr\oddsidemargin+1in\relax,-85pt)$) {ISSN: \VAR{ISSN}};
+            at ($(current page.north west) + (\dimexpr\oddsidemargin+1in\relax,-85pt)$) {ISSN: \VAR{ISSN | latex_escape | safe}};
 
         % Open Access - shifted to match right margin
         \node[anchor=east, font=\fontsize{9}{11}\selectfont\bfseries, text=white] 
@@ -104,7 +104,7 @@
 \fancypagestyle{subsequent}{
     \fancyhf{}
     % Header
-    \fancyhead[L]{\fontsize{8.5}{10}\selectfont\color{Black}\VAR{copyrightAuthor | format_reference | safe}}
+    \fancyhead[L]{\fontsize{8.5}{10}\selectfont\color{Black}\VAR{copyrightAuthor | format_reference | latex_escape | safe}}
     \fancyhead[R]{\fontsize{8.5}{10}\selectfont\color{Black}\VAR{journalYearVolumeIssue}}
     % \renewcommand{\headrule}{%
     %   \vbox to 0pt{\hbox to\headwidth{\color{DarkViolet}\leaders\hrule height 0.5pt\hfill}\vss}%
@@ -133,7 +133,7 @@
 \vspace*{1cm} % adjust this value until it clears the purple bar
 
 \begin{flushleft}
-    \articletitle{\VAR{title | format_reference | safe}}
+    \articletitle{\VAR{title | format_reference | latex_escape | safe}}
     \vspace{-0.3cm}\color{DarkViolet}\rule{0.97\textwidth}{1pt}
     \vspace{0.1cm}
 \end{flushleft}
@@ -191,7 +191,7 @@ None.
 \fontsize{8}{9.6}\selectfont
 \begin{enumerate}
     \BLOCK{ for key, item in content.items() }
-        \item \href{\VAR{item.url}}{ \VAR{item.references | format_reference | safe}}
+        \item \href{\VAR{item.url}}{ \VAR{item.references | format_reference | latex_escape | safe}}
     \BLOCK{ endfor }
 \end{enumerate}
 
