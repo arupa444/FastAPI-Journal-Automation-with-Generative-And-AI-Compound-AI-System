@@ -827,16 +827,16 @@ class PulsusOutputStr(BaseModel):
             justToCite = "".join(justToCite)
             return f"""{justToCite}. {self.title}. {self.shortJournalName}. {self.published.split("-")[-1]};{self.volume}({self.issues}):{self.pdfNo}."""
 
-        elif self.brandName == "omics.tex":
-            justToCite = self.author.split(" ")
+        elif self.brandName == 'omics.tex':
+            justToCite = self.author.split(' ')
             justToCite.insert(0, justToCite[-1])
             justToCite = justToCite[0:-1]
             for i in range(1, len(justToCite)):
                 justToCite[i] = justToCite[i][0]
             justToCite[1] = " " + justToCite[1]
             justToCite = "".join(justToCite)
-            return f"""{justToCite},({self.published.split("-")[-1]}) {self.title}. {self.shortJournalName} {self.volume}: {self.pdfNo}. DOI: {self.doi}"""
-
+            return f"""{justToCite} ({self.published.split("-")[-1]}) {self.title}. {self.shortJournalName} {self.volume}: {self.pdfNo}."""
+        
         else:
             justToCite = self.author.split(" ")
             justToCite.insert(0, justToCite[-1])
