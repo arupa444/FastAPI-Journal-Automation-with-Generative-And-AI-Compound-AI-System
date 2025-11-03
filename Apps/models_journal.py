@@ -772,6 +772,11 @@ class PulsusOutputStr(BaseModel):
             description="Enter the id for this journal input....",
         ),
     ]
+    @computed_field
+    @property
+    def firstNameAuthor(self) -> str:
+        copyAuth = self.author.split(' ')
+        return copyAuth[0]
 
     @field_validator("content")
     @classmethod
