@@ -175,7 +175,7 @@
 
 \begin{flushleft}
   \begin{otherlanguage}{\VAR{lang_name}}
-  \articletitle{\VAR{title | format_reference | safe}}
+  \articletitle{\VAR{title | format_reference | latex_escape | safe}}
   \end{otherlanguage}
   \vspace{0.5cm}
 \end{flushleft}
@@ -260,7 +260,7 @@
 \section*{References}
 \begin{enumerate}
     \BLOCK{ for key, item in content.items() }
-        \item \href{\VAR{item.url}}{ \VAR{item.references | safe}}
+        \item \href{\VAR{item.url}}{ \VAR{item.references | latex_escape | safe}}
     \BLOCK{ endfor }
 \end{enumerate}
 
