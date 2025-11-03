@@ -1,27 +1,21 @@
-\documentclass[10pt]{article} % body text 10pt globally
-
-% === PACKAGES ===
-\usepackage[margin=35pt, top=69pt, bottom=90pt]{geometry}
+\documentclass[10pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=35pt, top=50pt, bottom=150pt]{geometry}
+\setlength{\headheight}{20pt} % enough for 2-line headers
+\setlength{\footskip}{20pt}   % increase space so footer doesn't overlap
 % === DYNAMIC PREAMBLE ===
 \VAR{preamble | safe}
 % === END DYNAMIC PREAMBLE ===
-\usepackage{titlesec} % for heading sizes
-\usepackage{latexsym}
-\usepackage{pict2e}
-\usepackage{wasysym}
+
+\usepackage{setspace}
+\usepackage{eso-pic}
 \usepackage{tikz}
-\usetikzlibrary{calc}
-\usepackage{fancyhdr}
-\usepackage{multicol}
+\usepackage{titlesec}
 \usepackage{hyperref}
-\usepackage{framed}
-\usepackage{lettrine}
-\usepackage{zref-abspage}
-\usepackage{refcount}
-\usepackage{atbegshi}
-\usepackage{ragged2e}
+\usepackage{multicol}
 \setlength{\parindent}{0pt}
-\setlength{\parskip}{6pt}
+\setlength{\parskip}{1em}
+\usepackage{fancyhdr} % For headers/footers
 
 
 % === COLORS ===
