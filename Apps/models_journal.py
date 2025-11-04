@@ -285,6 +285,13 @@ class PulsusInputStr(BaseModel):
 
         else:
             return """author names(first name + the remainings name's first letter(ex.: Arupa Nanda Swain then that should be Arupa NS) and there must be 3 or less, not more authors then that and seperated with comma). title of that journal. Journal short name. year of publishing;Volume of the journal:the page range or the number.(for example: 'author n, author n, author n. titleOFtheJournal. journalShortName. year;Volume:ThePageRangeOrTheNumber.')"""
+    @field_validator("author")
+    @classmethod
+    def validateAuthor(cls, value):
+        if len(value.split(" "))>1:
+            return value
+        else:
+            raise ValueError({"Message":"Author name must contain at least first name and last name."})
 
 
 class UpdateInputPartJournal(BaseModel):
