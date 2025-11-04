@@ -817,11 +817,7 @@ class PulsusOutputStr(BaseModel):
     def citation(self) -> str:
         if self.brandName == "hilaris.tex":
             justToCite = self.author.split(" ")
-            justToCite.insert(0, justToCite[-1])
-            justToCite = justToCite[0:-1]
-            justToCite[0] = f"{justToCite[0]},"
-            justToCite[1] = justToCite[1]
-            justToCite = " ".join(justToCite)
+            justToCite = f"{justToCite[-1]}{" ".join(justToCite[:-1])}"
             return f"""{justToCite}. "{self.title}." {self.shortJournalName} {self.volume} ({self.published.split("-")[-1]}):{self.pdfNo}."""
 
         elif self.brandName == "alliedAcademy.tex":
