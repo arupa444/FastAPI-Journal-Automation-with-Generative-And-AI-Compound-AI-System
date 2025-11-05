@@ -820,41 +820,23 @@ class PulsusOutputStr(BaseModel):
     @computed_field
     @property
     def citation(self) -> str:
+        def formatAuthor(name: str) -> str:
+            intials=""
+            name = name.split(' ')
+            for i in range(len(name)-1):
+                intials+=name[i][0]
+            return f"{name[-1]} {intials}"
+
         if self.brandName == "hilaris.tex":
             justToCite = self.author.split(" ")
-            justToCite.insert(0, justToCite[-1])
-            justToCite = justToCite[0:-1]
-            justToCite[0] = f"{justToCite[0]},"
-            justToCite[1] = justToCite[1]
-            justToCite = " ".join(justToCite)
+            justToCite = f"{justToCite[-1]}, {" ".join(justToCite[:-1])}"
             return f"""{justToCite}. "{self.title}." {self.shortJournalName} {self.volume} ({self.published.split("-")[-1]}):{self.pdfNo}."""
 
         elif self.brandName == "alliedAcademy.tex":
-            justToCite = self.author.split(" ")
-            justToCite.insert(0, justToCite[-1])
-            justToCite = justToCite[0:-1]
-            for i in range(1, len(justToCite)):
-                justToCite[i] = justToCite[i][0]
-            justToCite[1] = " " + justToCite[1]
-            justToCite = "".join(justToCite)
-            return f"""{justToCite}. {self.title}. {self.shortJournalName}. {self.published.split("-")[-1]};{self.volume}({self.issues}):{self.pdfNo}."""
+            return f"""{formatAuthor(self.author)}. {self.title}. {self.shortJournalName}. {self.published.split("-")[-1]};{self.volume}({self.issues}):{self.pdfNo}."""
 
-        elif self.brandName == "omics.tex":
-            justToCite = self.author.split(" ")
-            justToCite.insert(0, justToCite[-1])
-            justToCite = justToCite[0:-1]
-            for i in range(1, len(justToCite)):
-                justToCite[i] = justToCite[i][0]
-            justToCite[1] = " " + justToCite[1]
-            justToCite = "".join(justToCite)
-            return f"""{justToCite} ({self.published.split("-")[-1]}) {self.title}. {self.shortJournalName} {self.volume}: {self.pdfNo}."""
-
+        elif self.brandName == 'omics.tex':
+            return f"""{formatAuthor(self.author)} ({self.published.split("-")[-1]}) {self.title}. {self.shortJournalName} {self.volume}: {self.pdfNo}."""
+        
         else:
-            justToCite = self.author.split(" ")
-            justToCite.insert(0, justToCite[-1])
-            justToCite = justToCite[0:-1]
-            for i in range(1, len(justToCite)):
-                justToCite[i] = justToCite[i][0]
-            justToCite[1] = " " + justToCite[1]
-            justToCite = "".join(justToCite)
-            return f"""{justToCite},({self.published.split("-")[-1]}) {self.title}. {self.shortJournalName} {self.volume}: {self.pdfNo}. DOI: {self.doi}"""
+            return f"""{formatAuthor(self.author)},({self.published.split("-")[-1]}) {self.title}. {self.shortJournalName} {self.volume}: {self.pdfNo}. DOI: {self.doi}"""
