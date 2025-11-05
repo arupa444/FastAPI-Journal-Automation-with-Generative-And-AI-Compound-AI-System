@@ -1,3 +1,5 @@
+from math import log
+from reportlab.lib.PyFontify import pat
 from Apps.config import Config
 from Apps.services.io_service import IOService
 from Apps.models_journal import PulsusInputStr, PulsusOutputStr
@@ -50,7 +52,7 @@ class PipelineService:
 
             store = []
             for author in authors:
-                parts = author.split(' ')
+                parts = author.split(" ")
                 if len(parts) > 1:
                     for j in range(1, len(parts)):
                         parts[j] = parts[j][0]
@@ -59,7 +61,6 @@ class PipelineService:
                 store.append(name)
 
             data["authors"] = ", ".join(store)
-
 
         # ---------- Step 5: Create title, abstract, summary ----------
         processed_sections = PipelineService._process_sections(content_data)
@@ -71,7 +72,7 @@ class PipelineService:
         gem_title = PipelineService._generate_title(
             processed_sections["content"]["summary"], journal
         )
-        if gem_title[-1] == '.':
+        if gem_title[-1] == ".":
             gem_title = gem_title[:-1]
 
         print("Step 6 : Generated title ✅")
@@ -324,10 +325,15 @@ class PipelineService:
         """Move all your LaTeX + HTML rendering logic here."""
         # --- Centralized Directory Setup ---
 
-        # Create a single directory for all of this journal's output files.
+        # Create a single directory for all of this journal's pdf, .html, .tex files.
         output_base_dir = pathOfPathLib("Apps/DB/PDFStorePulsus")
-        journal_folder = output_base_dir/journal.id
+        journal_folder = output_base_dir / journal.id
         journal_folder.mkdir(parents=True, exist_ok=True)
+
+        # Create a working directory for output and log files
+        output_log_dir = pathOfPathLib("Apps/DB/TempLogsPulsus")
+        log_folder = output_log_dir / journal.id
+        log_folder.mkdir(parents=True, exist_ok=True)
 
         print("Step 8.1 : Final response ✅")
 
@@ -502,14 +508,19 @@ class PipelineService:
         # Compile LaTeX to PDF. Run from within the journal's folder.
         for i in range(2):
             result = subprocess.run(
-                ["xelatex", "-interaction=nonstopmode", tex_file_path.name],
+                [
+                    "xelatex",
+                    "-interaction=nonstopmode",
+                    tex_file_path.name,
+                ],
                 capture_output=True,  # Capture stdout/stderr
                 text=True,
                 cwd=journal_folder,  # CRITICAL: Set the working directory
             )
 
             if result.returncode != 0:
-                log_file_path = tex_file_path.with_suffix(".log")
+                log_file_path = log_folder / f"{journal.id}.log"
+                log_file_path = log_file_path.with_suffix(".log")
 
                 # The log file is already saved by xelatex, so we just read it for the error message
                 error_text = "Unknown LaTeX error. Check the log file."
@@ -526,6 +537,12 @@ class PipelineService:
                     status_code=500,
                     detail=f"LaTeX compilation failed on run {i + 1}:\n\n{error_text}",
                 )
+
+        for ext in [".log", ".aux", ".out"]:
+            src = journal_folder / f"{journal.id}{ext}"
+            dst = log_folder / f"{journal.id}{ext}"
+            if src.exists():
+                src.replace(dst)  # move file
 
         print("Step 10 : Create PDF file ✅")
 

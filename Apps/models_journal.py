@@ -83,14 +83,14 @@ class DateUtils:
         current_date = start_date
 
         if brand == "alliedAcademy.tex":
-           # Count only weekdays
+            # Count only weekdays
             added_days = 0
             while added_days < days:
                 current_date += datetime.timedelta(days=1)
                 if current_date.weekday() < 5:
                     added_days += 1
         else:
-             # Just add calendar days
+            # Just add calendar days
             current_date += datetime.timedelta(days=days)
             # If it lands on Saturday/Sunday, move to Monday
             while current_date.weekday() > 4:
@@ -270,7 +270,6 @@ class PulsusInputStr(BaseModel):
         )
         self.received = DateUtils.format_date(received_date)
 
-    
     @computed_field
     @property
     def citeAuthorFormate(self) -> str:
@@ -285,13 +284,18 @@ class PulsusInputStr(BaseModel):
 
         else:
             return """author names(first name + the remainings name's first letter(ex.: Arupa Nanda Swain then that should be Arupa NS) and there must be 3 or less, not more authors then that and seperated with comma). title of that journal. Journal short name. year of publishing;Volume of the journal:the page range or the number.(for example: 'author n, author n, author n. titleOFtheJournal. journalShortName. year;Volume:ThePageRangeOrTheNumber.')"""
+
     @field_validator("author")
     @classmethod
     def validateAuthor(cls, value):
-        if len(value.split(" "))>1:
+        if len(value.split(" ")) > 1:
             return value
         else:
-            raise ValueError({"Message":"Author name must contain at least first name and last name."})
+            raise ValueError(
+                {
+                    "Message": "Author name must contain at least first name and last name."
+                }
+            )
 
 
 class UpdateInputPartJournal(BaseModel):
@@ -779,10 +783,11 @@ class PulsusOutputStr(BaseModel):
             description="Enter the id for this journal input....",
         ),
     ]
+
     @computed_field
     @property
     def firstNameAuthor(self) -> str:
-        copyAuth = self.author.split(' ')
+        copyAuth = self.author.split(" ")
         return copyAuth[0]
 
     @field_validator("content")
