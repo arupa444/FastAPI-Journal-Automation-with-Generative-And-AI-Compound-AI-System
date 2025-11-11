@@ -216,6 +216,7 @@ class PipelineService:
             "description" : '''...''',
             "summary" : '''...''',
             "abstract" : '''...''',
+            "discusion" : '''...''',
             "keywords" : '''...''' # give me Minimun 5 to 10 keywords joined by comma(,)
             ...
             }}
