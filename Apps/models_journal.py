@@ -571,8 +571,8 @@ class PulsusOutputStr(BaseModel):
         str,
         Field(
             ...,
-            title="Name of the short journal name where it belongs to.",
-            description="Enter the short journal name where it belongs from...",
+            title="Short Journal Name",
+            description="The abbreviated or short form of the journal’s name.",
         ),
     ]
     type: Annotated[
