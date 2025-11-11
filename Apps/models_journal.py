@@ -655,6 +655,14 @@ class PulsusOutputStr(BaseModel):
             description="Enter the id for this journal input....",
         ),
     ]
+    discussion: Annotated[
+        str,
+        Field(
+            ...,
+            title="ID of the Input Journal",
+            description="Enter the id for this journal input....",
+        ),
+    ]
     keywords: Annotated[
         str,
         Field(
