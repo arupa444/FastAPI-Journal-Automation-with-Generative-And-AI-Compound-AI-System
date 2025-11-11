@@ -683,8 +683,8 @@ class PulsusOutputStr(BaseModel):
         str,
         Field(
             ...,
-            title="ID of the Input Journal",
-            description="Enter the id for this journal input....",
+            title="Date Received",
+            description="The date when the manuscript was initially received by the journal.",
         ),
     ]
     editorAssigned: Annotated[
