@@ -603,8 +603,8 @@ class PulsusOutputStr(BaseModel):
         str,
         Field(
             ...,
-            title="Name of the brand",
-            description="Enter the name of your brand...",
+            title="Publisher Brand Name",
+            description="The brand or publishing house responsible for the journal.",
         ),
     ]
     authorsDepartment: Annotated[
