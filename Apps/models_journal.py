@@ -627,23 +627,23 @@ class PulsusOutputStr(BaseModel):
         str,
         Field(
             ...,
-            title="ID of the Input Journal",
-            description="Enter the id for this journal input....",
+            title="Introduction",
+            description="The introductory section outlining background and objectives of the study.",
         ),
     ]
     description: Annotated[
         str,
         Field(
             ...,
-            title="ID of the Input Journal",
-            description="Enter the id for this journal input....",
+            title="Journal Description",
+            description="A brief summary or narrative about the article’s content.",
         ),
     ]
     content: Annotated[
         Dict[str, Dict],
         Field(
             ...,
-            title="ID of the Input Journal",
+            title="Journal Content",
             description="Enter the id for this journal input....",
         ),
     ]
