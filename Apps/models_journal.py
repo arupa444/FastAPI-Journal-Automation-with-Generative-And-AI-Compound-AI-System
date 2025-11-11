@@ -667,16 +667,16 @@ class PulsusOutputStr(BaseModel):
         str,
         Field(
             ...,
-            title="ID of the Input Journal",
-            description="Enter the id for this journal input....",
+            title="Keywords",
+            description="Relevant keywords that describe the main topics of the paper.",
         ),
     ]
     doi: Annotated[
         Optional[str],
         Field(
             default=None,
-            title="ID of the Input Journal",
-            description="Enter the id for this journal input....",
+            title="DOI (Digital Object Identifier)",
+            description="The unique DOI assigned to the article, if available.",
         ),
     ]
     received: Annotated[
