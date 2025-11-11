@@ -378,6 +378,11 @@ class PipelineService:
                 storeBody["Introduction"] = forHtml["introduction"]
                 storeBody["Description"] = forHtml["description"]
                 storeBody["Conclusion"] = forHtml["conclusion"]
+            elif journal.brandName == "intres.tex":
+                storeBody["Introduction"] = forHtml["introduction"]
+                storeBody["Description"] = forHtml["description"]
+                storeBody["discussion"] = forHtml["discussion"]
+                storeBody["Conclusion"] = forHtml["conclusion"]
             else:
                 storeBody["Introduction"] = forHtml["introduction"]
                 storeBody["Description"] = forHtml["description"]
