@@ -563,8 +563,8 @@ class PulsusOutputStr(BaseModel):
         str,
         Field(
             ...,
-            title="ID of the Input Journal",
-            description="Enter the id for this journal input....",
+            title="Name of the journal",
+            description="Enter the journal name where it belongs from...",
         ),
     ]
     shortJournalName: Annotated[
