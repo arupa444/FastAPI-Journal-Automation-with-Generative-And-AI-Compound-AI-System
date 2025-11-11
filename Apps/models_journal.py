@@ -579,8 +579,8 @@ class PulsusOutputStr(BaseModel):
         str,
         Field(
             ...,
-            title="ID of the Input Journal",
-            description="Enter the id for this journal input....",
+            title="Journal Type",
+            description="The category of the paper (Eg-Peer reviewed,Research Article, Review, Case Report, etc.)",
         ),
     ]
     author: Annotated[
