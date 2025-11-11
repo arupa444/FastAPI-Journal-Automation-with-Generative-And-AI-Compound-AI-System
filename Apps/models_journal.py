@@ -611,16 +611,16 @@ class PulsusOutputStr(BaseModel):
         str,
         Field(
             ...,
-            title="ID of the Input Journal",
-            description="Enter the id for this journal input....",
+            title="Author’s Department",
+            description="The department to which the author is affiliated with.",
         ),
     ]
     journalYearVolumeIssue: Annotated[
         str,
         Field(
             ...,
-            title="ID of the Input Journal",
-            description="Enter the id for this journal input....",
+            title="Year, Volume & Issue",
+            description="The publication details in the format: Year, Volume, and Issue.",
         ),
     ]
     introduction: Annotated[
