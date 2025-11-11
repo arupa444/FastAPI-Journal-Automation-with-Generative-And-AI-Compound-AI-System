@@ -651,8 +651,8 @@ class PulsusOutputStr(BaseModel):
         str,
         Field(
             ...,
-            title="ID of the Input Journal",
-            description="Enter the id for this journal input....",
+            title="Abstract of the Journal",
+            description="A concise summary of the research purpose, methods, results, and conclusion.",
         ),
     ]
     discussion: Annotated[
