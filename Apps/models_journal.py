@@ -587,8 +587,8 @@ class PulsusOutputStr(BaseModel):
         str,
         Field(
             ...,
-            title="ID of the Input Journal",
-            description="Enter the id for this journal input....",
+            title="Author Name",
+            description="Name of the primary author or corresponding author.",
         ),
     ]
     email: Annotated[
