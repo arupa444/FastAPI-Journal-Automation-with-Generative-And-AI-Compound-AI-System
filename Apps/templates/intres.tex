@@ -1,0 +1,95 @@
+\documentclass{article} % body text 10pt globally
+
+% === PACKAGES ===
+\usepackage[left=1in,right=1in,top=1in,bottom=1in]{geometry}
+% === FONT SETUP ===
+\usepackage{times}
+\usepackage{setspace}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usepackage{xcolor}
+
+% === COLORS ===
+\fancypagestyle{firstpage}{
+    \fancyhf{} % clear header/footer
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0pt}
+    
+    \fancyhead[C]{%
+    \begin{minipage}{\textwidth}
+        \begin{tabular}[t]{@{}p{3cm}p{12cm}@{}}
+            % ---- Left side: Logo + Article Type ----
+            \begin{minipage}[t]{3cm}
+                \vspace{4pt} % adjust vertical alignment
+                \includegraphics[width=2.6cm]{../../../Logo/\VAR{imgPath}}\\[4pt]
+                {\fontsize{9}{12}\selectfont \textit{Commentary Article}}
+            \end{minipage}
+            &
+            % ---- Right side: Journal metadata ----
+            \begin{minipage}[t]{\linewidth}
+                \vspace{0.4cm}
+                \raggedright
+                {\fontsize{10}{12}\selectfont 
+                \makebox[\linewidth][s]{\textbf{International Research Journal of Engineering Science, Technology and Innovation}}\\[4pt]
+                (ISSN: 2315-5663) Vol.11 (1) pp. 01–2, Mar, 2025\\[3pt]
+                DOI: \href{http://dx.doi.org/10.14303/2315-5663.2025.55}{http://dx.doi.org/10.14303/2315-5663.2025.55}\\[3pt]
+                Available online @ \href{https://www.interesjournals.org/biotechnology.html}{https://www.interesjournals.org/biotechnology.html}\\[3pt]
+                \textcopyright~2025 International Research Journals}
+            \end{minipage}
+        \end{tabular}
+    \end{minipage}
+    }
+}
+
+\thispagestyle{firstpage}
+% === Title Section ===
+\begin{document}
+\vspace*{2cm}
+\begin{center}
+    \textbf{\Large Advanced Materials in Structural Engineering: Innovations and Applications}\\[0.5cm]
+    \textbf{Priya Menon*} \\[0.2cm]
+    Department of Civil and Structural Engineering, Orion Institute of Technology, Mumbai, India \\[0.2cm]
+    \textbf{*Corresponding author E-mail: {priyamenon223@gmail.com}}
+\end{center}
+\vspace{0.5cm}
+\noindent
+\textbf{Received:} 01-Mar-2025, Manuscript No. irjesti-25-169520; \textbf{Editor assigned:} 03-Mar-2025, PreQC No. irjesti-25-169520 (PQ); \textbf{Reviewed:} 17-Mar-2025, QC No. irjesti-25-169520; \textbf{Revised:} 21-Mar-2025, Manuscript No. irjesti-25-169520 (R); 
+\textbf{Published:} 28-Mar-2025, DOI: 10.14303/2315-5663.2025.55
+
+% === Main Sections ===
+\section*{INTRODUCTION}
+\vspace{-0.3cm}
+\begin{otherlanguage}{\VAR{lang_name}}
+\VAR{introduction | latex_escape | safe}
+\end{otherlanguage}
+
+\section*{DESCRIPTION}
+\vspace{-0.3cm}
+\begin{otherlanguage}{\VAR{lang_name}}
+\VAR{description | latex_escape | safe}
+\end{otherlanguage}
+
+\section*{DISCUSSION}
+\vspace{-0.3cm}
+\begin{otherlanguage}{\VAR{lang_name}}
+\VAR{discussion | latex_escape | safe}
+\end{otherlanguage}
+
+\section*{CONCLUSION}
+\vspace{-0.3cm}
+\begin{otherlanguage}{\VAR{lang_name}}
+\VAR{conclusion | latex_escape | safe}
+\end{otherlanguage}
+
+\section*{REFERENCES}
+\begin{enumerate}
+    \BLOCK{ for key, item in content.items() }
+        \item \href{\VAR{item.url}}{ \VAR{item.references | latex_escape | safe}}
+    \BLOCK{ endfor }
+\end{enumerate}
+
+\end{document}
