@@ -337,6 +337,6 @@ with JSON body:
 
 For queries or contributions:
 
-*   **Author:** Arupa Nanda Swain
+*   **Author:** Arupa Nanda Swain, Ashutosh Mishra, Daniel Bavisetti
 *   **GitHub:** https://github.com/arupa444
-*   **Email:** arupaswain7735@gmail.com
+*   **Email:** arupaswain7735@gmail.com, ashutoshmishra21oct2003@gmail.com, daniel.bavisetti0579@gmail.com
