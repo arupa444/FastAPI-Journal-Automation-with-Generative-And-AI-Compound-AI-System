@@ -1,4 +1,3 @@
-from math import log
 from Apps.config import Config
 from Apps.services.io_service import IOService
 from Apps.models_journal import PulsusInputStr, PulsusOutputStr
