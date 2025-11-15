@@ -208,6 +208,7 @@ class PipelineService:
             2: Give me a brief introduction from the given data where it will contain the citation markers as well, and note, you have to take in this way: the "C001" will be 1, "C002": 2...... and each section should have different but sequential citation markers (for ex: "C001" will be [1], "C002": [2] and so on). and give two linebreak '\n' after the citation marker and also make sure the citation marker must stays before the full stop '.' and covered with square brackets'[]'(for ex: [1], [2]....., [10]), and the full introduction word count lies in between 600 - 800.
             3: Give me a brief description from the given data and note, the full description contain more then 4 paragraphs with word count lies in between 600 - 800 NOTE: Add citation markers(Inside square brackets).
             4: Give me a abstract from the given data, and the full abstract word count lies in between 90 - 100.
+            5: Give me a brief discussion from the given data where the word count lies in between 300 - 500.
 
             The final structure should look like:
             "content": {{
@@ -215,6 +216,7 @@ class PipelineService:
             "description" : '''...''',
             "summary" : '''...''',
             "abstract" : '''...''',
+            "discussion" : '''...''',
             "keywords" : '''...''' # give me Minimun 5 to 10 keywords joined by comma(,)
             ...
             }}
@@ -275,6 +277,7 @@ class PipelineService:
                 "introduction": gem_info["introduction"],
                 "description": gem_info["description"],
                 "abstract": gem_info["abstract"],
+                "discussion": gem_info["discussion"],
                 "keywords": gem_info["keywords"],
                 "content": content_data.get("content", {}),
                 "doi": journal.doi,
@@ -373,6 +376,11 @@ class PipelineService:
             elif journal.brandName == "iomc.tex":
                 storeBody["Introduction"] = forHtml["introduction"]
                 storeBody["Description"] = forHtml["description"]
+                storeBody["Conclusion"] = forHtml["conclusion"]
+            elif journal.brandName == "intres.tex":
+                storeBody["Introduction"] = forHtml["introduction"]
+                storeBody["Description"] = forHtml["description"]
+                storeBody["discussion"] = forHtml["discussion"]
                 storeBody["Conclusion"] = forHtml["conclusion"]
             else:
                 storeBody["Introduction"] = forHtml["introduction"]

@@ -555,95 +555,95 @@ class PulsusOutputStr(BaseModel):
         str,
         Field(
             ...,
-            title="ID of the Input Journal",
-            description="Enter the id for this journal input....",
+            title="Article Title",
+            description="The full title of the research paper or article.",
         ),
     ]
     journalName: Annotated[
         str,
         Field(
             ...,
-            title="ID of the Input Journal",
-            description="Enter the id for this journal input....",
+            title="Journal Name",
+            description="Enter the journal name where it belongs from.",
         ),
     ]
     shortJournalName: Annotated[
         str,
         Field(
             ...,
-            title="Name of the short journal name where it belongs to.",
-            description="Enter the short journal name where it belongs from...",
+            title="Short Journal Name",
+            description="The abbreviated or short form of the journal’s name.",
         ),
     ]
     type: Annotated[
         str,
         Field(
             ...,
-            title="ID of the Input Journal",
-            description="Enter the id for this journal input....",
+            title="Journal Type",
+            description="The category of the paper (Eg-Peer reviewed,Research Article, Review, Case Report, etc.)",
         ),
     ]
     author: Annotated[
         str,
         Field(
             ...,
-            title="ID of the Input Journal",
-            description="Enter the id for this journal input....",
+            title="Author Name",
+            description="Name of the primary author or corresponding author.",
         ),
     ]
     email: Annotated[
         EmailStr,
         Field(
             ...,
-            title="ID of the Input Journal",
-            description="Enter the id for this journal input....",
+            title="Author Email",
+            description="Official email address of the corresponding author.",
         ),
     ]
     brandName: Annotated[
         str,
         Field(
             ...,
-            title="Name of the brand",
-            description="Enter the name of your brand...",
+            title="Publisher Brand Name",
+            description="The brand or publishing house responsible for the journal.",
         ),
     ]
     authorsDepartment: Annotated[
         str,
         Field(
             ...,
-            title="ID of the Input Journal",
-            description="Enter the id for this journal input....",
+            title="Author’s Department",
+            description="The department to which the author is affiliated with.",
         ),
     ]
     journalYearVolumeIssue: Annotated[
         str,
         Field(
             ...,
-            title="ID of the Input Journal",
-            description="Enter the id for this journal input....",
+            title="Year, Volume & Issue",
+            description="The publication details in the format: Year, Volume, and Issue.",
         ),
     ]
     introduction: Annotated[
         str,
         Field(
             ...,
-            title="ID of the Input Journal",
-            description="Enter the id for this journal input....",
+            title="Introduction",
+            description="The introductory section outlining background and objectives of the study.",
         ),
     ]
     description: Annotated[
         str,
         Field(
             ...,
-            title="ID of the Input Journal",
-            description="Enter the id for this journal input....",
+            title="Journal Description",
+            description="A brief summary or narrative about the article’s content.",
         ),
     ]
     content: Annotated[
         Dict[str, Dict],
         Field(
             ...,
-            title="ID of the Input Journal",
+            title="Journal Content",
             description="Enter the id for this journal input....",
         ),
     ]
@@ -651,32 +651,40 @@ class PulsusOutputStr(BaseModel):
         str,
         Field(
             ...,
-            title="ID of the Input Journal",
-            description="Enter the id for this journal input....",
+            title="Abstract of the Journal",
+            description="A concise summary of the research purpose, methods, results, and conclusion.",
+        ),
+    ]
+    discussion: Annotated[
+        str,
+        Field(
+            ...,
+            title="Discussion",
+            description="Section discussing the findings, interpretations, and implications.",
         ),
     ]
     keywords: Annotated[
         str,
         Field(
             ...,
-            title="ID of the Input Journal",
-            description="Enter the id for this journal input....",
+            title="Keywords",
+            description="Relevant keywords that describe the main topics of the paper.",
         ),
     ]
     doi: Annotated[
         Optional[str],
         Field(
             default=None,
-            title="ID of the Input Journal",
-            description="Enter the id for this journal input....",
+            title="DOI (Digital Object Identifier)",
+            description="The unique DOI assigned to the article, if available.",
         ),
     ]
     received: Annotated[
         str,
         Field(
             ...,
-            title="ID of the Input Journal",
-            description="Enter the id for this journal input....",
+            title="Date Received",
+            description="The date when the manuscript was initially received by the journal.",
         ),
     ]
     editorAssigned: Annotated[
