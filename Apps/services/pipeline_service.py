@@ -43,23 +43,6 @@ class PipelineService:
         content_data = PipelineService._parse_gemini_response(prompt)
         print("Step 3,4 : Generation with Parsing the structured JSON ✅")
 
-        for kk, data in content_data.items():
-            authors = data.get("authors")
-            if not authors:
-                continue  # skip if missing or empty
-
-            store = []
-            for author in authors:
-                parts = author.split(" ")
-                if len(parts) > 1:
-                    for j in range(1, len(parts)):
-                        parts[j] = parts[j][0]
-                    parts[1] = " " + parts[1]
-                name = "".join(parts)
-                store.append(name)
-
-            data["authors"] = ", ".join(store)
-
         # ---------- Step 5: Create title, abstract, summary ----------
         processed_sections = PipelineService._process_sections(content_data)
         processed_sections = PipelineService._normalize_content_structure(
@@ -130,6 +113,12 @@ class PipelineService:
         }}, # give me exact 10 References(..., C009, C010)
         ...
         }}
+        IMPORTANT NOTE: 
+        1: Write in a natural, imperfect human style. Vary sentence length, occasionally use subtle pauses or conversational shifts, and let ideas flow organically instead of in rigid patterns. Avoid over-optimized grammar or uniform structure that AI detectors pick up. Do not make the writing overly polished—keep it slightly raw, like thoughtful notes written by a researcher.
+        
+        2: Write in a natural human manner with varied rhythm, organic flow, and slight imperfections. Avoid AI-like patterns such as overly polished grammar, repetitive transitions, or uniform structure. Let the writing feel like a human expert summarizing after reading the papers—thoughtful, varied, and intentionally imperfect where appropriate.
+
+
 
 
         Focus on creating references from title, authors, year, and DOI.
@@ -150,7 +139,7 @@ class PipelineService:
         for attempt in range(retries):
             try:
                 response = PipelineService.gemClient.models.generate_content(
-                    model="gemini-2.5-pro", contents=prompt
+                    model="gemini-2.5-flash", contents=prompt
                 )
                 return response.text
             except Exception as e:
@@ -209,6 +198,12 @@ class PipelineService:
             3: Give me a brief description from the given data and note, the full description contain more then 4 paragraphs with word count lies in between 600 - 800 NOTE: Add citation markers(Inside square brackets).
             4: Give me a abstract from the given data, and the full abstract word count lies in between 90 - 100.
             5: Give me a brief discussion from the given data where the word count lies in between 300 - 500.
+            
+            IMPORTANT NOTE: 
+            1: Write in a natural, imperfect human style. Vary sentence length, occasionally use subtle pauses or conversational shifts, and let ideas flow organically instead of in rigid patterns. Avoid over-optimized grammar or uniform structure that AI detectors pick up. Do not make the writing overly polished—keep it slightly raw, like thoughtful notes written by a researcher.
+            
+            2: Write in a natural human manner with varied rhythm, organic flow, and slight imperfections. Avoid AI-like patterns such as overly polished grammar, repetitive transitions, or uniform structure. Let the writing feel like a human expert summarizing after reading the papers—thoughtful, varied, and intentionally imperfect where appropriate.
+            
 
             The final structure should look like:
             "content": {{

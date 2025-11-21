@@ -32,7 +32,7 @@
         showLoading();
 
         try {
-            const response = await fetch(`/delete/journalInputData/${journalId}`, {
+            const response = await fetch(`/journal/delete/${journalId}`, {
                 method: "DELETE"
             });
 
