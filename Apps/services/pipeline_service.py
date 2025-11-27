@@ -24,6 +24,7 @@ class PipelineService:
         5. Return JSON status
         """
         # ---------- Step 1: Store input ----------
+        IOService.INPUT_FILE.parent.mkdir(parents=True, exist_ok=True)
         data = IOService.fetchInputData()
         journal.id = journal.id.strip()
         if journal.id in data:
@@ -65,14 +66,16 @@ class PipelineService:
 
         IOService.saveInputData(data)
         output_data = IOService.fetchOutputData()
-        pulsus_output_instance = PulsusOutputStr(**final_output[journal.id])
-        output_data[journal.id] = pulsus_output_instance.model_dump()
+
+        # Save the prepared dict directly so we don't lose 'content' to model serialization.
+        output_data[journal.id] = final_output[journal.id]
+
         IOService.saveOutputData(output_data)
         print("Step 7 : Saved output data ✅")
 
         # ---------- Step 7: Generate files ----------
         PipelineService._generate_html_and_pdf(journal, output_data)
-        print("Step 8 : Generated HTML and PDF ✅")
+        print("Step 11 : Generated HTML and PDF ✅")
 
         # ---------- Step 8: Return success ----------
         return JSONResponse(
@@ -99,7 +102,7 @@ class PipelineService:
         "content": {{
         "C001": {{
             "subContent": "...",
-            "references": "...", # make sure that cite should be in {journal.citeAuthorFormate} formate
+            "references": "", # leave this empty; the backend will generate this string using citeAuthorFormat
             "title": "...",
             "journalShortName": "...",
             "authors": ["...", "...", "..."], #only three authors name (full name)
@@ -255,10 +258,73 @@ class PipelineService:
 
         return response.strip()
 
+    # =======================
+    # AUTHOR FORMAT UTILITIES
+    # =======================
+
+    @staticmethod
+    def _format_author_name(full_name: str) -> str:
+        """
+        'Swarupa N. Kulkarni' → 'Swarupa NK'
+        """
+        parts = full_name.replace(".", "").split()
+        if len(parts) == 1:
+            return parts[0]
+
+        first = parts[0]
+        initials = "".join(p[0] for p in parts[1:])
+        return f"{first} {initials}"
+
+    @staticmethod
+    def _format_authors_list(author_list: list[str]) -> str:
+        formatted = [
+            PipelineService._format_author_name(a)
+            for a in author_list
+            if isinstance(a, str)
+        ]
+        return ", ".join(formatted) + "."
+
     @staticmethod
     def _build_final_output(journal, gem_title, content_data, gem_info):
-        """Combine all data into one dict."""
-        return {
+        """
+        Stores:
+          - authors_full  (full names)
+          - authors_short (initials format)
+          - RAW reference fields (title, year, journal, etc.)
+
+        Reference string is NOT generated here.
+        Each LaTeX brand template will format its own version.
+        """
+
+        processed_content = {}
+
+        # ----------------------------------------------------
+        #  Process content items (C001, C002, ...)
+        # ----------------------------------------------------
+        # Process each reference C001, C002...
+
+        for key, item in content_data.get("content", {}).items():
+
+            full_authors_list = item.get("authors", [])
+            authors_full = ", ".join(full_authors_list) + "."
+            authors_short = PipelineService._format_authors_list(full_authors_list)
+
+            processed_content[key] = {
+                "title": item.get("title", ""),
+                "journalShortName": item.get("journalShortName", ""),
+                "authors_full": authors_full,
+                "authors_short": authors_short,
+                "published": item.get("published", ""),
+                "pageRangeOrNumber": item.get("pageRangeOrNumber", ""),
+                "volume": item.get("volume", ""),
+                "issues": item.get("issues", ""),
+                "DOI": item.get("DOI", ""),
+                "url": item.get("url", ""),
+                "parentLink": item.get("parentLink", ""),
+                "subContent": item.get("subContent", ""),
+            }
+
+        output = {
             journal.id: {
                 "title": gem_title,
                 "journalName": journal.journalName,
@@ -274,7 +340,8 @@ class PipelineService:
                 "abstract": gem_info["abstract"],
                 "discussion": gem_info["discussion"],
                 "keywords": gem_info["keywords"],
-                "content": content_data.get("content", {}),
+                # 🔥 Use processed content here
+                "content": processed_content,
                 "doi": journal.doi,
                 "received": journal.received,
                 "editorAssigned": journal.editorAssigned,
@@ -282,6 +349,7 @@ class PipelineService:
                 "revised": journal.revised,
                 "published": journal.published,
                 "year": int(journal.published.split("-")[-1]),
+                "month": str(journal.published.split("-")[1]),
                 "manuscriptNo": journal.manuscriptNo,
                 "QCNo": (
                     f"Q-{journal.manuscriptNo.split('-')[-1]}"
@@ -315,6 +383,7 @@ class PipelineService:
                 "conclusion": gem_info["summary"],
             }
         }
+        return output
 
     @staticmethod
     def _generate_html_and_pdf(journal, output_data):
@@ -391,16 +460,16 @@ class PipelineService:
                 i["issues"] = f"({i['issues']})" if i.get("issues") else ""
 
                 if journal.brandName == "alliedAcademy.tex":
-                    temp = f"""<p><a name="{count}" id="{count}"></a>{i["authors"]}. <a href="{i["parentLink"]}" target="_blank">{i["title"]}</a>. {i["journalShortName"]}. {i["published"]};{i["volume"]}{i["issues"]}:{i["pageRangeOrNumber"]}.</p>
+                    temp = f"""<p><a name="{count}" id="{count}"></a>{i["authors_short"]}. <a href="{i["parentLink"]}" target="_blank">{i["title"]}</a>. {i["journalShortName"]}. {i["published"]};{i["volume"]}{i["issues"]}:{i["pageRangeOrNumber"]}.</p>
                     <p align="right"><a href="{i["url"]}" target="_blank"><u>Indexed at</u></a>, <a href="https://scholar.google.com/scholar?hl=en&as_sdt=0%2C5&q={'+'.join(i["title"].split(' '))}&btnG=" target="_blank"><u>Google Scholar</u></a>, <a href="https://doi.org/{i["DOI"]}" target="_blank"><u>Crossref</u></a></p>"""
                 elif journal.brandName == "omics.tex":
-                    temp = f"""<p><a name="{count}" id="{count}"></a>{i["authors"]} ({i["published"]}) <a href="{i["parentLink"]}" target="_blank">{i["title"]}</a>.{i["journalShortName"]} {i["volume"]}:{i["pageRangeOrNumber"]}.</p>
+                    temp = f"""<p><a name="{count}" id="{count}"></a>{i["authors_short"]} ({i["published"]}) <a href="{i["parentLink"]}" target="_blank">{i["title"]}</a>.{i["journalShortName"]} {i["volume"]}:{i["pageRangeOrNumber"]}.</p>
                     <p align="right"><a href="{i["url"]}" target="_blank"><u>Indexed at</u></a>, <a href="https://scholar.google.com/scholar?hl=en&as_sdt=0%2C5&q={'+'.join(i["title"].split(' '))}&btnG=" target="_blank"><u>Google Scholar</u></a>, <a href="https://doi.org/{i["DOI"]}" target="_blank"><u>Crossref</u></a></p>"""
                 elif journal.brandName == "hilaris.tex":
-                    temp = f"""<p><a name="{count}" id="{count}"></a>{i["authors"]}. <a href="{i["parentLink"]}" target="_blank">"{i["title"]}"</a>.<i>{i["journalShortName"]}</i> {i["volume"]} ({i["published"]}):{i["pageRangeOrNumber"]}.</p>
+                    temp = f"""<p><a name="{count}" id="{count}"></a>{i["authors_full"]}. <a href="{i["parentLink"]}" target="_blank">"{i["title"]}"</a>.<i>{i["journalShortName"]}</i> {i["volume"]} ({i["published"]}):{i["pageRangeOrNumber"]}.</p>
                     <p align="right"><a href="{i["url"]}" target="_blank"><u>Indexed at</u></a>, <a href="https://scholar.google.com/scholar?hl=en&as_sdt=0%2C5&q={'+'.join(i["title"].split(' '))}&btnG=" target="_blank"><u>Google Scholar</u></a>, <a href="https://doi.org/{i["DOI"]}" target="_blank"><u>Crossref</u></a></p>"""
                 else:
-                    temp = f"""<p><a name="{count}" id="{count}"></a>{i["authors"]}. <a href="{i["parentLink"]}" target="_blank">{i["title"]}</a>. {i["journalShortName"]}. {i["published"]};{i["volume"]}{i["issues"]}:{i["pageRangeOrNumber"]}.</p>
+                    temp = f"""<p><a name="{count}" id="{count}"></a>{i["authors_short"]}. <a href="{i["parentLink"]}" target="_blank">{i["title"]}</a>. {i["journalShortName"]}. {i["published"]};{i["volume"]}{i["issues"]}:{i["pageRangeOrNumber"]}.</p>
                     <p align="right"><a href="{i["url"]}" target="_blank"><u>Indexed at</u></a>, <a href="https://scholar.google.com/scholar?hl=en&as_sdt=0%2C5&q={'+'.join(i["title"].split(' '))}&btnG=" target="_blank"><u>Google Scholar</u></a>, <a href="https://doi.org/{i["DOI"]}" target="_blank"><u>Crossref</u></a></p>"""
 
                 forHtml["storeRefPart"] = f"""{forHtml['storeRefPart']}\n{temp}"""
@@ -461,24 +530,7 @@ class PipelineService:
             pattern = re.compile("|".join(re.escape(k) for k in replacements.keys()))
             return pattern.sub(lambda m: replacements[m.group()], text)
 
-        def format_reference(ref: str) -> str:
-            if not isinstance(ref, str):
-                return ref
-
-            # First escape LaTeX
-            ref = latex_escape(ref)
-
-            # Regex: Find journal short name (before year/volume/semicolon/parenthesis)
-            # Example match: " J. Biomol. Struct. Dyn"
-            pattern = r"(\s)([A-Z][A-Za-z\.\s]+)(?=\s\d|\s\(|;)"
-
-            def repl(match):
-                return f" \\textit{{{match.group(2).strip()}}}"
-
-            return re.sub(pattern, repl, ref, count=1)
-
         env_latex.filters["latex_escape"] = latex_escape
-        env_latex.filters["format_reference"] = format_reference
         template = env_latex.get_template(journal.brandName)
 
         brand_key = journal.brandName.replace(".tex", "")
@@ -499,6 +551,7 @@ class PipelineService:
 
         # record original language so later translation flow can detect existing language if needed
         output_data[journal.id]["lang"] = "en"
+
 
         rendered_latex = template.render(**output_data[journal.id])
 
