@@ -258,10 +258,19 @@
 
 
 \section*{References}
+\fontsize{8}{9.6}\selectfont
 \begin{enumerate}
-    \BLOCK{ for key, item in content.items() }
-        \item \href{\VAR{item.url}}{ \VAR{item.references | latex_escape | safe}}
-    \BLOCK{ endfor }
+\BLOCK{ if content|length == 0 }
+    \item No references generated.
+\BLOCK{ else }
+\BLOCK{ for key, item in content.items() }
+    \item \href{\VAR{item.url}}{%
+        \VAR{item.authors_short} \VAR{item.published} \VAR{item.title}. 
+        \textit{\VAR{item.journalShortName}}. 
+        \VAR{item.volume}:\VAR{item.pageRangeOrNumber}
+    }
+\BLOCK{ endfor }
+\BLOCK{ endif }
 \end{enumerate}
 
 
