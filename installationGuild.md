@@ -129,7 +129,4 @@ This ensures full flexibility and zero hosting cost.
 
 ---
 
-## 📄 License
-
-This project is currently intended for internal or private usage.  
-Modify as needed based on your licensing preferences.
+Thank you
