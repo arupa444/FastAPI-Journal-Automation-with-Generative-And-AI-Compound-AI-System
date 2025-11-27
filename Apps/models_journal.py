@@ -723,8 +723,16 @@ class PulsusOutputStr(BaseModel):
         int,
         Field(
             ...,
-            title="Yes of publishing",
+            title="year of publishing",
             description="Enter the journal publising year...",
+        ),
+    ]
+    month: Annotated[
+        str,
+        Field(
+            ...,
+            title="Month of publishing",
+            description="Enter the journal publising month...",
         ),
     ]
     manuscriptNo: Annotated[

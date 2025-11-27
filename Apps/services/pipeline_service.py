@@ -282,6 +282,7 @@ class PipelineService:
                 "revised": journal.revised,
                 "published": journal.published,
                 "year": int(journal.published.split("-")[-1]),
+                "month": str(journal.published.split("-")[1]),
                 "manuscriptNo": journal.manuscriptNo,
                 "QCNo": (
                     f"Q-{journal.manuscriptNo.split('-')[-1]}"
