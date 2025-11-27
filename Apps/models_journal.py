@@ -723,7 +723,7 @@ class PulsusOutputStr(BaseModel):
         int,
         Field(
             ...,
-            title="Yes of publishing",
+            title="year of publishing",
             description="Enter the journal publising year...",
         ),
     ]
@@ -731,7 +731,7 @@ class PulsusOutputStr(BaseModel):
         str,
         Field(
             ...,
-            title="Yes of publishing",
+            title="Month of publishing",
             description="Enter the journal publising month...",
         ),
     ]
