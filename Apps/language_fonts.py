@@ -190,6 +190,15 @@ class LatexLanguageConfig:
             ItalicFont     = *-Italic ,
             BoldItalicFont = *-BoldItalic
         ]""",
+        "Irjesti": r"""
+        \usepackage{fontspec}
+        \setmainfont{Calibri}[
+            Path=../../../Fonts/,
+            UprightFont    = *-Regular ,
+            BoldFont       = *-Bold ,
+            ItalicFont     = *-Italic ,
+            BoldItalicFont = *-BoldItalic
+        ]""",
     }
 
     def get_lang_map(self, brand: str = "default") -> dict[str, dict[str, str]]:
