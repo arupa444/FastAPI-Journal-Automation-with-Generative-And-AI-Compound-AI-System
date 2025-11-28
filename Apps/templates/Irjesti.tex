@@ -3,15 +3,45 @@
 % === PACKAGES ===
 \usepackage[left=1in,right=1in,top=1in,bottom=1in]{geometry}
 % === FONT SETUP ===
-\usepackage{times}
+% === DYNAMIC PREAMBLE ===
+\VAR{preamble | safe}
+% === END DYNAMIC PREAMBLE ===
+
 \usepackage{setspace}
 \usepackage{fancyhdr}
 \usepackage{titlesec}
 \usepackage{enumitem}
 \usepackage{hyperref}
+\usepackage{xurl}   % allows line breaks in long URLs
 \usepackage{graphicx}
 \usepackage{tikz}
 \usepackage{xcolor}
+
+\definecolor{White}{rgb}{1,1,1}% White - color_283006
+\definecolor{Black}{rgb}{0,0,0}% Black - Black
+\definecolor{OffWhite}{rgb}{1,0.996078,0.996078}% Very Light Pink / Off-White - color_282974
+\definecolor{LightNavyBlue}{rgb}{0,0.349,0.588}
+
+% === Global font size control ===
+\renewcommand\normalsize{%
+  \fontsize{10}{13.6}\selectfont
+}
+\normalsize
+
+% === TITLE STYLE ===
+\newcommand{\articletitle}[1]{%
+  {\fontsize{20}{20}\selectfont\bfseries\color{Black}{#1}}\par
+}
+
+% === TITLE & SECTION FONT SIZES ===
+% --- Section (numbered + unnumbered) ---
+\titleformat{name=\section,numberless}[block]%
+  {\fontsize{15}{20}\selectfont\bfseries\color{Black}}{}{0pt}{}
+
+% --- Subsection ---
+\titleformat{name=\subsection}[block]%
+  {\normalsize\bfseries\color{Black}}{}{0pt}{}
+
 
 % === COLORS ===
 \fancypagestyle{firstpage}{
@@ -21,12 +51,13 @@
     
     \fancyhead[C]{%
     \begin{minipage}{\textwidth}
-        \begin{tabular}[t]{@{}p{3cm}p{12cm}@{}}
+        \begin{tabular}[t]{@{}p{2.7cm}p{\dimexpr\textwidth-3.3cm\relax}@{}}
             % ---- Left side: Logo + Article Type ----
             \begin{minipage}[t]{3cm}
+                \centering
                 \vspace{4pt} % adjust vertical alignment
                 \includegraphics[width=2.6cm]{../../../Logo/\VAR{imgPath}}\\[4pt]
-                {\fontsize{9}{12}\selectfont \textit{\VAR{type}}}
+                {\fontsize{9}{12}\selectfont\textit{\VAR{type}}}
             \end{minipage}
             &
             % ---- Right side: Journal metadata ----
@@ -36,8 +67,8 @@
                 {\fontsize{10}{12}\selectfont 
                 \makebox[\linewidth][s]{\textbf{International Research Journal of Engineering Science, Technology and Innovation}}\\[4pt]
                 (ISSN: \VAR{ISSN}) Vol.\VAR{volume} (\VAR{issues}) pp. \VAR{pdfNo}, \VAR{month}, \VAR{year}\\[3pt]
-                DOI: \href{http:/dx.doi.org/\VAR{doi}}{http:/dx.doi.org/\VAR{doi}}\\[3pt]
-                Available online @ \href{\VAR{parentLink}}{\VAR{parentLink}}\\[3pt]
+                DOI: \url{http:/dx.doi.org/\VAR{doi}}\\[3pt]
+                Available online @ \url{\VAR{parentLink}}\\[3pt]
                 \textcopyright~\VAR{year} International Research Journals}
             \end{minipage}
         \end{tabular}
@@ -50,10 +81,11 @@
 \begin{document}
 \vspace*{2cm}
 \begin{center}
-    \textbf{\Large Advanced Materials in Structural Engineering: Innovations and Applications}\\[0.5cm]
-    \textbf{\VAR{author}*} \\[0.2cm]
-    \VAR{authorsDepartment} \\[0.2cm]
-    \textbf{*Corresponding author E-mail: \VAR{email}}
+    \articletitle{\VAR{title | latex_escape | safe}}
+    \vspace{0.8cm}
+    {\fontsize{12}{16}\selectfont\bfseries{\VAR{author}*}} \\[0.2cm]
+    {\fontsize{11}{16}\selectfont \VAR{authorsDepartment}} \\[0.2cm]
+    {\fontsize{11}{16}\selectfont\bfseries{*Corresponding author E-mail: \VAR{email}}}
 \end{center}
 \vspace{0.5cm}
 \noindent

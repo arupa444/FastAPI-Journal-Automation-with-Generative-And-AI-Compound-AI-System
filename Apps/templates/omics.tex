@@ -98,14 +98,14 @@
             \setlength{\parskip}{0pt} % no extra spacing
             \fontsize{15}{17}\selectfont\color{LightNavyBlue}\textbf{%  
 	    \sloppy 
-	    \VAR{journalName | format_reference | safe}}
+	    \VAR{journalName | safe}}
 	    \end{minipage}%
         };
     
       % Right side citation info
       \node[anchor=east] at 
           ($(current page.north east) + (-35pt,-30pt)$) {%
-          \fontsize{8}{10}\selectfont\color{Black}{\VAR{firstNameAuthor | latex_escape | safe}, \VAR{shortJournalName | format_reference | safe} \VAR{year}, \VAR{volume}:\VAR{issues}}%
+          \fontsize{8}{10}\selectfont\color{Black}{\VAR{firstNameAuthor | latex_escape | safe}, \VAR{shortJournalName | safe} \VAR{year}, \VAR{volume}:\VAR{issues}}%
     };
     
         % --- Blue bar inside text margins ---
@@ -125,7 +125,7 @@
 }
 
     % Left footer
-    \fancyfoot[L]{\fontsize{8}{10}\selectfont\color{Black}\VAR{shortJournalName | format_reference | safe}, an open access journal}
+    \fancyfoot[L]{\fontsize{8}{10}\selectfont\color{Black}\VAR{shortJournalName | safe}, an open access journal}
 
     % Right footer: volume info BELOW the rule line
     \fancyfoot[R]{\fontsize{8.5}{10}\selectfont\color{Black}%
@@ -150,12 +150,12 @@
       \hbox to\headwidth{\color{LightNavyBlue}\leaders\hrule height 0.5pt\hfill}\vss
     }
 
-    \fancyhead[L]{\fontsize{8}{10}\selectfont\color{Black}\textbf{Citation:} \VAR{citation | format_reference | safe}}
+    \fancyhead[L]{\fontsize{8}{10}\selectfont\color{Black}\textbf{Citation:} \VAR{citation | safe}}
     \fancyhead[R]{\fontsize{8.5}{10}\selectfont\color{Black}% 
       Page~\thepage~of~\getpagerefnumber{TotPages}}
 
     % Left footer
-    \fancyfoot[L]{\fontsize{8}{10}\selectfont\color{Black}\VAR{shortJournalName | format_reference | safe}, an open access journal}
+    \fancyfoot[L]{\fontsize{8}{10}\selectfont\color{Black}\VAR{shortJournalName | safe}, an open access journal}
 
     % Right footer: volume info BELOW the rule line
     \fancyfoot[R]{\fontsize{8.5}{10}\selectfont\color{Black}%
@@ -175,16 +175,16 @@
 
 \begin{flushleft}
   \begin{otherlanguage}{\VAR{lang_name}}
-  \articletitle{\VAR{title | format_reference | latex_escape | safe}}
+  \articletitle{\VAR{title | latex_escape | safe}}
   \end{otherlanguage}
   \vspace{0.5cm}
 \end{flushleft}
 
 \begin{flushleft}
 \vspace*{-0.5cm}
-    \fontsize{10}{13.2}\selectfont\color{Black}\textbf{\VAR{author | format_reference | safe}*}\par
+    \fontsize{10}{13.2}\selectfont\color{Black}\textbf{\VAR{author | safe}*}\par
     \vspace{0cm}
-    \fontsize{8}{10.8}\selectfont\color{Black}\VAR{authorsDepartment | format_reference | safe}\par
+    \fontsize{8}{10.8}\selectfont\color{Black}\VAR{authorsDepartment | safe}\par
     \vspace{0.1cm}
 
     \noindent\color{LightNavyBlue}\rule{\linewidth}{1pt}
@@ -220,7 +220,7 @@
 \begin{abstractbox}
 \abstractsection{Abstract}
 \begin{otherlanguage}{\VAR{lang_name}}
-\VAR{abstract | format_reference | safe}
+\VAR{abstract | safe}
 \end{otherlanguage}
 \end{abstractbox}
 

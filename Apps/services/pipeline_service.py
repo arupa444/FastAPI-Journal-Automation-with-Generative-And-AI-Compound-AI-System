@@ -441,7 +441,7 @@ class PipelineService:
                 storeBody["Introduction"] = forHtml["introduction"]
                 storeBody["Description"] = forHtml["description"]
                 storeBody["Conclusion"] = forHtml["conclusion"]
-            elif journal.brandName == "intres.tex":
+            elif journal.brandName == "Irjesti.tex":
                 storeBody["Introduction"] = forHtml["introduction"]
                 storeBody["Description"] = forHtml["description"]
                 storeBody["discussion"] = forHtml["discussion"]
@@ -534,7 +534,7 @@ class PipelineService:
         template = env_latex.get_template(journal.brandName)
 
         brand_key = journal.brandName.replace(".tex", "")
-        lang_map = LatexLanguageConfig.get_lang_map(brand_key)
+        lang_map = LatexLanguageConfig().get_lang_map(brand_key)
 
         # --- ensure initial PDF has an English preamble and mark language in saved record ---
         default_cfg = lang_map.get("default")
@@ -551,7 +551,6 @@ class PipelineService:
 
         # record original language so later translation flow can detect existing language if needed
         output_data[journal.id]["lang"] = "en"
-
 
         rendered_latex = template.render(**output_data[journal.id])
 
