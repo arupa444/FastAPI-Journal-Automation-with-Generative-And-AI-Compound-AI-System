@@ -51,7 +51,27 @@ def ui_add_journal(request: Request):
 
 @router.get("/ui/update-journal")
 def ui_update_journal(request: Request):
-    return templates.TemplateResponse("updateJournal.html", {"request": request})
+    allowed_ext_img = (".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp", ".tiff", ".svg")
+    allowed_ext_temp = (".tex")
+    image_files = [
+        f
+        for f in os.listdir(
+            "Apps/Logo"
+        )
+        if f.lower().endswith(allowed_ext_img)
+    ]
+    template_files = [
+        f
+        for f in os.listdir(
+            "Apps/templates"
+        )
+        if f.lower().endswith(allowed_ext_temp)
+    ]
+    return templates.TemplateResponse(
+        "updateJournal.html", {
+            "request": request, "images": image_files, "template_files": template_files
+        }
+    )
 
 
 @router.get("/ui/ask-gemini")
