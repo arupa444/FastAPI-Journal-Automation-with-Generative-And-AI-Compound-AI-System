@@ -7,71 +7,104 @@
 
 <form id="updateJournalForm" class="row g-3">
 
-    <!-- Journal ID (Required for PUT) -->
+    <!-- Basic IDs -->
     <div class="col-md-4">
         <label class="form-label">Journal ID</label>
-        <input type="text" id="journalId" class="form-control" placeholder="J001" required>
+        <input type="text" name="id" class="form-control" placeholder="J001" required>
     </div>
-
-    <!-- Fields to update (all optional) -->
     <div class="col-md-8">
         <label class="form-label">Topic</label>
-        <input type="text" name="topic" class="form-control">
+        <input type="text" name="topic" class="form-control" required>
     </div>
 
+    <!-- Journal Info -->
     <div class="col-md-6">
         <label class="form-label">Journal Name</label>
-        <input type="text" name="journalName" class="form-control">
+        <input type="text" name="journalName" class="form-control" required>
     </div>
-
     <div class="col-md-6">
         <label class="form-label">Short Journal Name</label>
-        <input type="text" name="shortJournalName" class="form-control">
+        <input type="text" name="shortJournalName" class="form-control" required>
     </div>
 
+    <div class="col-md-4">
+        <label class="form-label">Type</label>
+        <input type="text" name="type" class="form-control" required>
+    </div>
+
+    <!-- Author -->
     <div class="col-md-6">
         <label class="form-label">Author</label>
-        <input type="text" name="author" class="form-control">
+        <input type="text" name="author" class="form-control" required>
+    </div>
+    <div class="col-md-6">
+        <label class="form-label">Email</label>
+        <input type="email" name="email" class="form-control" placeholder="author@email.com" required>
     </div>
 
     <div class="col-md-6">
-        <label class="form-label">Email</label>
-        <input type="email" name="email" class="form-control">
+        <label class="form-label">Brand Name</label>
+        <select name="brandName" class="form-select" required>
+            <option value="" selected disabled>Choose brand</option>
+            {% for template_file in template_files %}
+                <option value="{{ template_file }}">{{ template_file }}</option>
+            {% endfor %}
+        </select>
     </div>
 
     <div class="col-md-12">
         <label class="form-label">Author's Department</label>
-        <input type="text" name="authorsDepartment" class="form-control">
+        <input type="text" name="authorsDepartment" class="form-control" required>
     </div>
 
-    <!-- Dates -->
-    <div class="col-md-2"><label class="form-label">Received</label><input type="text" name="received"
-            class="form-control" placeholder="01-Jan-2025"></div>
-    <div class="col-md-2"><label class="form-label">Editor Assigned</label><input type="text" name="editorAssigned"
-            class="form-control"></div>
-    <div class="col-md-2"><label class="form-label">Reviewed</label><input type="text" name="reviewed"
-            class="form-control"></div>
-    <div class="col-md-2"><label class="form-label">Revised</label><input type="text" name="revised"
-            class="form-control"></div>
-    <div class="col-md-2"><label class="form-label">Published</label><input type="text" name="published"
-            class="form-control"></div>
+    <div class="col-md-2">
+        <label class="form-label">Received</label>
+        <input type="date" name="received" class="form-control" required>
+    </div>
+
+    <div class="col-md-2">
+        <label class="form-label">Image Path</label>
+        <select id="imageSelector" name="imgPath" class="form-select">
+            <option value="" disabled selected>Choose image</option>
+            {% for image in images %}
+            <option value="{{ image }}">{{ image }}</option>
+            {% endfor %}
+        </select>
+        <img id="preview" src="" alt="Preview will appear here" class="mt-2 img-fluid rounded d-none"
+            style="max-height:150px;">
+    </div>
 
     <!-- Numbers -->
-    <div class="col-md-3"><label class="form-label">Manuscript No</label><input type="text" name="manuscriptNo"
-            class="form-control"></div>
-    <div class="col-md-3"><label class="form-label">Volume</label><input type="number" name="volume"
-            class="form-control"></div>
-    <div class="col-md-3"><label class="form-label">Issue</label><input type="number" name="issues"
-            class="form-control"></div>
-    <div class="col-md-3"><label class="form-label">PDF No</label><input type="number" name="pdfNo"
-            class="form-control"></div>
+    <div class="col-md-3">
+        <label class="form-label">Manuscript No</label>
+        <input type="text" name="manuscriptNo" class="form-control" placeholder="MS-1234" required>
+    </div>
+    <div class="col-md-3">
+        <label class="form-label">Volume</label>
+        <input type="number" name="volume" class="form-control" min="1" required>
+    </div>
+    <div class="col-md-3">
+        <label class="form-label">Issue</label>
+        <input type="number" name="issues" class="form-control" min="1" required>
+    </div>
+    <div class="col-md-3">
+        <label class="form-label">PDF No</label>
+        <input type="number" name="pdfNo" class="form-control" min="1" required>
+    </div>
 
     <!-- Identifiers -->
-    <div class="col-md-6"><label class="form-label">DOI</label><input type="text" name="doi" class="form-control"></div>
-    <div class="col-md-6"><label class="form-label">ISSN</label><input type="text" name="ISSN" class="form-control">
+    <div class="col-md-6">
+        <label class="form-label">DOI</label>
+        <input type="text" name="doi" class="form-control">
     </div>
-    <div class="col-md-12"><label class="form-label">Parent Link</label><input type="url" name="parentLink"
-            class="form-control"></div>
+    <div class="col-md-6">
+        <label class="form-label">ISSN</label>
+        <input type="text" name="ISSN" class="form-control">
+    </div>
+    <div class="col-md-12">
+        <label class="form-label">Parent Link</label>
+        <input type="url" name="parentLink" class="form-control" placeholder="https://example.com/journal" required>
+    </div>
 
     <!-- Submit -->
     <div class="col-12">
