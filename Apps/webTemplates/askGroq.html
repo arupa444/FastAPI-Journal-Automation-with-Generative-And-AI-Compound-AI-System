@@ -21,7 +21,7 @@
         showLoading();
 
         try {
-            const response = await fetch("/pulsus-ask-groq", {
+            const response = await fetch("/llm/ask-groq", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(data)
