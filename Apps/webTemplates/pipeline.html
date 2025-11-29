@@ -70,7 +70,7 @@
         <select id="imageSelector" name="imgPath" class="form-select">
             <option value="" disabled selected>Choose image</option>
             {% for image in images %}
-            <option value="{{ image }}">{{ image }}</option>
+                <option value="{{ image }}">{{ image }}</option>
             {% endfor %}
         </select>
         <img id="preview" src="" alt="Preview will appear here" class="mt-2 img-fluid rounded d-none"
