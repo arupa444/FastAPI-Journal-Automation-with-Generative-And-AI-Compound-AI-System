@@ -36,7 +36,7 @@ def ui_add_journal(request: Request):
         if f.lower().endswith(allowed_ext_img)
     ]
     template_files = [
-        f.split(".")[0]
+        f
         for f in os.listdir(
             "Apps/templates"
         )
