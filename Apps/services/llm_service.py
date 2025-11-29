@@ -6,6 +6,7 @@ from Apps.models_journal import ArticleItem
 class LLMService:
 
     gem_client, groq_client, CORE_API_KEY = Config.init_clients()
+    CORE_API_URL = "https://api.core.ac.uk/v3/search/works"
 
     @staticmethod
     def process_gemini(prompt: str) -> str:
