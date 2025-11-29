@@ -45,11 +45,9 @@
         <label class="form-label">Brand Name</label>
         <select name="brandName" class="form-select" required>
             <option value="" selected disabled>Choose brand</option>
-            <option value="hilaris.tex">Hilaris</option>
-            <option value="alliedAcademy.tex">Allied Academy</option>
-            <option value="omics.tex">Omics</option>
-            <option value="iomc.tex">Iomc</option>
-            <option value="Irjesti.tex">Irjesti</option>
+            {% for template_file in template_files %}
+                <option value="{{ template_file }}">{{ template_file }}</option>
+            {% endfor %}
         </select>
     </div>
 
