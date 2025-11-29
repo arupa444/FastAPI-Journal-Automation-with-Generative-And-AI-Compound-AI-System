@@ -26,7 +26,19 @@ def ui_about(request: Request):
 
 @router.get("/ui/add-journal")
 def ui_add_journal(request: Request):
-    return templates.TemplateResponse("addJournal.html", {"request": request})
+    allowed_ext = (".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp", ".tiff", ".svg")
+    image_files = [
+        f
+        for f in os.listdir(
+            "Apps/Logo"
+        )
+        if f.lower().endswith(allowed_ext)
+    ]
+    return templates.TemplateResponse(
+        "addJournal.html", {
+            "request": request, "images": image_files
+        }
+    )
 
 
 @router.get("/ui/update-journal")
