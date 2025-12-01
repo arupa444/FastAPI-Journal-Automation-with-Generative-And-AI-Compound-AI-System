@@ -806,17 +806,17 @@ class PulsusOutputStr(BaseModel):
         copyAuth = self.author.split(" ")
         return copyAuth[0]
 
-    @field_validator("content")
-    @classmethod
-    def validatePDFNo(cls, value):
-        # Avoid modifying dict during iteration
-        keys_to_delete = []
-        for i, j in value.items():
-            if j.get("subContent") is None or j.get("references") is None:
-                keys_to_delete.append(i)
-        for k in keys_to_delete:
-            del value[k]
-        return value
+    # @field_validator("content")
+    # @classmethod
+    # def validatePDFNo(cls, value):
+    #     # Avoid modifying dict during iteration
+    #     keys_to_delete = []
+    #     for i, j in value.items():
+    #         if j.get("subContent") is None or j.get("references") is None:
+    #             keys_to_delete.append(i)
+    #     for k in keys_to_delete:
+    #         del value[k]
+    #     return value
 
     @computed_field
     @property
