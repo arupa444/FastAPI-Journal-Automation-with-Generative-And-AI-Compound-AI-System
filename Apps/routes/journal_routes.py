@@ -60,7 +60,13 @@ def updateInpJournal(journal_id: str, update_data: UpdateInputPartJournal):
 
 @router.delete("/delete/{journal_id}")
 def delete_journal(journal_id: str):
-    print("DELETE route reached with:", journal_id)
+
+    input_data = IOService.fetchInputData()
+    if journal_id not in input_data:
+        details = "Journal ID doesn't exist. Available IDs:"
+        details += " ".join(input_data.keys())
+        raise HTTPException(status_code=404, detail=details)
+
     data = IOService.fetchInputData()
     if journal_id not in data:
         raise HTTPException(status_code=404, detail="Journal not found")
