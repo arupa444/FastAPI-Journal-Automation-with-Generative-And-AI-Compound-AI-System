@@ -2,7 +2,6 @@ from Apps.config import Config
 from Apps.library_import import HTTPException, httpx
 from Apps.models_journal import ArticleItem
 
-
 class LLMService:
 
     gem_client, groq_client, CORE_API_KEY = Config.init_clients()
