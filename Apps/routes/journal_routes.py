@@ -72,7 +72,6 @@ def delete_journal(journal_id: str):
         raise HTTPException(status_code=404, detail="Journal not found")
     del data[journal_id]
     IOService.saveInputData(data)
-    print("Keys after delete:", data.keys())
     return JSONResponse(
         status_code=200, content={"message": f"Perfectly deleted the {journal_id}"}
     )

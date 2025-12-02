@@ -44,6 +44,8 @@
         } catch (error) {
             document.getElementById("responseBox").innerHTML = `
           <div class="alert alert-danger">Error: ${error}</div>`;
+        } finally {
+            hideLoading();
         }
     });
 </script>
