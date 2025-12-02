@@ -63,10 +63,8 @@ class PipelineService:
         final_output = PipelineService._build_final_output(
             journal, gem_title, content_data, processed_sections["content"]
         )
-        print(final_output)
         IOService.saveInputData(data)
         output_data = IOService.fetchOutputData()
-        print(output_data)
         pulsus_output_instance = PulsusOutputStr(**final_output[journal.id])
         output_data[journal.id] = pulsus_output_instance.model_dump()
         
