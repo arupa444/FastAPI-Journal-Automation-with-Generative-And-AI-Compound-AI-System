@@ -61,10 +61,10 @@
     
     % Main header row
     \fancyhead[L]{%
-        \selectfont\color{Black}\textbf{\VAR{journalName | format_reference | latex_escape | safe}: Open Access \VAR{year}, \VAR{volume}, \VAR{issues}, \VAR{pdfNo}.}
+        \selectfont\color{Black}\textbf{\VAR{journalName | latex_escape | safe}: Open Access \VAR{year}, \VAR{volume}, \VAR{issues}, \VAR{pdfNo}.}
     }
     \fancyhead[R]{%
-        \selectfont\color{Black}\textbf{\VAR{type | format_reference | latex_escape | safe}}
+        \selectfont\color{Black}\textbf{\VAR{type | latex_escape | safe}}
     }
     
     % Footer
@@ -72,7 +72,7 @@
         \begin{tcolorbox}[colback=white, colframe=black, arc=2pt, boxrule=1pt, left=2pt, right=2pt, top=2pt, bottom=2pt]
     
         \centering % centers all content inside the box
-        \textbf{Cite this article: }\VAR{citation | format_reference | safe}
+        \textbf{Cite this article: }\VAR{citation | latex_escape | safe}
         \end{tcolorbox}
         \begin{flushright}
             \textbf{\thepage}
@@ -91,7 +91,7 @@
         \begin{tcolorbox}[colback=white, colframe=black, arc=2pt, boxrule=1pt, left=2pt, right=2pt, top=2pt, bottom=2pt]
     
         \centering % centers all content inside the box
-        \textbf{Cite this article: }\VAR{citation | format_reference | safe}
+        \textbf{Cite this article: }\VAR{citation | latex_escape | safe}
         \end{tcolorbox}
     }
     \fancyfoot[R]{
@@ -114,12 +114,12 @@
     
     \centering % centers all content inside the box
     
-    \articletitle{\VAR{title | format_reference | latex_escape | safe}}
+    \articletitle{\VAR{title | latex_escape | safe}}
     
     \vspace{0.2cm}
-    \fontsize{11}{13.2}\selectfont\color{Black}\textbf{\VAR{author | format_reference | safe}}\par
+    \fontsize{11}{13.2}\selectfont\color{Black}\textbf{\VAR{author}}\par
     \vspace{0cm}
-    \fontsize{9}{10.8}\selectfont\color{Black}\VAR{authorsDepartment | format_reference | safe}\par
+    \fontsize{9}{10.8}\selectfont\color{Black}\VAR{authorsDepartment | latex_escape | safe}\par
 \end{tcolorbox}
 
 
@@ -129,9 +129,9 @@
 \begin{flushleft}
 \color{DarkGreen}\textbf{\underline{\textit{Corresponding Authors*}}} \\
 \vspace{0.3cm}
-\color{Black}\VAR{author | format_reference | safe}\\
-\color{Black}\VAR{authorsDepartment | format_reference | latex_escape | safe}\\
-E-mail: \href{mailto:\VAR{email}}{\VAR{email}}\\
+\color{Black}\VAR{author}\\
+\color{Black}\VAR{authorsDepartment | latex_escape | safe}\\
+E-mail: \href{mailto:\VAR{email}}{\VAR{email | latex_escape | safe}}\\
 \vspace{0.1cm}
 \rule{\linewidth}{1pt}
 \color{DarkGreen}\textbf{Copyright:} 
@@ -141,9 +141,9 @@ use, distribution, and reproduction in any medium, provided the original author
 and source are credited.
 \vspace{0.1cm}
 \rule{\linewidth}{1pt}
-\color{Black}\textbf{Received:} \VAR{received | format_reference | safe};
-\textbf{Accepted:} \VAR{published | format_reference | safe}; 
-\textbf{Published:} \VAR{published | format_reference | safe}
+\color{Black}\textbf{Received:} \VAR{received};
+\textbf{Accepted:} \VAR{published};
+\textbf{Published:} \VAR{published}
 \rule{\linewidth}{1pt}
 \end{flushleft}
 
@@ -177,9 +177,9 @@ and source are credited.
     \item No references generated.
 \BLOCK{ else }
 \BLOCK{ for key, item in content.items() }
-    \item \href{\VAR{item.url}}{%
-        \VAR{item.authors_short} \VAR{item.title}. 
-        \textit{\VAR{item.journalShortName}}. 
+    \item \href{\VAR{item.url | latex_escape | safe}}{%
+        \VAR{item.authors_short | latex_escape | safe} \VAR{item.title | latex_escape | safe}.
+        \textit{\VAR{item.journalShortName | latex_escape | safe}}.
         \VAR{item.published};\VAR{item.volume}:\VAR{item.pageRangeOrNumber}.
     }
 \BLOCK{ endfor }
