@@ -213,12 +213,12 @@ class PipelineService:
             - Word count: 600–800.
             - Include sequential citation markers from the references: "C001" → [1], "C002" → [2], etc.
             - Citations must appear only once in the text and strictly in ascending order.
-            - Total paragraphs in Introduction and Description combined should match the number of references (e.g., 10 paragraphs for 10 references).
+            - Total paragraphs in Introduction should match the number of references (e.g., 10 paragraphs for 10 references).
             - Each paragraph in the Introduction should contain only one citation marker, placed at the end of the paragraph and before the period, followed by two line breaks (ie: "\n").
 
             Description
             - Word count: 600–800.
-            - Must contain sufficient paragraphs so that the combined total with Introduction equals the number of references (e.g., if Introduction has 4 paragraphs, Description should have 6 paragraphs for 10 references).
+            - Total paragraphs in Description should match the number of references (e.g., 10 paragraphs for 10 references).
             - Include sequential citation markers as above.
             - Each paragraph should contain only one citation marker, placed at the end and before the period.
             - There should be two line breaks ("\n") after each paragraph.
