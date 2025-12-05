@@ -211,17 +211,18 @@ class PipelineService:
 
             Introduction
             - Word count: 600–800.
-            - Include sequential citation markers from the references: "C001" → [1], "C002" → [2], etc.
-            - Citations must appear only once in the text and strictly in ascending order.
-            - Total paragraphs in Introduction should match the number of references (e.g., 10 paragraphs for 10 references).
-            - Each paragraph in the Introduction should contain only one citation marker, placed at the end of the paragraph and before the period, followed by two line breaks (ie: "\n").
+            - Include sequential citation markers from the references: "C001" → [1], "C002" → [2], and so on.
+            - Citations must appear only once in the text and follow strict ascending order.
+            - The Introduction must contain the same number of paragraphs as the number of references provided (for example, 10 paragraphs for 10 references).
+            - Each paragraph must contain exactly one citation marker placed at the end of the paragraph, directly before the period, followed by two line breaks ("\n").
 
             Description
             - Word count: 600–800.
-            - Total paragraphs in Description should match the number of references (e.g., 10 paragraphs for 10 references).
-            - Include sequential citation markers as above.
-            - Each paragraph should contain only one citation marker, placed at the end and before the period.
-            - There should be two line breaks ("\n") after each paragraph.
+            - The Description must also contain the same number of paragraphs as the number of references (for example, 10 paragraphs for 10 references).
+            - Include sequential citation markers in ascending order, one per paragraph.
+            - Each paragraph must contain exactly one citation marker placed at the end of the paragraph and before the period.
+            - After each paragraph, there must be two line breaks ("\n").
+
 
             Summary
             - Word count: 200–400.
