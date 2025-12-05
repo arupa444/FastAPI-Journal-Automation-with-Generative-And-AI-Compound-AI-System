@@ -150,7 +150,7 @@
       \hbox to\headwidth{\color{LightNavyBlue}\leaders\hrule height 0.5pt\hfill}\vss
     }
 
-    \fancyhead[L]{\fontsize{8}{10}\selectfont\color{Black}\textbf{Citation:} \VAR{citation | safe}}
+    \fancyhead[L]{\fontsize{8}{10}\selectfont\color{Black}\textbf{Citation: }\VAR{citation | safe}}
     \fancyhead[R]{\fontsize{8.5}{10}\selectfont\color{Black}% 
       Page~\thepage~of~\getpagerefnumber{TotPages}}
 
@@ -265,8 +265,8 @@
 \BLOCK{ else }
 \BLOCK{ for key, item in content.items() }
     \item \href{\VAR{item.url}}{%
-        \VAR{item.authors_short} \VAR{item.published} \VAR{item.title}. 
-        \VAR{item.journalShortName}. 
+        \VAR{item.authors_short} \VAR{item.published} \VAR{item.title | latex_escape | safe}. 
+        \VAR{item.journalShortName | latex_escape | safe}. 
         \VAR{item.volume}:\VAR{item.pageRangeOrNumber}
     }
 \BLOCK{ endfor }
