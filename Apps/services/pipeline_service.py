@@ -70,6 +70,7 @@ class PipelineService:
 
         IOService.saveOutputData(output_data)
         print("Step 7 : Saved output data ✅")
+        
 
         # ---------- Step 7: Generate files ----------
         PipelineService._generate_html_and_pdf(journal, output_data)
@@ -346,7 +347,7 @@ class PipelineService:
                 "subContent": item.get("subContent", ""),
             }
         
-        if journal.brandName == "hilaris":
+        if journal.brandName == "hilaris.tex":
             title = gem_title.titlecase()
         else:
             title = gem_title
@@ -438,11 +439,25 @@ class PipelineService:
             forHtml = copy.deepcopy(output_data[journal.id])
 
             # Logic for processing references for HTML
+            if journal.brandName == "Irjesti.tex":
+                start = 0
+                for i in forHtml["content"].keys():
+                    start += 1
 
-            for i in range(1, len(forHtml["content"]) + 1):
-                forHtml["introduction"] = forHtml["introduction"].replace(
-                    f"[{i}].", f"[<a href='#{i}' title='{i}'>{i}</a>].</p><p>"
-                )
+                    forHtml["introduction"] = forHtml["introduction"].replace(
+                        f"[{start}].", f"[<a href='#{i}' title='{i}'>{storeChangedName}</a>].</p><p>"
+                    )
+                    forHtml["description"] = forHtml["description"].replace(
+                        f"[{start}].", f"[<a href='#{i}' title='{i}'>{storeChangedName}</a>].</p><p>"
+                    )
+                    forHtml["discussion"] = forHtml["discussion"].replace(
+                        f"[{start}].", f"[<a href='#{i}' title='{i}'>{storeChangedName}</a>].</p><p>"
+                    )
+            else:
+                for i in range(1, len(forHtml["content"]) + 1):
+                    forHtml["introduction"] = forHtml["introduction"].replace(
+                        f"[{i}].", f"[<a href='#{i}' title='{i}'>{i}</a>].</p><p>"
+                    )
 
             forHtml["description"] = forHtml["description"].replace("\n\n", "</p><p>")
             forHtml["description"] = forHtml["description"].replace("\n", "</p><p>")
@@ -578,8 +593,28 @@ class PipelineService:
 
         # record original language so later translation flow can detect existing language if needed
         output_data[journal.id]["lang"] = "en"
+        
+        forPdf = copy.deepcopy(output_data[journal.id])
 
-        rendered_latex = template.render(**output_data[journal.id])
+        if journal.brandName == "Irjesti.tex":
+            start = 0
+            for i in forPdf["content"].keys():
+                start += 1
+                storeChangedName = f"[{forPdf["content"][i]["authors_short"].split(", ")[0]} et al., {forPdf["content"][i]["published"]}]"
+                print(start, storeChangedName)
+
+                forPdf["introduction"] = forPdf["introduction"].replace(
+                    f"[{start}].", storeChangedName
+                )
+                forPdf["description"] = forPdf["description"].replace(
+                    f"[{start}].", storeChangedName
+                )
+                forPdf["discussion"] = forPdf["discussion"].replace(
+                    f"[{start}].", storeChangedName
+                )
+
+
+        rendered_latex = template.render(**forPdf)
 
         # Save the .tex file inside the journal's dedicated folder
         tex_file_path = journal_folder / f"{journal.id}.tex"
