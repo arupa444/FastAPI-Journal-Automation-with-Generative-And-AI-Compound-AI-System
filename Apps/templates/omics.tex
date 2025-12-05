@@ -105,7 +105,7 @@
       % Right side citation info
       \node[anchor=east] at 
           ($(current page.north east) + (-35pt,-30pt)$) {%
-          \fontsize{8}{10}\selectfont\color{Black}{\VAR{firstNameAuthor | latex_escape | safe}, \textit{\VAR{shortJournalName | safe}} \VAR{year}, \VAR{volume}:\VAR{issues}}%
+          \fontsize{8}{10}\selectfont\color{Black}{\VAR{firstNameAuthor | latex_escape | safe}, \VAR{shortJournalName | safe} \VAR{year}, \VAR{volume}:\VAR{issues}}%
     };
     
         % --- Blue bar inside text margins ---
@@ -125,7 +125,7 @@
 }
 
     % Left footer
-    \fancyfoot[L]{\fontsize{8}{10}\selectfont\color{Black}\textit{\VAR{shortJournalName | safe}}, an open access journal}
+    \fancyfoot[L]{\fontsize{8}{10}\selectfont\color{Black}\VAR{shortJournalName | safe}, an open access journal}
 
     % Right footer: volume info BELOW the rule line
     \fancyfoot[R]{\fontsize{8.5}{10}\selectfont\color{Black}%
