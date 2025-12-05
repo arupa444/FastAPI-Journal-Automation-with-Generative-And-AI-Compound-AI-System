@@ -155,7 +155,7 @@
       Page~\thepage~of~\getpagerefnumber{TotPages}}
 
     % Left footer
-    \fancyfoot[L]{\fontsize{8}{10}\selectfont\color{Black}\textit{\VAR{shortJournalName | safe}}, an open access journal}
+    \fancyfoot[L]{\fontsize{8}{10}\selectfont\color{Black}\VAR{shortJournalName | latex_escape | safe}, an open access journal}
 
     % Right footer: volume info BELOW the rule line
     \fancyfoot[R]{\fontsize{8.5}{10}\selectfont\color{Black}%
@@ -198,7 +198,7 @@
     \textbf{Revised:} \VAR{revised}, Manuscript No. \VAR{RManuNo}(R); 
     \textbf{Published:} \VAR{published}, 
     \textbf{DOI}: \href{\VAR{parentLink}}{\VAR{doi}}\\
-    \noindent\color{Black}\textbf{Citation:}\color{Black}\VAR{citation | safe} \\
+    \noindent\color{Black}\textbf{Citation: }\color{Black}\VAR{citation | safe} \\
     \noindent\color{Black}\textbf{Copyright:} 
     \color{Black}© \VAR{year} \VAR{author} This is an open-access article distributed under the terms of the Creative Commons Attribution License, which permits unrestricted use, distribution and reproduction in any medium, provided the original author and source are credited. \\
 
