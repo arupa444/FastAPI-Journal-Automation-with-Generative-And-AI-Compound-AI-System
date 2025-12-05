@@ -73,7 +73,21 @@
         \vspace{-0.35cm}
         \rule{\textwidth}{0.4pt}
         \begin{flushleft}
-        \textit{Citation: \VAR{citation | latex_escape | safe}}
+            
+            \BLOCK{ set parts = author.split(" ") }
+            
+            % Extract last name
+            \BLOCK{ set last = parts[-1] }
+            
+            % Extract initials for all but last name
+            \BLOCK{ set initials = parts[0][0:1] }
+            
+            % Extract only the year
+            \BLOCK{ set year = published.split("-")[-1] }
+            
+            % Format Allied Academy citation:
+            \textit{\textbf{Citation:} \VAR{last} \VAR{initials}. \VAR{title}. \VAR{shortJournalName}. \VAR{year};\VAR{volume}(\VAR{issues}):\VAR{pdfNo}.
+        }
         \end{flushleft}
         % Bottom line: page left, journal right
         \noindent\makebox[\textwidth]{%
@@ -92,7 +106,21 @@
         % Citation centered
         \vspace*{4em}
         \begin{flushleft}
-        \textit{\textbf{Citation:} \VAR{citation | latex_escape | safe}}
+            
+            \BLOCK{ set parts = author.split(" ") }
+            
+            % Extract last name
+            \BLOCK{ set last = parts[-1] }
+            
+            % Extract initials for all but last name
+            \BLOCK{ set initials = parts[0][0:1] }
+            
+            % Extract only the year
+            \BLOCK{ set year = published.split("-")[-1] }
+            
+            % Format Allied Academy citation:
+            \textit{\textbf{Citation:} \VAR{last} \VAR{initials}. \VAR{title}. \VAR{shortJournalName}. \VAR{year};\VAR{volume}(\VAR{issues}):\VAR{pdfNo}.
+        }
         \end{flushleft}
 
         % Bottom line: page left, journal right
@@ -143,13 +171,17 @@
 \BLOCK{ else }
 \BLOCK{ for key, item in content.items() }
     \item \href{\VAR{item.url}}{%
-        \VAR{item.authors_short} \VAR{item.title}. 
-        \textit{\VAR{item.journalShortName}}. 
-        \VAR{item.published};\VAR{item.volume}:\VAR{item.pageRangeOrNumber}.
+        \BLOCK{if item.authors_short|length > 3 }
+            \VAR{item.authors_short} et al.
+        \BLOCK{ else }
+            \VAR{item.authors_short | join(", ")}
+        \BLOCK{ endif }
+        \VAR{item.title}. \textit{\VAR{item.journalShortName}}. \VAR{item.published};\VAR{item.volume}:\VAR{item.pageRangeOrNumber}.
     }
 \BLOCK{ endfor }
 \BLOCK{ endif }
 \end{enumerate}
+
 
 
 \end{multicols}
