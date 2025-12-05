@@ -443,15 +443,15 @@ class PipelineService:
                 start = 0
                 for i in forHtml["content"].keys():
                     start += 1
-
+                    storeChangedName = f"[{forHtml["content"][i]["authors_short"].split(", ")[0]} et al., {forHtml["content"][i]["published"]}]"
                     forHtml["introduction"] = forHtml["introduction"].replace(
-                        f"[{start}].", f"[<a href='#{i}' title='{i}'>{storeChangedName}</a>].</p><p>"
+                        f"[{start}].", f"[<a href='#{start}' title='{start}'>{storeChangedName}</a>].</p><p>"
                     )
                     forHtml["description"] = forHtml["description"].replace(
-                        f"[{start}].", f"[<a href='#{i}' title='{i}'>{storeChangedName}</a>].</p><p>"
+                        f"[{start}].", f"[<a href='#{start}' title='{start}'>{storeChangedName}</a>].</p><p>"
                     )
                     forHtml["discussion"] = forHtml["discussion"].replace(
-                        f"[{start}].", f"[<a href='#{i}' title='{i}'>{storeChangedName}</a>].</p><p>"
+                        f"[{start}].", f"[<a href='#{start}' title='{start}'>{storeChangedName}</a>].</p><p>"
                     )
             else:
                 for i in range(1, len(forHtml["content"]) + 1):
