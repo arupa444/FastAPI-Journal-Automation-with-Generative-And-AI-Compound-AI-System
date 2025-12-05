@@ -67,7 +67,6 @@ class PipelineService:
         output_data = IOService.fetchOutputData()
         pulsus_output_instance = PulsusOutputStr(**final_output[journal.id])
         output_data[journal.id] = pulsus_output_instance.model_dump()
-        
 
         IOService.saveOutputData(output_data)
         print("Step 7 : Saved output data ✅")
@@ -115,13 +114,7 @@ class PipelineService:
         }}, # give me exact 10 References(..., C009, C010)
         ...
         }}
-        IMPORTANT NOTE: 
-        1: Write in a natural, imperfect human style. Vary sentence length, occasionally use subtle pauses or conversational shifts, and let ideas flow organically instead of in rigid patterns. Avoid over-optimized grammar or uniform structure that AI detectors pick up. Do not make the writing overly polished—keep it slightly raw, like thoughtful notes written by a researcher.
         
-        2: Write in a natural human manner with varied rhythm, organic flow, and slight imperfections. Avoid AI-like patterns such as overly polished grammar, repetitive transitions, or uniform structure. Let the writing feel like a human expert summarizing after reading the papers—thoughtful, varied, and intentionally imperfect where appropriate.
-
-
-
 
         Focus on creating references from title, authors, year, and DOI.
         the most important thing, and the whole data will be copied out and used so give me clean information only the structured data no other thing not even a symbol or dot.
@@ -193,41 +186,72 @@ class PipelineService:
     @staticmethod
     def _process_sections(content_data: dict) -> dict:
         prompt = f"""
-            This is the given data : "{content_data}"
-            i want to you to process this data and give me some output:
-            1: Give me a brief summary from the given data where the word count lies in between 200 - 400.
-            2: Give me a brief introduction from the given data where it will contain the citation markers as well, and note, you have to take in this way: the "C001" will be 1, "C002": 2...... and each section should have different but sequential citation markers (for ex: "C001" will be [1], "C002": [2] and so on). and give two linebreak '\n' after the citation marker and also make sure the citation marker must stays before the full stop '.' and covered with square brackets'[]'(for ex: [1], [2]....., [10]), and the full introduction word count lies in between 600 - 800.
-            3: Give me a brief description from the given data and note, the full description contain more then 4 paragraphs with word count lies in between 600 - 800 NOTE: Add citation markers(Inside square brackets).
-            4: Give me a abstract from the given data, and the full abstract word count lies in between 90 - 100.
-            5: Give me a brief discussion from the given data where the word count lies in between 300 - 500.
-            
-            IMPORTANT NOTE: 
-            1: Write in a natural, imperfect human style. Vary sentence length, occasionally use subtle pauses or conversational shifts, and let ideas flow organically instead of in rigid patterns. Avoid over-optimized grammar or uniform structure that AI detectors pick up. Do not make the writing overly polished—keep it slightly raw, like thoughtful notes written by a researcher.
-            
-            2: Write in a natural human manner with varied rhythm, organic flow, and slight imperfections. Avoid AI-like patterns such as overly polished grammar, repetitive transitions, or uniform structure. Let the writing feel like a human expert summarizing after reading the papers—thoughtful, varied, and intentionally imperfect where appropriate.
-            
+            You are given the following data: {{content_data}}
+            You are also provided with reference details in the format: "C001", "C002", etc., where each reference contains full bibliographic information.
 
-            The final structure should look like:
+            Your task is to process this data and generate structured content in JSON format. Follow these instructions carefully:
+
+            1. Output Structure
+            Produce only a valid JSON object with the following keys:
+
             "content": {{
-            "introduction": '''...''',
-            "description" : '''...''',
-            "summary" : '''...''',
-            "abstract" : '''...''',
-            "discussion" : '''...''',
-            "keywords" : '''...''' # give me Minimun 5 to 10 keywords joined by comma(,)
-            ...
+                "introduction": "...",
+                "description": "...",
+                "summary": "...",
+                "abstract": "...",
+                "discussion": "...",
+                "keywords": "..."
             }}
 
+            - All sections must be filled.
+            - Remove all special characters, escape sequences, and formatting symbols from the text.
+            - Keep only brackets, commas, periods, and characters necessary for JSON and citation markers.
 
-            note: Do not include any introductory labels, brand names, or meta-commentary. Remove all special characters, escape sequences, and formatting symbols. Respond only with plain and clean text containing the summary. Respond without any introductory phrases, labels, brand mentions, or headings (e.g., 'Summary:', 'Gemini:', 'Groq:'). Do not include explanations of how you generated the answer unless explicitly asked.
-                Write like a confident, clear thinking human speaking to another smart human.
-                Avoid robotic phrases like 'in today's fast-paced world', 'leveraging synergies', 'furthermore'.....
-                Skip unnecessary dashes (-), quotation marks (''), and corporate buzzwords like 'cutting-edge', 'robust', or 'seamless experience. No Al tone. No fluff. No filler.
-                Use natural transitions like 'here's the thing', ‘let's break it down; or ‘what this really means is’ Keep sentences varied in length and rhythm, like how real people speak or write. Prioritize clarity, personality, and usefulness.
-                Every sentence should feel intentional, not generated. And Short names/abbreviations should be in Title case (e.g., Artificial Intelligence (AI))
-            IMPORTANT: Your response must be ONLY a valid JSON object with no additional text, 
-                explanations, or markdown formatting. Do not include any text before or after the JSON.
-        """
+            2. Section Requirements
+
+            Introduction
+            - Word count: 600–800.
+            - Include sequential citation markers from the references: "C001" → [1], "C002" → [2], etc.
+            - Citations must appear only once in the text and strictly in ascending order.
+            - Total paragraphs in Introduction and Description combined should match the number of references (e.g., 10 paragraphs for 10 references).
+            - Each paragraph in the Introduction should contain only one citation marker, placed at the end of the paragraph and before the period, followed by two line breaks (ie: "\n").
+
+            Description
+            - Word count: 600–800.
+            - Must contain sufficient paragraphs so that the combined total with Introduction equals the number of references (e.g., if Introduction has 4 paragraphs, Description should have 6 paragraphs for 10 references).
+            - Include sequential citation markers as above.
+            - Each paragraph should contain only one citation marker, placed at the end and before the period.
+
+            Summary
+            - Word count: 200–400.
+            - Do not include citations.
+            - Focus on key points from the content in a concise manner.
+
+            Abstract
+            - Word count: 90–100.
+            - Provide a brief summary of the content.
+            - No citations required.
+
+            Discussion
+            - Word count: 300–500.
+            - Include analysis, implications, or commentary derived from the content.
+            - Citation markers can be included in ascending order, one per paragraph, placed at the end and before the period.
+
+            Keywords
+            - Extract 5–10 keywords directly from the content.
+            - Keywords should be in Title Case and separated by commas.
+
+            3. Writing Style
+            - Formal academic tone.
+            - Clear, concise sentences.
+            - Avoid corporate buzzwords, filler, or AI-sounding phrases.
+            - Use natural transitions and sentence variation.
+
+            4. JSON Output Rules
+            - Only return the JSON object.
+            - No introductory phrases, explanations, or meta-commentary.
+            - Ensure all text is clean and compliant with JSON formatting.
+            """
 
         parsed = PipelineService._parse_gemini_response(prompt)
         normalized = PipelineService._normalize_content_structure(parsed)

@@ -78,7 +78,7 @@
                 \makebox[\linewidth][s]{International Research Journal of Engineering Science, Technology and Innovation}\\[5pt]
                 (ISSN: \VAR{ISSN}) Vol.\VAR{volume} (\VAR{issues}) pp. \VAR{pdfNo}, \VAR{month}, \VAR{year}\\[5pt]
                 DOI: \href{\VAR{parentLink}}{http:/dx.doi.org/\VAR{doi}}\\[5pt]
-                Available online @ \href{\VAR{parentLink}}{\underline{\textcolor{blue}{\url{\VAR{parentLink}}}}}\\[5pt]
+                Available online @ \href{\VAR{parentLink}}{\underline{\url{\VAR{parentLink}}}}\\[5pt]
                 Copyright \textcopyright~\VAR{year} International Research Journals}
             \end{minipage}
         \end{tabular}
@@ -134,11 +134,8 @@
     \item No references generated.
 \BLOCK{ else }
 \BLOCK{ for key, item in content.items() }
-    \item \href{\VAR{item.url}}{%
-        \VAR{item.authors_short} \VAR{item.published}. \VAR{item.title | latex_escape | safe}. 
-        \textit{\VAR{item.journalShortName | latex_escape | safe}}. 
-        \VAR{item.volume}:\VAR{item.pageRangeOrNumber}.
-    }
+    \item \VAR{item.authors_short} \VAR{item.published}. \href{\VAR{item.url}}{\VAR{item.title | latex_escape | safe}}. \textit{\VAR{item.journalShortName | latex_escape | safe}}. \VAR{item.volume}:\VAR{item.pageRangeOrNumber}.
+    
 \BLOCK{ endfor }
 \BLOCK{ endif }
 \end{enumerate}

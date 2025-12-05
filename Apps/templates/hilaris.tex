@@ -196,7 +196,7 @@ None.
 \BLOCK{ for key, item in content.items() }
     \item \href{\VAR{item.url}}{%
         \VAR{item.authors_full} "\VAR{item.title}."
-        \textit{\VAR{item.journalShortName}}. 
+        \textit{\VAR{item.journalShortName}} 
         \VAR{item.volume} (\VAR{item.published}):\VAR{item.pageRangeOrNumber}.
     }
 \BLOCK{ endfor }
@@ -205,7 +205,17 @@ None.
 
 \begin{framed}
 \noindent\fontsize{8.5}{10.2}\selectfont
-\textbf{How to cite this article:} \VAR{citation | safe}
+\BLOCK{ set author_parts = author.split(" ") }
+\BLOCK{ set author_last = author_parts[-1] }
+\BLOCK{ set author_first = " ".join(author_parts[:-1]) if author_parts|length > 1 else "" }
+
+% --- Extract year from published date ---
+\BLOCK{ set year = published.split("-")[-1] }
+
+% --- HILARIS citation format ---
+\textbf{How to cite this article:} \VAR{author_last}, \VAR{author_first}. 
+"\VAR{title}." 
+\textit{\VAR{shortJournalName}} \VAR{volume} (\VAR{year}):\VAR{pdfNo}.
 \end{framed}
 
 
