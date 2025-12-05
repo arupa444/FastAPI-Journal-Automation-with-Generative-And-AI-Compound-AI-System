@@ -212,14 +212,16 @@ class PipelineService:
             Introduction
             - Word count: 600–800.
             - Include sequential citation markers from the references: "C001" → [1], "C002" → [2], and so on.
-            - The Introduction must contain the 10 number of paragraphs and citation markers as the number of references provided (for example, 10 paragraphs for 10 references).
-            - Citation marker should be followed by two line breaks ("\n") one for each para followed by a period(.)
+            - The Introduction must contain exactly 10 paragraphs, each corresponding to one reference.
+            - Each paragraph must end with exactly one citation marker.
+            - The citation marker must be placed at the end of the paragraph, immediately before the period, followed by two line breaks ("\n\n").
 
             Description
             - Word count: 600–800.
             - Include sequential citation markers from the references: "C001" → [1], "C002" → [2], and so on.
-            - The Description must contain the same number of paragraphs nad citation markers as the number of references provided (for example, 10 paragraphs for 10 references).
-            - Citation marker should be followed by two line breaks ("\n") one for each para followed by a period(.)
+            - The Description must also contain exactly 10 paragraphs, each corresponding to one reference.
+            - Each paragraph must end with exactly one citation marker.
+            - The citation marker must be placed at the end of the paragraph, immediately before the period, followed by two line breaks ("\n\n").
 
             Summary
             - Word count: 200–400.
@@ -345,10 +347,15 @@ class PipelineService:
                 "parentLink": item.get("parentLink", ""),
                 "subContent": item.get("subContent", ""),
             }
+        
+        if journal.brandName == "hilaris":
+            title = gem_title.titlecase()
+        else:
+            title = gem_title
 
         output = {
             journal.id: {
-                "title": gem_title,
+                "title": title,
                 "journalName": journal.journalName,
                 "shortJournalName": journal.shortJournalName,
                 "type": journal.type,
