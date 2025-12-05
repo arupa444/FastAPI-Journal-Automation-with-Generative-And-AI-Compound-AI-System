@@ -196,7 +196,7 @@ None.
 \BLOCK{ for key, item in content.items() }
     \item \href{\VAR{item.url}}{%
         \VAR{item.authors_full} "\VAR{item.title}."
-        \textit{\VAR{item.journalShortName}} 
+        \textit{\VAR{item.journalShortName | latex_escape | safe}} 
         \VAR{item.volume} (\VAR{item.published}):\VAR{item.pageRangeOrNumber}.
     }
 \BLOCK{ endfor }
