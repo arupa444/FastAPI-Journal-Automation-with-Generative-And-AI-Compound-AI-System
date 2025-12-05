@@ -568,6 +568,8 @@ class PipelineService:
                 "^": r"\^{}",
                 "~": r"\textasciitilde{}",
                 "\\": r"\textbackslash{}",
+                "rizzBro": r"\textbf{",
+                "hoez": r"}",
             }
             pattern = re.compile("|".join(re.escape(k) for k in replacements.keys()))
             return pattern.sub(lambda m: replacements[m.group()], text)
@@ -601,7 +603,7 @@ class PipelineService:
             for i in forPdf["content"].keys():
                 start += 1
                 storeChangedName = f"[{forPdf["content"][i]["authors_short"].split(", ")[0]} et al., {forPdf["content"][i]["published"]}]"
-                storeChangedName = r"\textbf{" + storeChangedName + "}"
+                storeChangedName = "rizzBro" + storeChangedName + "hoez"
 
                 forPdf["introduction"] = forPdf["introduction"].replace(
                     f"[{start}].", storeChangedName
