@@ -221,6 +221,7 @@ class PipelineService:
             - Must contain sufficient paragraphs so that the combined total with Introduction equals the number of references (e.g., if Introduction has 4 paragraphs, Description should have 6 paragraphs for 10 references).
             - Include sequential citation markers as above.
             - Each paragraph should contain only one citation marker, placed at the end and before the period.
+            - There should be two line breaks ("\n") after each paragraph.
 
             Summary
             - Word count: 200–400.
@@ -239,7 +240,7 @@ class PipelineService:
 
             Keywords
             - Extract 5–10 keywords directly from the content.
-            - Keywords should be in Title Case and separated by commas.
+            - Keywords should be in Title Case and separated by semi-colon(;).
 
             3. Writing Style
             - Formal academic tone.
