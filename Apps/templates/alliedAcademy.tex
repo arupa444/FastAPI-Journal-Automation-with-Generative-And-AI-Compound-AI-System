@@ -61,7 +61,7 @@
         % Top rule
         \rule{\textwidth}{0.4pt}
         % Correspondence + received/published info
-        {\footnotesize\textbf{*Correspondence to:} \VAR{author | safe}, \VAR{authorsDepartment | safe}.
+        {\footnotesize\textbf{*Correspondence to:} \VAR{author | safe}, \VAR{authorsDepartment | latex_escape | safe}.
         E-mail: \href{mailto:\VAR{email}}{\VAR{email}}}\\[0.3em]
         {\footnotesize \textbf{Received:} \VAR{received}, Manuscript No. \VAR{manuscriptNo}; 
         \textbf{Editor assigned:} \VAR{editorAssigned}, Pre QC No. \VAR{preQCNo} \textit{(PQ)}; 
@@ -86,12 +86,12 @@
             \BLOCK{ set year = published.split("-")[-1] }
             
             % Format Allied Academy citation:
-            \textit{\textbf{Citation:} \VAR{last} \VAR{initials}. \VAR{title}. \VAR{shortJournalName}. \VAR{year};\VAR{volume}(\VAR{issues}):\VAR{pdfNo}.
+            \textit{\textbf{Citation:} \VAR{last} \VAR{initials}. \VAR{title | latex_escape | safe}. \VAR{shortJournalName | latex_escape | safe}. \VAR{year};\VAR{volume}(\VAR{issues}):\VAR{pdfNo}.
         }
         \end{flushleft}
         % Bottom line: page left, journal right
         \noindent\makebox[\textwidth]{%
-            \thepage \hfill \textit{\VAR{shortJournalName} \VAR{year} Volume \VAR{volume} Issue \VAR{issues}}%
+            \thepage \hfill \textit{\VAR{shortJournalName | latex_escape | safe} \VAR{year} Volume \VAR{volume} Issue \VAR{issues}}%
         }
     }
 }
@@ -110,19 +110,19 @@
             \BLOCK{ set last = parts[-1] }
             \BLOCK{ set initials = parts[0][0:1] }
             \BLOCK{ set year = published.split("-")[-1] }
-            \textit{\textbf{Citation:} \VAR{last} \VAR{initials}. \VAR{title}.
-            \VAR{shortJournalName}. \VAR{year};\VAR{volume}(\VAR{issues}):\VAR{pdfNo}.}
+            \textit{\textbf{Citation:} \VAR{last} \VAR{initials}. \VAR{title | latex_escape | safe}.
+            \VAR{shortJournalName | latex_escape | safe}. \VAR{year};\VAR{volume}(\VAR{issues}):\VAR{pdfNo}.}
         \end{flushleft}
     }
 
     % ===== Alternating page number position =====
     % Odd pages → number on LEFT
     \fancyfoot[LO]{%
-        \VAR{journalYearVolumeIssue | latex_escape} \hfill \thepage
+        \VAR{journalYearVolumeIssue | latex_escape | safe} \hfill \thepage
     }
     % Even pages → number on RIGHT
     \fancyfoot[RE]{%
-        \thepage \hfill \VAR{journalYearVolumeIssue | latex_escape}
+        \thepage \hfill \VAR{journalYearVolumeIssue | latex_escape | safe}
     }
 }
 
@@ -176,11 +176,11 @@
             \VAR{item.authors_short | join(", ")}
         \BLOCK{ endif }
         \BLOCK{ if not item.issues }
-                \href{\VAR{ item.url }}{\VAR{ item.title }.} 
-                \VAR{ item.journalShortName }. \VAR{ item.published };\VAR{ item.volume }:\VAR{ item.pageRangeOrNumber }.
+                \href{\VAR{ item.url }}{\VAR{item.title | latex_escape | safe}.} 
+                \VAR{ item.journalShortName | latex_escape | safe}. \VAR{ item.published };\VAR{ item.volume }:\VAR{ item.pageRangeOrNumber }.
             \BLOCK{ else }
                 \href{\VAR{ item.url }}{\VAR{ item.title }.} 
-                \VAR{ item.journalShortName }. \VAR{ item.published };\VAR{ item.volume }(\VAR{ item.issues }):\VAR{ item.pageRangeOrNumber }.
+                \VAR{ item.journalShortName | latex_escape | safe}. \VAR{ item.published };\VAR{ item.volume }(\VAR{ item.issues }):\VAR{ item.pageRangeOrNumber }.
             \BLOCK{ endif }
 \BLOCK{ endfor }
 \BLOCK{ endif }

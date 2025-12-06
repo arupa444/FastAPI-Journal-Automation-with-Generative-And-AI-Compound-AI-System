@@ -98,14 +98,14 @@
             \setlength{\parskip}{0pt} % no extra spacing
             \fontsize{15}{17}\selectfont\color{LightNavyBlue}\textbf{%  
 	    \sloppy 
-	    \VAR{journalName | safe}}
+	    \VAR{journalName | latex_escape | safe}}
 	    \end{minipage}%
         };
     
       % Right side citation info
       \node[anchor=east] at 
           ($(current page.north east) + (-35pt,-30pt)$) {%
-          \fontsize{8}{10}\selectfont\color{Black}{\VAR{firstNameAuthor | latex_escape | safe}, \VAR{shortJournalName | safe} \VAR{year}, \VAR{volume}:\VAR{issues}}%
+          \fontsize{8}{10}\selectfont\color{Black}{\VAR{firstNameAuthor | latex_escape | safe}, \VAR{shortJournalName | latex_escape | safe} \VAR{year}, \VAR{volume}:\VAR{issues}}%
     };
     
         % --- Blue bar inside text margins ---
@@ -116,7 +116,7 @@
     
         % Article type - left
         \node[anchor=west, font=\fontsize{11}{11}\selectfont\bfseries, text=white] 
-            at ($(current page.north west) + (1in+\oddsidemargin,-97.5pt)$) {\VAR{type}};
+            at ($(current page.north west) + (1in+\oddsidemargin,-97.5pt)$) {\VAR{type | latex_escape | safe}};
     
         % Open Access - right
         \node[anchor=east, font=\fontsize{11}{11}\selectfont\bfseries, text=white] 
@@ -125,7 +125,7 @@
 }
 
     % Left footer
-    \fancyfoot[L]{\fontsize{8}{10}\selectfont\color{Black}\VAR{shortJournalName | safe}, an open access journal}
+    \fancyfoot[L]{\fontsize{8}{10}\selectfont\color{Black}\VAR{shortJournalName | latex_escape | safe}, an open access journal}
 
     % Right footer: volume info BELOW the rule line
     \fancyfoot[R]{\fontsize{8.5}{10}\selectfont\color{Black}%
@@ -150,7 +150,7 @@
       \hbox to\headwidth{\color{LightNavyBlue}\leaders\hrule height 0.5pt\hfill}\vss
     }
 
-    \fancyhead[L]{\fontsize{8}{10}\selectfont\color{Black}\textbf{Citation: }\VAR{citation | safe}}
+    \fancyhead[L]{\fontsize{8}{10}\selectfont\color{Black}\textbf{Citation: }\VAR{citation | latex_escape | safe}}
     \fancyhead[R]{\fontsize{8.5}{10}\selectfont\color{Black}% 
       Page~\thepage~of~\getpagerefnumber{TotPages}}
 
@@ -184,12 +184,12 @@
 \vspace*{-0.5cm}
     \fontsize{10}{13.2}\selectfont\color{Black}\textbf{\VAR{author | safe}*}\par
     \vspace{0cm}
-    \fontsize{8}{10.8}\selectfont\color{Black}\VAR{authorsDepartment | safe}\par
+    \fontsize{8}{10.8}\selectfont\color{Black}\VAR{authorsDepartment | latex_escape | safe}\par
     \vspace{0.1cm}
 
     \noindent\color{LightNavyBlue}\rule{\linewidth}{1pt}
     \color{Black}\textbf{*Corresponding Author:}  
-    \color{Black}\VAR{author}, \VAR{authorsDepartment},
+    \color{Black}\VAR{author}, \VAR{authorsDepartment | latex_escape | safe},
     E-mail: \href{mailto:\VAR{email}}{\VAR{email}} \\
     \vspace{0.1cm}
     \noindent\color{Black}\textbf{Received:} \VAR{received}, Manuscript No. \VAR{manuscriptNo}; 
@@ -198,7 +198,7 @@
     \textbf{Revised:} \VAR{revised}, Manuscript No. \VAR{RManuNo}(R); 
     \textbf{Published:} \VAR{published}, 
     \textbf{DOI}: \href{\VAR{parentLink}}{\VAR{doi}}\\
-    \noindent\color{Black}\textbf{Citation: }\color{Black}\VAR{citation | safe} \\
+    \noindent\color{Black}\textbf{Citation: }\color{Black}\VAR{citation | latex_escape | safe} \\
     \noindent\color{Black}\textbf{Copyright:} 
     \color{Black}© \VAR{year} \VAR{author} This is an open-access article distributed under the terms of the Creative Commons Attribution License, which permits unrestricted use, distribution and reproduction in any medium, provided the original author and source are credited. \\
 
@@ -220,7 +220,7 @@
 \begin{abstractbox}
 \abstractsection{Abstract}
 \begin{otherlanguage}{\VAR{lang_name}}
-\VAR{abstract | safe}
+\VAR{abstract | latex_escape | safe}
 \end{otherlanguage}
 \end{abstractbox}
 
