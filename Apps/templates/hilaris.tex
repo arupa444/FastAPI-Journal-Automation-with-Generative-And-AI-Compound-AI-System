@@ -143,9 +143,9 @@
 \vspace*{-0.5cm}
     \fontsize{11}{13.2}\selectfont\color{Black}\textbf{\VAR{author | safe}}*\par
     \vspace{0cm}
-    \fontsize{9}{10.8}\selectfont\color{Black}\textit{\VAR{authorsDepartment | safe}}\par
+    \fontsize{9}{10.8}\selectfont\color{Black}\textit{\VAR{authorsDepartment | latex_escape | safe}}\par
     % Measure the width of the department text
-    \settowidth{\dimen0}{\fontsize{9}{10.8}\selectfont\color{Black}\VAR{authorsDepartment | safe}}%
+    \settowidth{\dimen0}{\fontsize{9}{10.8}\selectfont\color{Black}\VAR{authorsDepartment | latex_escape | safe}}%
     % Draw a rule with that width
     \vspace{-0.3cm}\color{DarkViolet}\rule{\dimen0}{1pt}
 \end{flushleft}
@@ -214,8 +214,8 @@ None.
 
 % --- HILARIS citation format ---
 \textbf{How to cite this article:} \VAR{author_last}, \VAR{author_first}. 
-"\VAR{title}." 
-\textit{\VAR{shortJournalName}} \VAR{volume} (\VAR{year}):\VAR{pdfNo}.
+"\VAR{title | latex_escape | safe}." 
+\textit{\VAR{shortJournalName | latex_escape | safe}} \VAR{volume} (\VAR{year}):\VAR{pdfNo}.
 \end{framed}
 
 
@@ -231,7 +231,7 @@ None.
 \begin{justify}
 \fontsize{8.5}{10.2}\selectfont
 \textit{\color{DarkViolet}\textbf{*Address for Correspondence:}}
-\color{Black}\VAR{addressForCorres}, \VAR{authorsDepartment | safe},
+\color{Black}\VAR{addressForCorres | latex_escape | safe}, \VAR{authorsDepartment | latex_escape | safe},
 E-mail: \href{mailto:\VAR{email}}{\VAR{email}} \\
 
 \noindent\textit{\color{DarkViolet}\textbf{Copyright:} 
