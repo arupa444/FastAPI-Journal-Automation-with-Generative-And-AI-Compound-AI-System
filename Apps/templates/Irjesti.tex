@@ -78,7 +78,7 @@
                 \makebox[\linewidth][s]{International Research Journal of Engineering Science, Technology and Innovation}\\[5pt]
                 (ISSN: \VAR{ISSN}) Vol.\VAR{volume} (\VAR{issues}) pp. \VAR{pdfNo}, \VAR{month}, \VAR{year}\\[5pt]
                 DOI: \href{\VAR{parentLink}}{http:/dx.doi.org/\VAR{doi}}\\[5pt]
-                Available online @ \href{\VAR{parentLink}}{\underline{\url{\VAR{parentLink}}}}\\[5pt]
+                Available online @ \underline{\href{\VAR{parentLink}}\VAR{parentLink}}\\[5pt]
                 Copyright \textcopyright~\VAR{year} International Research Journals}
             \end{minipage}
         \end{tabular}
@@ -95,7 +95,7 @@
     \vspace{0.8cm}
     {\fontsize{12}{16}\selectfont\bfseries{\VAR{author | latex_escape | safe}*}} \\[0.2cm]
     {\fontsize{11}{16}\selectfont \VAR{authorsDepartment | latex_escape | safe}} \\[0.2cm]
-    {\fontsize{11}{16}\selectfont\bfseries{*Corresponding author E-mail: \VAR{email}}}
+    {\fontsize{11}{16}\selectfont{*Corresponding author E-mail: \VAR{email}}}
 \end{center}
 \vspace{0.5cm}
 \noindent
@@ -134,7 +134,7 @@
     \item No references generated.
 \BLOCK{ else }
 \BLOCK{ for key, item in content.items() }
-    \item \VAR{item.authors_short} \VAR{item.published}. \href{\VAR{item.url}}{\VAR{item.title | latex_escape | safe}}. \textit{\VAR{item.journalShortName | latex_escape | safe}}. \VAR{item.volume}:\VAR{item.pageRangeOrNumber}.
+    \item \VAR{item.authors_short} \VAR{item.published}. \href{\VAR{item.url}}{\VAR{item.title | latex_escape | safe}}. \VAR{item.journalShortName | latex_escape | safe}. \VAR{item.volume}:\VAR{item.pageRangeOrNumber}.
     
 \BLOCK{ endfor }
 \BLOCK{ endif }
