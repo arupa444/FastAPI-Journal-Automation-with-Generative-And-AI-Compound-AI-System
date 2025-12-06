@@ -91,7 +91,7 @@
         \end{flushleft}
         % Bottom line: page left, journal right
         \noindent\makebox[\textwidth]{%
-            \thepage \hfill \textit{\VAR{journalYearVolumeIssue | latex_escape | safe}}%
+            \thepage \hfill \textit{\VAR{shortJournalName} \VAR{year} Volume \VAR{volume} Issue \VAR{issues}}%
         }
     }
 }
@@ -125,7 +125,7 @@
 
         % Bottom line: page left, journal right
         \noindent\makebox[\textwidth]{%
-        \VAR{journalYearVolumeIssue | latex_escape | safe}   \hfill \thepage
+        \textit{\VAR{shortJournalName} \VAR{year} Volume \VAR{volume} Issue \VAR{issues}}   \hfill \thepage
         }
     }
 }
@@ -163,21 +163,28 @@
 \VAR{conclusion | latex_escape | safe}
 \end{otherlanguage}
 
+\vspace{-0.3cm}
 \section*{References}
+\vspace{-0.2cm}
 \fontsize{8}{9.6}\selectfont
 \begin{enumerate}
 \BLOCK{ if content|length == 0 }
     \item No references generated.
 \BLOCK{ else }
 \BLOCK{ for key, item in content.items() }
-    \item \href{\VAR{item.url}}{%
+    \item %
         \BLOCK{if item.authors_short|length > 3 }
             \VAR{item.authors_short} et al.
         \BLOCK{ else }
             \VAR{item.authors_short | join(", ")}
         \BLOCK{ endif }
-        \VAR{item.title}. \VAR{item.journalShortName}. \VAR{item.published};\VAR{item.volume}(\VAR{item.issues}):\VAR{item.pageRangeOrNumber}.
-    }
+        \BLOCK{ if not item.issues }
+                \href{\VAR{ item.url }}{\VAR{ item.title }.} 
+                \VAR{ item.journalShortName }. \VAR{ item.published };\VAR{ item.volume }:\VAR{ item.pageRangeOrNumber }.
+            \BLOCK{ else }
+                \href{\VAR{ item.url }}{\VAR{ item.title }.} 
+                \VAR{ item.journalShortName }. \VAR{ item.published };\VAR{ item.volume }(\VAR{ item.issues }):\VAR{ item.pageRangeOrNumber }.
+            \BLOCK{ endif }
 \BLOCK{ endfor }
 \BLOCK{ endif }
 \end{enumerate}
