@@ -94,9 +94,9 @@ class PipelineService:
         You are provided by a topic:
         topic : "{journal.topic}"
         ...
-        Using this topic, generate a summarized structure that contains "subContent" (summary of key insights from the article), "references" (citation-style reference) and the remainings and make sure all the journals are authentic not created by you and have more then or equal to 3 authors, and i need recent year data's(last 5 years) and must from a legit author and the links must work properly, don't provide any dummy data or dummy link.
-
-
+        IMPORTANT: Generate a structured output for the given topic containing subContent (a concise summary of the article’s key insights), references (complete citation-style entries), and all remaining required fields. All references must be authentic, peer-reviewed journal articles published within the last five years, each with at least three legitimate authors. Use only reputable journals indexed in PubMed, Scopus, or Web of Science. Every reference must include authors, year, title, journal name, volume, issue, page range, DOI, and a working URL that leads to the real article. Do not create or fabricate any data, authors, journals, DOIs, or links. If accurate sources cannot be found, ask for clarification instead of generating false information.
+        
+        
         The final structure should look like:
         "content": {{
         "C001": {{
