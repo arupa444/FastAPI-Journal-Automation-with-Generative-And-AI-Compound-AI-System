@@ -98,37 +98,34 @@
 
 % --- Subsequent pages style ---
 \fancypagestyle{subsequent}{
-    \fancyhf{} % clear everything (important!)
-    \renewcommand{\headrulewidth}{0pt} % remove top line
-    \renewcommand{\footrulewidth}{0pt} % remove any bottom line
+    \fancyhf{} % clear
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0pt}
 
-    \fancyfoot[L]{%
-        % Citation centered
+    % ===== Citation block (same for both) =====
+    \fancyfoot[LO,RE]{%
         \vspace*{4em}
         \begin{flushleft}
-            
             \BLOCK{ set parts = author.split(" ") }
-            
-            % Extract last name
             \BLOCK{ set last = parts[-1] }
-            
-            % Extract initials for all but last name
             \BLOCK{ set initials = parts[0][0:1] }
-            
-            % Extract only the year
             \BLOCK{ set year = published.split("-")[-1] }
-            
-            % Format Allied Academy citation:
-            \textit{\textbf{Citation:} \VAR{last} \VAR{initials}. \VAR{title}. \VAR{shortJournalName}. \VAR{year};\VAR{volume}(\VAR{issues}):\VAR{pdfNo}.
-        }
+            \textit{\textbf{Citation:} \VAR{last} \VAR{initials}. \VAR{title}.
+            \VAR{shortJournalName}. \VAR{year};\VAR{volume}(\VAR{issues}):\VAR{pdfNo}.}
         \end{flushleft}
+    }
 
-        % Bottom line: page left, journal right
-        \noindent\makebox[\textwidth]{%
-        \VAR{journalYearVolumeIssue | latex_escape | safe}   \hfill \thepage
-        }
+    % ===== Alternating page number position =====
+    % Odd pages → number on LEFT
+    \fancyfoot[LO]{%
+        \VAR{journalYearVolumeIssue | latex_escape} \hfill \thepage
+    }
+    % Even pages → number on RIGHT
+    \fancyfoot[RE]{%
+        \thepage \hfill \VAR{journalYearVolumeIssue | latex_escape}
     }
 }
+
 
 \begin{document}
 % Apply first-page style
