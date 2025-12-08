@@ -121,10 +121,10 @@
         \begin{flushleft}
         \ifodd\value{page}
             % Odd pages → journal left, page right
-            \VAR{journalYearVolumeIssue | safe} \hfill \thepage
+            \textit{\VAR{journalYearVolumeIssue | safe}} \hfill \thepage
         \else
             % Even pages → page left, journal right
-            \thepage \hfill \VAR{journalYearVolumeIssue | safe}
+            \thepage \hfill \textit{\VAR{journalYearVolumeIssue | safe}}
         \fi
         \end{flushleft}
     }
