@@ -348,7 +348,7 @@ class PipelineService:
             }
         
         if journal.brandName == "hilaris.tex":
-            title = gem_title.titlecase()
+            title = gem_title.title()
         else:
             title = gem_title
 
