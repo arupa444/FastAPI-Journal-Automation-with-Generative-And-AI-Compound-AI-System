@@ -102,35 +102,43 @@
     \renewcommand{\headrulewidth}{0pt}
     \renewcommand{\footrulewidth}{0pt}
 
-    % ===== Citation block (same for both) =====
-    \fancyfoot[LO,RE]{%
-        \vspace*{4em}
+    % ========== ALL FOOTER CONTENT IN ONE PLACE ==========
+    \fancyfoot[C]{%
+        % ------ Citation comes FIRST ------
+
         \begin{flushleft}
             \BLOCK{ set parts = author.split(" ") }
             \BLOCK{ set last = parts[-1] }
             \BLOCK{ set initials = parts[0][0:1] }
             \BLOCK{ set year = published.split("-")[-1] }
-            \textit{\textbf{Citation:} \VAR{last} \VAR{initials}. \VAR{title | latex_escape | safe}.
-            \VAR{shortJournalName | latex_escape | safe}. \VAR{year};\VAR{volume}(\VAR{issues}):\VAR{pdfNo}.}
-        \end{flushleft}
-    }
 
-    % ===== Alternating page number position =====
-    % Odd pages → number on LEFT
-    \fancyfoot[LO]{%
-        \VAR{journalYearVolumeIssue | latex_escape | safe} \hfill \thepage
-    }
-    % Even pages → number on RIGHT
-    \fancyfoot[RE]{%
-        \thepage \hfill \VAR{journalYearVolumeIssue | latex_escape | safe}
+            \textit{\textbf{Citation:} \VAR{last} \VAR{initials}.
+            \VAR{title | safe}. \VAR{shortJournalName | safe}. 
+            \VAR{year};\VAR{volume}(\VAR{issues}):\VAR{pdfNo}.}
+        \end{flushleft}
+
+        % ------ Now the alternating page info ------
+        \begin{flushleft}
+        \ifodd\value{page}
+            % Odd pages → journal left, page right
+            \VAR{journalYearVolumeIssue | safe} \hfill \thepage
+        \else
+            % Even pages → page left, journal right
+            \thepage \hfill \VAR{journalYearVolumeIssue | safe}
+        \fi
+        \end{flushleft}
     }
 }
 
 
+
 \begin{document}
 % Apply first-page style
-\pagestyle{subsequent}   % Default for all pages except overridden ones
 \thispagestyle{firstpage}
+\newpage
+\newgeometry{margin=35pt, top=50pt, bottom=35pt}
+\pagestyle{subsequent}   % Default for all pages except overridden ones
+
 
 % ARTICLE TITLE (20pt)
 \begin{flushleft}

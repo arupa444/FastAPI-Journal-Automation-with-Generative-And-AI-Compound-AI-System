@@ -443,7 +443,7 @@ class PipelineService:
                 start = 0
                 for i in forHtml["content"].keys():
                     start += 1
-                    storeChangedName = f"[{forHtml["content"][i]["authors_short"].split(", ")[0]} et al., {forHtml["content"][i]["published"]}]"
+                    storeChangedName = f"[{forHtml['content'][i]['authors_short'].split(', ')[0]} et al., {forHtml['content'][i]['published']}]"
                     forHtml["introduction"] = forHtml["introduction"].replace(
                         f"[{start}].", f"[<a href='#{start}' title='{start}'>{storeChangedName}</a>].</p><p>"
                     )
@@ -602,7 +602,7 @@ class PipelineService:
             start = 0
             for i in forPdf["content"].keys():
                 start += 1
-                storeChangedName = f"[{forPdf["content"][i]["authors_short"].split(", ")[0]} et al., {forPdf["content"][i]["published"]}]"
+                storeChangedName = f"[{forPdf['content'][i]['authors_short'].split(', ')[0]} et al., {forPdf['content'][i]['published']}]"
                 storeChangedName = "rizzBro" + storeChangedName + "hoez"
 
                 forPdf["introduction"] = forPdf["introduction"].replace(
