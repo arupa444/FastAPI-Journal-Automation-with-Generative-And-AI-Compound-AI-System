@@ -70,7 +70,7 @@ class PipelineService:
         output_data[journal.id] = pulsus_output_instance.model_dump()
 
         IOService.saveOutputData(output_data)
-        print("Step 7 : Saved output data ✅")
+        print("Step 7 : Saved output data ✔")
 
         # ---------- Step 7: Generate files ----------
         PipelineService._generate_html_and_pdf(journal, output_data)
