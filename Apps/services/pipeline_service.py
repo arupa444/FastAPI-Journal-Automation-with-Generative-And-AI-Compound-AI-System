@@ -69,8 +69,7 @@ class PipelineService:
         output_data[journal.id] = pulsus_output_instance.model_dump()
 
         IOService.saveOutputData(output_data)
-        print("Step 7 : Saved output data ✔")
-        
+        print("Step 7 : Saved output data ✅")
 
         # ---------- Step 7: Generate files ----------
         PipelineService._generate_html_and_pdf(journal, output_data)
@@ -93,6 +92,8 @@ class PipelineService:
         return f"""
         You are provided by a topic:
         topic : "{journal.topic}"
+        journal name: "{journal.journalName}"
+        department: "{journal.authorsDepartment}" ignore the university name if mentioned. use the department name only as reference.
         ...
         IMPORTANT: Generate a structured output for the given topic containing subContent (a concise summary of the article’s key insights), references (complete citation-style entries), and all remaining required fields. All references must be authentic, peer-reviewed journal articles published within the last five years, each with at least three legitimate authors. Use only reputable journals indexed in PubMed, Scopus, or Web of Science. Every reference must include authors, year, title, journal name, volume, issue, page range, DOI, and a working URL that leads to the real article. Do not create or fabricate any data, authors, journals, DOIs, or links. If accurate sources cannot be found, ask for clarification instead of generating false information.
         
@@ -115,7 +116,7 @@ class PipelineService:
         }}, # give me exact 10 References(..., C009, C010)
         ...
         }}
-        
+
 
         Focus on creating references from title, authors, year, and DOI.
         the most important thing, and the whole data will be copied out and used so give me clean information only the structured data no other thing not even a symbol or dot.
@@ -211,19 +212,19 @@ class PipelineService:
             2. Section Requirements
 
             Introduction
-            - Word count: 600–800.
+            - Word count: 500–700.
             - Include sequential citation markers from the references: "C001" → [1], "C002" → [2], and so on.
             - The Introduction must contain exactly 10 paragraphs, each corresponding to one reference.
             - The citation marker must be placed at the end of the paragraph, immediately before the period, followed by two line breaks(\n).
 
             Description
-            - Word count: 600–800.
+            - Word count: 500–700.
             - Include sequential citation markers from the references: "C001" → [1], "C002" → [2], and so on.
             - The Description must also contain exactly 10 paragraphs, each corresponding to one reference.
             - The citation marker must be placed at the end of the paragraph, immediately before the period, followed by two line breaks(\n).
 
             Summary
-            - Word count: 200–400.
+            - Word count: 150–300.
             - Do not include citations.
             - Focus on key points from the content in a concise manner.
 
@@ -233,7 +234,7 @@ class PipelineService:
             - No citations required.
 
             Discussion
-            - Word count: 300–500.
+            - Word count: 200–400.
             - Include analysis, implications, or commentary derived from the content.
             - Citation markers can be included in ascending order, one per paragraph, placed at the end and before the period.
 
@@ -346,7 +347,7 @@ class PipelineService:
                 "parentLink": item.get("parentLink", ""),
                 "subContent": item.get("subContent", ""),
             }
-        
+
         if journal.brandName == "hilaris.tex":
             title = gem_title.title()
         else:
@@ -445,13 +446,16 @@ class PipelineService:
                     start += 1
                     storeChangedName = f"[{forHtml['content'][i]['authors_short'].split(', ')[0]} et al., {forHtml['content'][i]['published']}]"
                     forHtml["introduction"] = forHtml["introduction"].replace(
-                        f"[{start}].", f"[<a href='#{start}' title='{start}'>{storeChangedName}</a>].</p><p>"
+                        f"[{start}].",
+                        f"[<a href='#{start}' title='{start}'>{storeChangedName}</a>].</p><p>",
                     )
                     forHtml["description"] = forHtml["description"].replace(
-                        f"[{start}].", f"[<a href='#{start}' title='{start}'>{storeChangedName}</a>].</p><p>"
+                        f"[{start}].",
+                        f"[<a href='#{start}' title='{start}'>{storeChangedName}</a>].</p><p>",
                     )
                     forHtml["discussion"] = forHtml["discussion"].replace(
-                        f"[{start}].", f"[<a href='#{start}' title='{start}'>{storeChangedName}</a>].</p><p>"
+                        f"[{start}].",
+                        f"[<a href='#{start}' title='{start}'>{storeChangedName}</a>].</p><p>",
                     )
             else:
                 for i in range(1, len(forHtml["content"]) + 1):
@@ -459,8 +463,11 @@ class PipelineService:
                         f"[{i}].", f"[<a href='#{i}' title='{i}'>{i}</a>].</p><p>"
                     )
 
-            forHtml["description"] = forHtml["description"].replace("\n\n", "</p><p>")
-            forHtml["description"] = forHtml["description"].replace("\n", "</p><p>")
+            forHtml["introduction"] = forHtml["introduction"].replace(r"\\n", r"\n")
+            forHtml["description"] = forHtml["description"].replace(r"\\n", r"\n")
+            forHtml["discussion"] = forHtml["discussion"].replace(r"\\n", r"\n")
+            forHtml["description"] = forHtml["description"].replace(r"\n\n", "</p><p>")
+            forHtml["description"] = forHtml["description"].replace(r"\n", "</p><p>")
 
             storeBody = {}
 
@@ -595,8 +602,11 @@ class PipelineService:
 
         # record original language so later translation flow can detect existing language if needed
         output_data[journal.id]["lang"] = "en"
-        
+
         forPdf = copy.deepcopy(output_data[journal.id])
+        forPdf["introduction"] = forPdf["introduction"].replace(r"\\n", r"\n")
+        forPdf["description"] = forPdf["description"].replace(r"\\n", r"\n")
+        forPdf["discussion"] = forPdf["discussion"].replace(r"\\n", r"\n")
 
         if journal.brandName == "Irjesti.tex":
             start = 0
@@ -614,7 +624,6 @@ class PipelineService:
                 forPdf["discussion"] = forPdf["discussion"].replace(
                     f"[{start}].", storeChangedName
                 )
-
 
         rendered_latex = template.render(**forPdf)
 

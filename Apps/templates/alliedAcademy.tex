@@ -103,8 +103,8 @@
     \renewcommand{\footrulewidth}{0pt}
 
     \fancyfoot[C]{%
-        \vspace{1.5cm}
-        % Citation (single tight line)
+        % ------ Citation comes FIRST ------
+        \vspace{2cm}
         \begin{flushleft}
         {\footnotesize
         \textit{\textbf{Citation:} 
@@ -115,14 +115,16 @@
         }
         \end{flushleft}
 
-        
-        % Page + journal info (single tight line)
-        
-    \ifodd\value{page}
-        \textit{\VAR{journalYearVolumeIssue | safe}} \hfill \thepage
-    \else
-        \thepage \hfill \textit{\VAR{journalYearVolumeIssue | safe}}
-    \fi
+        % ------ Now the alternating page info ------
+        \begin{flushleft}
+        \ifodd\value{page}
+            % Odd pages → journal left, page right
+            \thepage \hfill \textit{\VAR{shortJournalName | latex_escape | safe} \VAR{year} Volume \VAR{volume} Issue \VAR{issues}}
+        \else
+            % Even pages → page left, journal right
+            \textit{\VAR{shortJournalName | latex_escape | safe} \VAR{year} Volume \VAR{volume} Issue \VAR{issues}} \hfill \thepage
+        \fi
+        \end{flushleft}
     }
 }
 
@@ -155,6 +157,7 @@
 \VAR{introduction | latex_escape | safe}
 \end{otherlanguage}
 
+\vspace{-0.3cm}
 \section*{Conclusion}
 \vspace{-0.5cm}
 \begin{otherlanguage}{\VAR{lang_name}}
