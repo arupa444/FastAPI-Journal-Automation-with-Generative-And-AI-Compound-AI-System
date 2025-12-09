@@ -463,8 +463,11 @@ class PipelineService:
                         f"[{i}].", f"[<a href='#{i}' title='{i}'>{i}</a>].</p><p>"
                     )
 
-            forHtml["description"] = forHtml["description"].replace("\n\n", "</p><p>")
-            forHtml["description"] = forHtml["description"].replace("\n", "</p><p>")
+            forHtml["introduction"] = forHtml["introduction"].replace(r"\\n", r"\n")
+            forHtml["description"] = forHtml["description"].replace(r"\\n", r"\n")
+            forHtml["discussion"] = forHtml["discussion"].replace(r"\\n", r"\n")
+            forHtml["description"] = forHtml["description"].replace(r"\n\n", "</p><p>")
+            forHtml["description"] = forHtml["description"].replace(r"\n", "</p><p>")
 
             storeBody = {}
 
@@ -572,7 +575,6 @@ class PipelineService:
                 "^": r"\^{}",
                 "~": r"\textasciitilde{}",
                 "\\": r"\textbackslash{}",
-                "\\n": r"\n",
                 "rizzBro": r"\textbf{",
                 "hoez": r"}",
             }
@@ -602,6 +604,9 @@ class PipelineService:
         output_data[journal.id]["lang"] = "en"
 
         forPdf = copy.deepcopy(output_data[journal.id])
+        forPdf["introduction"] = forPdf["introduction"].replace(r"\\n", r"\n")
+        forPdf["description"] = forPdf["description"].replace(r"\\n", r"\n")
+        forPdf["discussion"] = forPdf["discussion"].replace(r"\\n", r"\n")
 
         if journal.brandName == "Irjesti.tex":
             start = 0

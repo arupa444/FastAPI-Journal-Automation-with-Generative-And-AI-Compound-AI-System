@@ -105,7 +105,7 @@
     % ========== ALL FOOTER CONTENT IN ONE PLACE ==========
     \fancyfoot[C]{%
         % ------ Citation comes FIRST ------
-        \vspace{1.5cm}
+        \vspace{2cm}
         \begin{flushleft}
             \BLOCK{ set parts = author.split(" ") }
             \BLOCK{ set last = parts[-1] }
@@ -121,10 +121,10 @@
         \begin{flushleft}
         \ifodd\value{page}
             % Odd pages → journal left, page right
-            \textit{\VAR{journalYearVolumeIssue | safe}} \hfill \thepage
+            \textit{\VAR{shortJournalName | latex_escape | safe} \VAR{year} Volume \VAR{volume} Issue \VAR{issues}} \hfill \thepage
         \else
             % Even pages → page left, journal right
-            \thepage \hfill \textit{\VAR{journalYearVolumeIssue | safe}}
+            \thepage \hfill \textit{\VAR{shortJournalName | latex_escape | safe} \VAR{year} Volume \VAR{volume} Issue \VAR{issues}}
         \fi
         \end{flushleft}
     }
@@ -135,8 +135,6 @@
 \begin{document}
 % Apply first-page style
 \thispagestyle{firstpage}
-\newpage
-\newgeometry{margin=35pt, top=50pt, bottom=35pt}
 \pagestyle{subsequent}   % Default for all pages except overridden ones
 
 
