@@ -6,6 +6,7 @@ from Apps.library_import import *
 from Apps.library_import import pathOfPathLib
 
 
+
 class PipelineService:
     """
     Handles the complete pipeline for journal processing and PDF generation.
@@ -30,26 +31,26 @@ class PipelineService:
         if journal.id in data:
             raise HTTPException(status_code=400, detail="Journal ID already exists.")
         data[journal.id] = journal.model_dump(exclude=["id"])
-        print("Step 1 : Save journal input ✅")
+        print("Step 1 : Save journal input ✔")
 
         # ---------- Step 2: Build LLM Prompt ----------
         prompt = PipelineService._build_prompt(journal)
-        print("Step 2 : Created universal prompt ✅")
+        print("Step 2 : Created universal prompt ✔")
 
         # ---------- Step 3: Ask Gemini ----------
         # gem_summary = PipelineService._ask_gemini_with_retries(prompt)
-        # print("Step 3 : Gemini response received ✅")
+        # print("Step 3 : Gemini response received ✔")
 
         # ---------- Step 3,4: Meta data Parse LLM JSON ----------
         content_data = PipelineService._parse_gemini_response(prompt)
-        print("Step 3,4 : Generation with Parsing the structured JSON ✅")
+        print("Step 3,4 : Generation with Parsing the structured JSON ✔")
 
         # ---------- Step 5: Create title, abstract, summary ----------
         processed_sections = PipelineService._process_sections(content_data)
         processed_sections = PipelineService._normalize_content_structure(
             processed_sections
         )
-        print("Step 5 : Generated summary/introduction/description ✅")
+        print("Step 5 : Generated summary/introduction/description ✔")
 
         gem_title = PipelineService._generate_title(
             processed_sections["content"]["summary"], journal
@@ -57,7 +58,7 @@ class PipelineService:
         if gem_title[-1] == ".":
             gem_title = gem_title[:-1]
 
-        print("Step 6 : Generated title ✅")
+        print("Step 6 : Generated title ✔")
 
         # ---------- Step 6: Save structured data ----------
         final_output = PipelineService._build_final_output(
@@ -73,13 +74,13 @@ class PipelineService:
 
         # ---------- Step 7: Generate files ----------
         PipelineService._generate_html_and_pdf(journal, output_data)
-        print("Step 11 : Generated HTML and PDF ✅")
+        print("Step 11 : Generated HTML and PDF ✔")
 
         # ---------- Step 8: Return success ----------
         return JSONResponse(
             status_code=200,
             content={
-                "Status": f"Data added and files generated successfully in PDFStorePulsus/{journal.id}/ ✅."
+                "Status": f"Data added and files generated successfully in PDFStorePulsus/{journal.id}/ ✔."
             },
         )
 
@@ -429,7 +430,7 @@ class PipelineService:
         log_folder = output_log_dir / journal.id
         log_folder.mkdir(parents=True, exist_ok=True)
 
-        print("Step 8.1 : Final response ✅")
+        print("Step 8.1 : Final response ✔")
 
         # --- 9: Create HTML file ---
         env_html = Environment(
@@ -544,7 +545,7 @@ class PipelineService:
                 status_code=500, detail=f"Failed to generate HTML file: {str(e)}"
             )
 
-        print("Step 9 : Created HTML file ✅")
+        print("Step 9 : Created HTML file ✔")
 
         # --- 10: Create PDF file ---
         env_latex = Environment(
@@ -670,11 +671,11 @@ class PipelineService:
             if src.exists():
                 src.replace(dst)  # move file
 
-        print("Step 10 : Create PDF file ✅")
+        print("Step 10 : Create PDF file ✔")
 
         return JSONResponse(
             status_code=200,
             content={
-                "Status": f"Data added and files generated successfully in PDFStorePulsus/{journal.id}/ ✅."
+                "Status": f"Data added and files generated successfully in PDFStorePulsus/{journal.id}/ ✔."
             },
         )
