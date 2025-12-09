@@ -70,7 +70,6 @@ class PipelineService:
 
         IOService.saveOutputData(output_data)
         print("Step 7 : Saved output data ✅")
-        
 
         # ---------- Step 7: Generate files ----------
         PipelineService._generate_html_and_pdf(journal, output_data)
@@ -93,6 +92,8 @@ class PipelineService:
         return f"""
         You are provided by a topic:
         topic : "{journal.topic}"
+        journal name: "{journal.journalName}"
+        department: "{journal.authorsDepartment}" ignore the university name if mentioned. use the department name only as reference.
         ...
         IMPORTANT: Generate a structured output for the given topic containing subContent (a concise summary of the article’s key insights), references (complete citation-style entries), and all remaining required fields. All references must be authentic, peer-reviewed journal articles published within the last five years, each with at least three legitimate authors. Use only reputable journals indexed in PubMed, Scopus, or Web of Science. Every reference must include authors, year, title, journal name, volume, issue, page range, DOI, and a working URL that leads to the real article. Do not create or fabricate any data, authors, journals, DOIs, or links. If accurate sources cannot be found, ask for clarification instead of generating false information.
         
@@ -115,7 +116,7 @@ class PipelineService:
         }}, # give me exact 10 References(..., C009, C010)
         ...
         }}
-        
+
 
         Focus on creating references from title, authors, year, and DOI.
         the most important thing, and the whole data will be copied out and used so give me clean information only the structured data no other thing not even a symbol or dot.
@@ -346,7 +347,7 @@ class PipelineService:
                 "parentLink": item.get("parentLink", ""),
                 "subContent": item.get("subContent", ""),
             }
-        
+
         if journal.brandName == "hilaris.tex":
             title = gem_title.title()
         else:
@@ -445,13 +446,16 @@ class PipelineService:
                     start += 1
                     storeChangedName = f"[{forHtml['content'][i]['authors_short'].split(', ')[0]} et al., {forHtml['content'][i]['published']}]"
                     forHtml["introduction"] = forHtml["introduction"].replace(
-                        f"[{start}].", f"[<a href='#{start}' title='{start}'>{storeChangedName}</a>].</p><p>"
+                        f"[{start}].",
+                        f"[<a href='#{start}' title='{start}'>{storeChangedName}</a>].</p><p>",
                     )
                     forHtml["description"] = forHtml["description"].replace(
-                        f"[{start}].", f"[<a href='#{start}' title='{start}'>{storeChangedName}</a>].</p><p>"
+                        f"[{start}].",
+                        f"[<a href='#{start}' title='{start}'>{storeChangedName}</a>].</p><p>",
                     )
                     forHtml["discussion"] = forHtml["discussion"].replace(
-                        f"[{start}].", f"[<a href='#{start}' title='{start}'>{storeChangedName}</a>].</p><p>"
+                        f"[{start}].",
+                        f"[<a href='#{start}' title='{start}'>{storeChangedName}</a>].</p><p>",
                     )
             else:
                 for i in range(1, len(forHtml["content"]) + 1):
@@ -568,6 +572,7 @@ class PipelineService:
                 "^": r"\^{}",
                 "~": r"\textasciitilde{}",
                 "\\": r"\textbackslash{}",
+                "\\n": r"\n",
                 "rizzBro": r"\textbf{",
                 "hoez": r"}",
             }
@@ -595,7 +600,7 @@ class PipelineService:
 
         # record original language so later translation flow can detect existing language if needed
         output_data[journal.id]["lang"] = "en"
-        
+
         forPdf = copy.deepcopy(output_data[journal.id])
 
         if journal.brandName == "Irjesti.tex":
@@ -614,7 +619,6 @@ class PipelineService:
                 forPdf["discussion"] = forPdf["discussion"].replace(
                     f"[{start}].", storeChangedName
                 )
-
 
         rendered_latex = template.render(**forPdf)
 
