@@ -121,10 +121,10 @@
         \begin{flushleft}
         \ifodd\value{page}
             % Odd pages → journal left, page right
-            \textit{\VAR{shortJournalName | latex_escape | safe} \VAR{year} Volume \VAR{volume} Issue \VAR{issues}} \hfill \thepage
+            \thepage \hfill \textit{\VAR{shortJournalName | latex_escape | safe} \VAR{year} Volume \VAR{volume} Issue \VAR{issues}}
         \else
             % Even pages → page left, journal right
-            \thepage \hfill \textit{\VAR{shortJournalName | latex_escape | safe} \VAR{year} Volume \VAR{volume} Issue \VAR{issues}}
+            \textit{\VAR{shortJournalName | latex_escape | safe} \VAR{year} Volume \VAR{volume} Issue \VAR{issues}} \hfill \thepage
         \fi
         \end{flushleft}
     }
@@ -160,6 +160,7 @@
 \VAR{introduction | latex_escape | safe}
 \end{otherlanguage}
 
+\vspace{-0.3cm}
 \section*{Conclusion}
 \vspace{-0.5cm}
 \begin{otherlanguage}{\VAR{lang_name}}
