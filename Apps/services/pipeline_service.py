@@ -6,6 +6,7 @@ from Apps.library_import import *
 from Apps.library_import import pathOfPathLib
 
 
+
 class PipelineService:
     """
     Handles the complete pipeline for journal processing and PDF generation.
