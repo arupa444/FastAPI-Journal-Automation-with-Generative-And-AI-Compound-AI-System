@@ -234,7 +234,7 @@ class PipelineService:
             - No citations required.
 
             Discussion
-            - Word count: 300–500.
+            - Word count: 200–400.
             - Include analysis, implications, or commentary derived from the content.
             - Citation markers can be included in ascending order, one per paragraph, placed at the end and before the period.
 
