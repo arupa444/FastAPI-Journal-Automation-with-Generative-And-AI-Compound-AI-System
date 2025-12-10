@@ -150,21 +150,21 @@
 
 % ===== Two-column main content =====
 \begin{multicols}{2}
-
+\vspace{-0.3cm}
 \section*{Introduction}
 \vspace{-0.5cm}
 \begin{otherlanguage}{\VAR{lang_name}}
 \VAR{introduction | latex_escape | safe}
 \end{otherlanguage}
 
-\vspace{-0.5cm}
+\vspace{-0.7cm}
 \section*{Conclusion}
 \vspace{-0.5cm}
 \begin{otherlanguage}{\VAR{lang_name}}
 \VAR{conclusion | latex_escape | safe}
 \end{otherlanguage}
 
-\vspace{-0.5cm}
+\vspace{-0.7cm}
 \section*{References}
 \vspace{-0.2cm}
 \fontsize{8}{9.6}\selectfont
@@ -182,10 +182,11 @@
         \BLOCK{ if not item.issues }
                 \href{\VAR{ item.url }}{\VAR{item.title | latex_escape | safe}.} 
                 \VAR{ item.journalShortName | latex_escape | safe}. \VAR{ item.published };\VAR{ item.volume }:\VAR{ item.pageRangeOrNumber }.
-            \BLOCK{ else }
-                \href{\VAR{ item.url }}{\VAR{ item.title }.} 
-                \VAR{ item.journalShortName | latex_escape | safe}. \VAR{ item.published };\VAR{ item.volume }(\VAR{ item.issues }):\VAR{ item.pageRangeOrNumber }.
-            \BLOCK{ endif }
+        \BLOCK{ else }
+            \href{\VAR{ item.url }}{\VAR{ item.title }.} 
+            \VAR{ item.journalShortName | latex_escape | safe}. \VAR{ item.published };\VAR{ item.volume }(\VAR{ item.issues }):\VAR{ item.pageRangeOrNumber }.
+        \BLOCK{ endif }
+        \vspace{-0.1cm}
 \BLOCK{ endfor }
 \BLOCK{ endif }
 \end{enumerate}
