@@ -96,7 +96,7 @@ class PipelineService:
         journal name: "{journal.journalName}"
         department: "{journal.authorsDepartment}" ignore the university name if mentioned. use the department name only as reference.
         ...
-        IMPORTANT: Generate a structured output for the given topic containing subContent (a concise summary of the article’s key insights), references (complete citation-style entries), and all remaining required fields. All references must be authentic, peer-reviewed journal articles published within the last five years, each with at least three legitimate authors. Use only reputable journals indexed in PubMed, Scopus, or Web of Science. Every reference must include authors, year, title, journal name, volume, issue, page range, DOI, and a working URL that leads to the real article. Do not create or fabricate any data, authors, journals, DOIs, or links. If accurate sources cannot be found, ask for clarification instead of generating false information.
+        IMPORTANT: Generate a structured output for the given topic containing subContent (a concise summary of the article’s key insights), references (complete citation-style entries), and all remaining required fields. All references must be authentic, peer-reviewed journal articles published within the last five years, each with at least three legitimate authors. Use only reputable journals indexed in PubMed, Scopus, or Web of Science. Every reference must include authors, year, title, journal name, volume, issue, page range, DOI, and a working URL that leads to the real article. Do not create or fabricate any data, authors, journals, DOIs, or links.
         
         
         The final structure should look like:
@@ -123,8 +123,8 @@ class PipelineService:
         the most important thing, and the whole data will be copied out and used so give me clean information only the structured data no other thing not even a symbol or dot.
         note: Write like a confident, clear thinking human speaking to another smart human.
             Avoid robotic phrases like 'in today's fast-paced world', 'leveraging synergies', or
-            'furthermore.
-            Skip unnecessary dashes (-), quotation marks (''), and corporate buzzwords like 'cutting-edge', 'robust', or 'seamless experience. No Al tone. No fluff. No filler.
+            furthermore.
+            Skip unnecessary dashes (-), quotation marks (''), and corporate buzzwords like 'cutting-edge', 'robust', or 'seamless experience. No AI tone. No fluff. No filler.
             Use natural transitions like 'here's the thing', 'let's break it down; or 'what this really means is' Keep sentences varied in length and rhythm, like how real people speak or write. Prioritize clarity, personality, and usefulness.
             Every sentence should feel intentional, not generated
         IMPORTANT: Your response must be ONLY a valid JSON object with no additional text, 
