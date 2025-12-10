@@ -419,7 +419,10 @@ class PipelineService:
     def _generate_html_and_pdf(journal, output_data):
         """Move all your LaTeX + HTML rendering logic here."""
         # --- Centralized Directory Setup ---
-
+        
+        output_data[journal.id]["introduction"] = output_data[journal.id]["introduction"].replace(r"\\n", r"\n")
+        output_data[journal.id]["description"] = output_data[journal.id]["description"].replace(r"\\n", r"\n")
+        output_data[journal.id]["discussion"] = output_data[journal.id]["discussion"].replace(r"\\n", r"\n")
         # Create a single directory for all of this journal's pdf, .html, .tex files.
         output_base_dir = pathOfPathLib("Apps/DB/PDFStorePulsus")
         journal_folder = output_base_dir / journal.id
@@ -464,9 +467,6 @@ class PipelineService:
                         f"[{i}].", f"[<a href='#{i}' title='{i}'>{i}</a>].</p><p>"
                     )
 
-            forHtml["introduction"] = forHtml["introduction"].replace(r"\\n", r"\n")
-            forHtml["description"] = forHtml["description"].replace(r"\\n", r"\n")
-            forHtml["discussion"] = forHtml["discussion"].replace(r"\\n", r"\n")
             forHtml["description"] = forHtml["description"].replace(r"\n\n", "</p><p>")
             forHtml["description"] = forHtml["description"].replace(r"\n", "</p><p>")
 
@@ -605,9 +605,6 @@ class PipelineService:
         output_data[journal.id]["lang"] = "en"
 
         forPdf = copy.deepcopy(output_data[journal.id])
-        forPdf["introduction"] = forPdf["introduction"].replace(r"\\n", r"\n")
-        forPdf["description"] = forPdf["description"].replace(r"\\n", r"\n")
-        forPdf["discussion"] = forPdf["discussion"].replace(r"\\n", r"\n")
 
         if journal.brandName == "Irjesti.tex":
             start = 0
