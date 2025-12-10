@@ -610,7 +610,7 @@ class PipelineService:
             start = 0
             for i in forPdf["content"].keys():
                 start += 1
-                storeChangedName = f"[{forPdf['content'][i]['authors_short'].split(', ')[0]} et al., {forPdf['content'][i]['published']}]"
+                storeChangedName = f"({forPdf['content'][i]['authors_short'].split(', ')[0]} et al., {forPdf['content'][i]['published']})."
                 storeChangedName = "rizzBro" + storeChangedName + "hoez"
 
                 forPdf["introduction"] = forPdf["introduction"].replace(
