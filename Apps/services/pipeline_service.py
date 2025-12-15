@@ -162,6 +162,7 @@ class PipelineService:
 
             except json.JSONDecodeError as e:
                 attempt += 1
+                print(gem_response)
                 print(f"JSON parsing failed (attempt {attempt}/{retries}): {e}")
                 if attempt >= retries:
                     raise HTTPException(
@@ -189,7 +190,7 @@ class PipelineService:
     @staticmethod
     def _process_sections(content_data: dict) -> dict:
         prompt = f"""
-            You are given the following data: {{content_data}}
+            You are given the following data: {content_data}
             You are also provided with reference details in the format: "C001", "C002", etc., where each reference contains full bibliographic information.
 
             Your task is to process this data and generate structured content in JSON format. Follow these instructions carefully:
@@ -254,7 +255,7 @@ class PipelineService:
             - No introductory phrases, explanations, or meta-commentary.
             - Ensure all text is clean and compliant with JSON formatting.
             """
-
+        print("\n\n\n\n\n\n\n\n\n\n",content_data,"\n\n\n\n\n\n\n\n\n\n")
         parsed = PipelineService._parse_gemini_response(prompt)
         normalized = PipelineService._normalize_content_structure(parsed)
         return normalized
