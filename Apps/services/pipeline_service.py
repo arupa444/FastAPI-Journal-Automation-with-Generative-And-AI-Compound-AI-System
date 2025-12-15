@@ -349,14 +349,9 @@ class PipelineService:
                 "subContent": item.get("subContent", ""),
             }
 
-        if journal.brandName == "hilaris.tex":
-            title = gem_title.title()
-        else:
-            title = gem_title
-
         output = {
             journal.id: {
-                "title": title,
+                "title": gem_title,
                 "journalName": journal.journalName,
                 "shortJournalName": journal.shortJournalName,
                 "type": journal.type,
