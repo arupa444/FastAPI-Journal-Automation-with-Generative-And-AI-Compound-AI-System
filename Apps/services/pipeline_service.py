@@ -255,7 +255,6 @@ class PipelineService:
             - No introductory phrases, explanations, or meta-commentary.
             - Ensure all text is clean and compliant with JSON formatting.
             """
-        print("\n\n\n\n\n\n\n\n\n\n",content_data,"\n\n\n\n\n\n\n\n\n\n")
         parsed = PipelineService._parse_gemini_response(prompt)
         normalized = PipelineService._normalize_content_structure(parsed)
         return normalized
