@@ -265,7 +265,7 @@ class PipelineService:
         prompt = f"""
         Generate a 5-7 word title based on this summary: {summary}
         
-        IMPORTANT: Respond with ONLY the title. No additional text, explanations, or formatting.
+        IMPORTANT: Respond with ONLY the title. The title should be in title case. No additional text, explanations, or formatting.
         """
         response = PipelineService._ask_gemini_with_retries(prompt)
 
