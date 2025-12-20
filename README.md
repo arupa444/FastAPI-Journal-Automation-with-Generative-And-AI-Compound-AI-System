@@ -1,342 +1,293 @@
-# 📚 FastAPI Journal Automation with Generative AI (Compound AI System for Journals – Automation API)
+# pdfGen — Local LaTeX PDF Generator for Journals ✅
 
-A **FastAPI-based** application designed to **automate the creation, enrichment, and management of journal articles**. This system integrates **Large Language Models (LLMs)** such as **Google Gemini (2.5-Flash)** and **Groq’s LLaMA (3.3-70b-versatile)**, combined with the **CORE (Connecting Repositories) API**, to process, enhance, and generate structured journal data, ultimately producing professional **HTML and PDF** documents.
-
----
-
-## ✨ Key Features
-
--   **📄 CRUD Operations** – Create, Read, Update, and Delete journal input data.
--   **🤖 Advanced AI-Powered Content Generation** – Utilizes Gemini 2.5-Flash and Groq LLaMA 3.3-70b-versatile to generate, summarize, and structure diverse content (research findings, introductions, descriptions, abstracts, conclusions, and titles).
--   **🔍 Academic Article Search** – Dedicated endpoint to search relevant academic literature via the CORE API. (Note: This is an independent search endpoint, not the primary content source for the automated pipeline).
--   **⚙️ Comprehensive Automated Journal Processing Pipeline** – From initial metadata input to AI-driven content generation, narrative assembly, and final **HTML and LaTeX-based PDF** document output.
--   **✅ Robust Data Validation** – Pydantic-based input and output validation ensuring data integrity and correct formatting, including custom date and uniqueness checks.
--   **📦 Structured JSON Output** – Machine-readable and well-defined journal data for easy integration.
--   **🌐 User Interface (UI)** – Basic web-based interface for interacting with key API functionalities.
+A lightweight, locally-hosted tool that converts journal templates into publication-ready PDFs using FastAPI and LaTeX. Designed to run offline on Windows and optionally integrate with AI services (Gemini, Groq) for assisted content generation and translation — enabling reproducible PDF generation without hosting costs.
 
 ---
 
-## 📌 API Endpoints Overview
+## Table of Contents
 
-| Method   | Path                                            | Description                                                                 |
-| :------- | :---------------------------------------------- | :-------------------------------------------------------------------------- |
-| **UI**  | `/`                                             | Home Page.                                                                  |
-| **GET**  | `/about`                                        | Project description.                                                        |
-| **GET**  | `/view/journalInputData`                        | Retrieve all journal input data.                                            |
-| **GET**  | `/journalInputData/{JournalInputID}`            | Fetch a specific journal input by ID.                                       |
-| **POST** | `/addJournalInInput`                            | Add a new journal input.                                                    |
-| **PUT**  | `/updateInputJournal/{JournalInputID}`          | Update an existing journal input.                                           |
-| **DELETE** | `/delete/journalInputData/{JournalInputID}`     | Delete a journal input by ID.                                               |
-| **POST** | `/pulsus-ask-gemini`                            | Send a prompt to the Google Gemini API (model: `gemini-2.5-flash`).         |
-| **POST** | `/pulsus-ask-groq`                              | Send a prompt to the Groq API (model: `llama-3.3-70b-versatile`).           |
-| **POST** | `/core/search/articles`                         | Search academic articles via CORE API.                                      |
-| **POST** | `/pipeline/journal-full-process`                | Execute the full journal processing pipeline to generate HTML & PDF.        |
-| **UI**   | `/ui/about`                                     | User interface for project description.                                     |
-| **UI**   | `/ui/add-journal`                               | User interface to add new journal input.                                    |
-| **UI**   | `/ui/update-journal`                            | User interface to update existing journal input.                            |
-| **UI**   | `/ui/ask-gemini`                                | User interface to interact with Gemini.                                     |
-| **UI**   | `/ui/ask-groq`                                  | User interface to interact with Groq.                                       |
-| **UI**   | `/ui/core-search`                               | User interface to search academic articles using CORE API.                  |
-| **UI**   | `/ui/pipeline`                                  | User interface to submit data for the full journal processing pipeline.     |
-| **UI**   | `/ui/delete-journal`                            | User interface to delete journal input data.                                |
+- [About](#pdfgen---local-latex-pdf-generator-for-journals-)
+- [Features](#features)
+- [Quickstart](#quickstart)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Project Structure](#project-structure)
+- [Technologies Used](#technologies-used)
+- [Contributing](#contributing)
+- [License](#license)
+- [Contact & Support](#contact--support)
 
 ---
 
-## 🚀 Installation & Setup
+## ✨ Features
 
-### 1️⃣ Clone the Repository
-
-```bash
-git clone https://github.com/arupa444/FastAPI-Journal-Automation-with-Generative-And-AI-Compound-AI-System.git
-cd FastAPI-Journal-Automation-with-Generative-And-AI-Compound-AI-System
-```
-
-### 2️⃣ Create & Activate a Virtual Environment
-
-```bash
-python -m venv venv
-source venv/bin/activate       # Mac/Linux
-venv\Scripts\activate          # Windows
-```
-
-### 3️⃣ Install Dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-### 4️⃣ Install Software and Font
-
-For successful PDF generation, you need:
-
-1.  **MikTex Software:** Download and Install [MikTex](https://miktex.org/download) to your device. This is essential for compiling LaTeX files into PDFs.
-2.  **Archivo Narrow Font:** Download and Install the [Archivo Narrow font](https://fonts.google.com/specimen/Archivo+Narrow) to your device's system fonts. This font is used in the LaTeX templates.
+- Render journal templates (LaTeX) into PDF locally using MiKTeX
+- Web interface and API endpoints via FastAPI and Uvicorn
+- Optional AI-enhanced content generation (Gemini, Groq)
+- Translation support (deep-translator) and multi-language templates
+- Local-first workflow — no paid hosting required
 
 ---
 
-## 🔑 Configuration
+## 🚀 Quickstart
 
-This application requires API keys for **Google Gemini**, **Groq**, and **CORE**.
+1. Clone the repository:
+   ```bash
+   git clone <repository-url>
+   cd <repo-root>
+   ```
+2. Follow the Installation steps below (Windows-specific steps included).
+3. Start the app:
 
-1.  Create a `.env` file in the root directory.
-2.  Add the following lines with your respective API keys:
+   - Option A (recommended):
 
-    ```env
-    gemAPI1="YOUR_GEMINI_API_KEY"
-    groqAPI2="YOUR_GROQ_API_KEY"
-    coreAPI3="YOUR_CORE_API_KEY"
-    ```
+     ```bash
+     python run.py
+     ```
 
----
+     The script finds a free port (8000–8100), launches Uvicorn, and opens your browser.
 
-## ▶️ Usage
+   - Option B: Run Uvicorn directly:
+     ```bash
+     uvicorn Apps.app:app --reload --port 8000
+     ```
 
-### Run the FastAPI Application
-
-Run the runServer.bat file to start pipeline OR
-
-```bash
-uvicorn main:app --reload
-```
-
-### Access Application and API Documentation
-
-Once running, open:
-
-*   **API Documentation (Swagger UI):** `http://127.0.0.1:8000/docs`
-*   **API Documentation (Redoc):** `http://127.0.0.1:8000/redoc`
-*   **Web User Interface:** `http://127.0.0.1:8000/`
+4. Open the URL displayed in the console (e.g., http://127.0.0.1:8000).
 
 ---
 
-## API Endpoint: `POST /pipeline/journal-full-process`
+## 🛠 Installation (Detailed)
 
-This endpoint represents the core automated pipeline of the application. It accepts detailed information about a journal article, processes it through a multi-step workflow involving Large Language Models (LLMs), and generates fully formatted **HTML** and **PDF** documents as the final output.
+**Prerequisites (Windows)**
 
-### Overview
+- Windows 10/11 (latest updates recommended)
+- Python 3.12.x (3.12.8 recommended)
+- MiKTeX 24.1+ (for LaTeX to PDF rendering)
+- Optional: API keys for Google Gemini / Groq / CORE if you plan to use AI or search features
 
-The pipeline automates the entire process of creating a research article, from initial data input to final document generation. It achieves this by:
+**Detailed steps**
 
-1.  **Validating** and storing initial journal metadata.
-2.  Using the journal's **topic** to prompt LLMs (Gemini/Groq) to generate structured research content (summaries, references, titles, authors, DOIs, URLs, etc.).
-3.  Leveraging further LLM calls to write a **narrative** (introduction, description, abstract, conclusion) and a **suitable title** based on the generated content.
-4.  **Assembling** all the original and generated data into a final, coherent structure (`PulsusOutputStr`).
-5.  **Generating an HTML file** by injecting the data into a Jinja2 HTML template.
-6.  **Generating a PDF file** by injecting this data into a LaTeX template (selected based on `brandName`) and compiling it using `xelatex`.
+1. Verify Python is installed and accessible
 
-### 1. Input and Validation
+   ```powershell
+   python --version
+   pip --version
+   python -m pip install --upgrade pip
+   ```
 
-The process begins when a `POST` request is sent to `/pipeline/journal-full-process`. The request body must be a JSON object that conforms to the `PulsusInputStr` Pydantic model.
+   If `python` is not found, reinstall Python and ensure you enable **Add python.exe to PATH**.
 
-**Request Body Example (`PulsusInputStr`):**
+2. Install MiKTeX
 
-```json
-{
-  "id": "J001",
-  "topic": "The Impact of AI on Climate Change Prediction Models",
-  "journalName": "Journal of Environmental Informatics",
-  "shortJournalName": "J Env Inform",
-  "type": "Research Article",
-  "author": "Dr. Jane Doe",
-  "email": "jane.doe@example.com",
-  "brandName": "hilaris.tex",
-  "authorsDepartment": "Department of Computer Science, University of XYZ, City, Country",
-  "received": "01-Jan-2025",
-  "editorAssigned": "15-Jan-2025",
-  "reviewed": "01-Feb-2025",
-  "revised": "15-Feb-2025",
-  "published": "01-Mar-2025",
-  "manuscriptNo": "JEI-2025-001",
-  "volume": 10,
-  "issues": 2,
-  "pdfNo": 123,
-  "doi": "10.1234/jei.2025.001",
-  "ISSN": "1234-5678",
-  "imgPath": "Logo/logo_sample.png",
-  "parentLink": "https://example.com/journal"
-}
-```
+   - Download MiKTeX: https://miktex.org/download
+   - Run the MiKTeX installer and open MiKTeX Console afterwards.
+   - In MiKTeX Console: enable **Install missing packages on-the-fly** and run **Update**.
+   - If `xelatex` is not on PATH after install, add MiKTeX's `miktex/bin` folder to your PATH or use the MiKTeX Console to fix PATH settings.
 
-**Validation Process:**
+3. Create & activate a virtual environment (recommended)
+   PowerShell (recommended):
 
-Before any processing occurs, the input data is rigorously validated by Pydantic:
+   ```powershell
+   python -m venv .venv
+   .\.venv\Scripts\Activate
+   ```
 
-*   **Type Checking:** Ensures fields like `volume` and `pdfNo` are integers and `email` is a valid email format.
-*   **Custom Date Validation:** The `validateDates` validator checks that all date fields (`received`, `published`, etc.) are in the correct `DD-Mmm-YYYY` format (e.g., `01-Mar-2025`).
-*   **Uniqueness Check:** The `validatePDFNo` validator checks against the `journalDBInput.json` file to ensure the `pdfNo` has not been used before, preventing duplicate entries.
-*   **ID Check:** The endpoint logic itself checks if the provided `id` already exists in the database, raising an error if it does to prevent overwriting existing data.
+   CMD:
 
-### 2. The Automated Workflow
+   ```cmd
+   python -m venv .venv
+   .\.venv\Scripts\activate.bat
+   ```
 
-If the input is valid, the main pipeline begins.
+4. Install Python dependencies
 
-#### Step 2.1: Structured Content Generation (LLM Prompt #1)
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-The pipeline uses the `topic` from the input to query the LLMs (Gemini or Groq). This first prompt is designed to generate the core content of the article—a collection of summarized research findings with comprehensive details.
+5. Configure environment variables (optional for AI features)
+   Create a `.env` file in the project root or set system environment variables. Example `.env`:
 
-> **Prompt Sent to Gemini/Groq:**
->
-> ```
-> You are provided by a topic:
-> topic : "{journal.topic}"
->
-> Using this topic, generate a summarized structure that contains "subContent" (summary of key insights from the article), "references" (citation-style reference) and the remainings and make sure all the journals are authentic not created by you, and i need recent year data's(last 5 years) and must from a legit author and the links must work properly, don't provide any dummy data or dummy link.
->
-> The final structure should look like:
-> "content": {{
->   "C001": {{
->     "subContent": "...",
->     "references": "...",
->     "title": "...",
->     "authors": "...",
->     "published": "...",
->     "pageRangeOrNumber": "...", #the page range or the page number
->     "volume": "...",
->     "issues": "...",
->     "DOI": "...",
->     "url": "...",
->     "parentLink": "..."
->   }}, # try to achieve the maximum of 10 (C010) counts.
->   ...
-> }}
->
-> Focus on creating references from title, authors, year, and DOI.
-> the most important thing, and the whole data will be copied out and used so give me clean information only the structured data no other thing not even a symbol or dot.
-> note: Write like a confident, clear thinking human speaking to another smart human... [and other style instructions]
-> ```
+   ```env
+   gemAPI1=your_gemini_api_key_here
+   groqAPI2=your_groq_api_key_here
+   coreAPI3=your_core_api_key_here
+   ```
 
-**How it's Helpful:** This prompt instructs the LLM to act as a sophisticated research assistant. It finds and structures relevant articles on the given topic into a clean, predictable JSON format, including detailed bibliographic information. This completely automates a significant part of the literature review and summarization process.
+   Note: `Apps/config.py` loads these variables as `gemAPI1`, `groqAPI2`, and `coreAPI3`.
 
-#### Step 2.2: Narrative Generation (LLM Prompt #2)
-
-The structured JSON content from the previous step is then used as context for a second LLM call. This prompt's goal is to write the human-readable narrative parts of the article: the introduction, description, summary (conclusion), and abstract.
-
-> **Prompt Sent to Gemini:**
->
-> ```
-> This is the given data : "{content_data}"
-> i want to you to process this data and give me some output:
-> 1: Give me a brief summary from the given data where the word count lies in between 200 - 400.
-> 2: Give me a brief introduction from the given data where it will contain the citation markers as well, and note, you have to take in this way: the "C001" will be 1, "C002": 2...... and each section should have different but sequencial citation markers (for ex: "C001" will be 1, "C002": 2 and so on). and give two linebreak '\n' after the citation marker and also make sure the citation marker must stays before the full stop '.', and the full introduction word count lies in between 600 - 800.
-> 3: Give me a brief description from the given data where it will contain the citation markers as well, and note, you have to take in this way: the "C001" will be 1, "C002": 2...... and each section should have different but sequencial citation markers (for ex: "C001" will be 1, "C002": 2 and so on). and give two linebreak '\n' after the citation marker and also make sure the citation marker must stays before the full stop '.', and the full description word count lies in between 600 - 800.
-> 4: Give me a abstract from the given data, and the full abstract word count lies in between 90 - 100.
->
-> The final structure should look like:
-> "content": {{
->   "introduction": '''...''',
->   "description" : '''...''',
->   "summary" : '''...''',
->   "abstract" : '''...'''
->   ...
-> }}
->
-> note: Do not include any introductory labels... [and other style/formatting instructions]
-> ```
-
-**How it's Helpful:** This step transforms the list of structured summaries into a flowing, academic narrative. It automatically synthesizes the information, adds sequential citation markers (e.g., `[1]`, `[2]`), and adheres to specified word counts, effectively writing the bulk of the article's human-readable content.
-
-#### Step 2.3: Title Generation (LLM Prompt #3)
-
-A final prompt is sent to generate a concise and suitable title for the new article.
-
-> **Prompt Sent to Gemini:**
->
-> ```
-> give me a 5 to 7 words title based on the generated summary {content_data}. use playoff method to generate 5,6 titles and choose the best one and give that title. no need to display background process. just give 1 title as a final response
-> ```
-
-**How it's Helpful:** This automates a creative task, providing a concise and relevant title based on the article's synthesized content, ensuring it's impactful and appropriate.
-
-### 3. Data Assembly and Final Output
-
-The pipeline now gathers all the generated and original data:
-*   Original user input (author, dates, DOI, `brandName`, `shortJournalName`, `imgPath`, etc.).
-*   The structured content from Step 2.1.
-*   The narrative (introduction, description, abstract, summary/conclusion) from Step 2.2.
-*   The title from Step 2.3.
-*   Several derived fields (like `QCNo`, `preQCNo`, `RManuNo`).
-*   A `citation` field which is a Pydantic `computed_field` that dynamically generates a citation string based on the `brandName` and other input data.
-
-This complete dataset is rigorously validated against the `PulsusOutputStr` Pydantic model (which includes validation to remove content items without `subContent` or `references`) and saved to `journalDBOutput.json`.
-
-### 4. HTML Generation
-
-This new step creates a web-friendly version of the generated journal article.
-
-1.  **Templating:** The system uses the **Jinja2** templating engine to load a predefined HTML template (`Format1.html`).
-2.  **Rendering:** The assembled JSON data (`PulsusOutputStr`) is passed as context to the template. Jinja2 replaces placeholders in the HTML file with the actual data. This includes dynamically creating clickable citation links (`[<a href='#{i}' title='{i}'>{i}</a>]`) and generating a styled reference list.
-3.  **Saving:** The rendered HTML content is saved as a `.html` file, named using the journal ID (e.g., `J001.html`).
-
-### 5. PDF Generation
-
-This is the final step where the digital data becomes a professional, print-ready document.
-
-1.  **Templating:** The system uses the **Jinja2** templating engine to load a LaTeX template. The specific LaTeX template (`hilaris.tex`, `alliedAcademy.tex`, `omics.tex`) is dynamically selected based on the `brandName` field in the input.
-2.  **LaTeX Escaping:** A custom `latex_escape` filter is applied to the data to ensure special characters (like `&`, `%`, `_`) are correctly escaped for LaTeX, preventing compilation errors.
-3.  **Rendering:** The assembled JSON data is passed as context to the chosen LaTeX template. Jinja2 replaces placeholders (e.g., `\VAR{title}`, `\VAR{introduction}`) with the escaped data.
-4.  **Compilation:** The script executes `xelatex` (a powerful TeX engine) on the rendered `.tex` file twice. This ensures all cross-references, citations, and table of contents are correctly resolved. The compiler generates a high-quality PDF document, complete with professional formatting, sections, and references. The output file is named using the journal ID (e.g., `J001.pdf`).
-
-### 6. Successful Response
-
-If all steps complete successfully, the API returns a `200 OK` status with the following JSON response, and new HTML and PDF files will be present on the server.
-
-```json
-{
-  "Status": "Data added successfully and generated PDF successfully ✅."
-}
-```
+6. (Optional) Run a quick LaTeX test
+   Create a file `temp/test.tex` with a minimal document and run `xelatex` manually or via the app to ensure MiKTeX is working:
+   ```tex
+   \documentclass{article}
+   \begin{document}
+   Hello, pdfGen!
+   \end{document}
+   ```
+   Then
+   ```powershell
+   xelatex -interaction=nonstopmode -output-directory=temp temp/test.tex
+   ```
+   If this succeeds, `temp/test.pdf` should be created.
 
 ---
 
-## 🛠 Example: Full Journal Automation Workflow
+## ▶️ Usage (Detailed)
 
-Send a `POST` request to:
+### Start the server
 
-```
-/pipeline/journal-full-process
-```
+- Recommended (auto-port + browser opener):
 
-with JSON body:
+  ```bash
+  python run.py
+  ```
 
-```json
-{
-    "id": "L003",
-    "topic": "Vocal Communication Patterns in Bottlenose Dolphins",
-    "journalName": "Journal of Animal Health and Behavioural Science",
-    "shortJournalName": "J Anim Health Behav Sci",
-    "type": "Short Communication",
-    "author": "Jhump James",
-    "email": "jhumpjames1@gmail.com",
+  This script auto-selects an available port in the range 8000–8100, starts Uvicorn and opens your browser.
+
+- Or start Uvicorn manually (use this if you want a fixed port):
+
+  ```bash
+  uvicorn Apps.app:app --reload --port 8000
+  ```
+
+- Windows quick launcher:
+  - Double-click `runServer.bat` to run `run.py` using the default Python on your PATH.
+
+### Web UI
+
+- After the server starts, open the printed URL (e.g., http://127.0.0.1:8000).
+- Useful UI pages:
+  - `GET /ui/add-journal` — Add a new journal entry via the web form
+  - `GET /ui/update-journal` — Edit an existing journal
+  - `GET /ui/ask-gemini` — Gemini prompt UI
+  - `GET /ui/ask-groq` — Groq prompt UI
+  - `GET /ui/pipeline` — Pipeline controls
+  - `GET /ui/translate` — Translate page UI
+
+### Key API Endpoints (examples)
+
+- Compile LaTeX to PDF (endpoint used by UI):
+
+  ```http
+  POST /compile-latex
+  Content-Type: application/json
+
+  { "source": "\\documentclass{article}\\begin{document}Hello\\end{document}" }
+  ```
+
+  Response on success:
+
+  ```json
+  { "pdf_path": "/static/<job_id>.pdf" }
+  ```
+
+  You can then open `http://127.0.0.1:<port>/static/<job_id>.pdf` to download the PDF.
+
+- Full pipeline (journal -> PDF):
+
+  ```http
+  POST /pipeline/journal-full-process
+  Content-Type: application/json
+
+  {
+    "id": "a123",
+    "topic": "Example Topic",
+    "journalName": "Example Journal",
+    "shortJournalName": "EJ",
+    "type": "Research Article",
+    "author": "Jane Doe",
+    "email": "jane@example.com",
     "brandName": "alliedAcademy.tex",
-    "authorsDepartment": "Department of Psychiatry, The University of Mostaganem, Algeria, Africa",
-    "received": "01-Apr-2024",
-    "editorAssigned": "03-Dec-2024",
-    "reviewed": "24-Dec-2024",
-    "revised": "24-Dec-2024",
-    "published": "31-Dec-2024",
-    "manuscriptNo": "ahbs-24-140508",
-    "volume": 8,
-    "issues": 2,
-    "pdfNo": 444,
-    "doi": "10.37421/2952-8097.2024.8.252",
-    "ISSN": "2952-8097",
-    "imgPath": "Logo/logo_sample.png",
-    "parentLink": "https://www.alliedacademies.org/archives-food-nutrition/"
-}
-```
+    "authorsDepartment": "CS",
+    "received": "2025-12-01",
+    "manuscriptNo": "M-001",
+    "volume": 1,
+    "issues": 1,
+    "pdfNo": 1,
+    "parentLink": "https://example.org/journal"
+  }
+  ```
+
+  This triggers the full processing pipeline and returns the generated output or status.
+
+- Translate generated journal page to another language:
+
+  ```http
+  POST /pdfs/translate
+  Content-Type: application/json
+
+  { "id": "a123", "language": "Spanish" }
+  ```
+
+- LLM endpoints (Gemini / Groq / CORE search):
+  ```http
+  POST /llm/ask-gemini    { "prompt": "Write an abstract about X" }
+  POST /llm/ask-groq      { "prompt": "Summarize this introduction" }
+  POST /llm/core/search   { "prompt": "Search query for core" }
+  ```
+
+### Storage paths
+
+- Generated outputs: `Apps/DB/PDFStorePulsus/` (`<journal_id>/` subfolders)
+- Temporary LaTeX artifacts & logs: `Apps/DB/TempLogsPulsus/` and `temp/`
 
 ---
 
-## 📄 License
+## 🔧 Troubleshooting & Tips
 
-**Open for everyone** – Free to use and modify. As this is free and made for you all, please consider leaving a star on my repo!
+- Port already in use: specify `--port` when using Uvicorn or inspect running services and stop the conflicting process.
+- `xelatex` command not found: ensure MiKTeX is installed and the binary folder is on your PATH.
+- LaTeX missing packages: enable on-the-fly installation in MiKTeX Console and re-run the compile step; then update MiKTeX packages.
+- If AI endpoints return errors: verify API keys are set (`gemAPI1`, `groqAPI2`, `coreAPI3`) in a `.env` or environment variables.
 
 ---
 
-## 📬 Contact
+## 👤 Author & Contact
 
-For queries or contributions:
+**Author:** John Doe  
+**Email:** john.doe@example.com  
+**Repository:** https://github.com/johndoe/pdfGen
 
-*   **Author:** Arupa Nanda Swain, Ashutosh Mishra, Daniel Bavisetti
-*   **GitHub:** https://github.com/arupa444
-*   **Email:** arupaswain7735@gmail.com, ashutoshmishra21oct2003@gmail.com, daniel.bavisetti0579@gmail.com
+_These are placeholder contact values. Replace them with real author name, email, and repository URL when you're ready._
+
+Please replace the placeholders above with actual contact details. To report bugs or request features, open an issue on GitHub.
+
+---
+
+## 📜 License
+
+MIT License
+
+Copyright (c) 2025 John Doe
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+## 🆘 Contact & Support
+
+- Report issues: open an issue on GitHub (preferred)
+- For questions or collaboration: email the project author (see Author & Contact above)
+- For local installation issues: check `installationGuild.md` for step-by-step Windows setup
+
+> 🔧 Tip: When submitting an issue, include steps to reproduce, console logs, and any LaTeX error output you see in the server logs.
+
+---
+
+If you'd like, I can replace the contact placeholders with your real name/email and add a GitHub Actions workflow for basic CI (linting/tests).
