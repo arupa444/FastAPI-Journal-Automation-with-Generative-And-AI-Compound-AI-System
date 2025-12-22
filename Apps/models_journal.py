@@ -1310,5 +1310,8 @@ class PulsusOutputStr(BaseModel):
         elif self.brandName == "omics.tex":
             return f"""{formatAuthor(self.author)} ({self.published.split("-")[-1]}) {self.title}. {self.shortJournalName} {self.volume}: {self.pdfNo}."""
 
+        elif self.brandName == 'iomc.tex':
+            return f"""{formatAuthor(self.author)}, {self.title}. {self.shortJournalName}({self.published.split("-")[-1]}) {self.volume}: {self.pdfNo}. DOI: {self.doi}"""
+
         else:
             return f"""{formatAuthor(self.author)},({self.published.split("-")[-1]}) {self.title}. {self.shortJournalName} {self.volume}: {self.pdfNo}. DOI: {self.doi}"""
