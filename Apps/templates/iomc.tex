@@ -1,7 +1,7 @@
 \documentclass[10pt]{article} % body text 10pt globally
 
 % === PACKAGES ===
-\usepackage[margin=35pt, top=69pt, bottom=90pt]{geometry}
+\usepackage[margin=35pt, top=69pt, bottom=95pt]{geometry}
 
 % === DYNAMIC PREAMBLE ===
 \VAR{preamble | safe}
@@ -72,7 +72,14 @@
         \begin{tcolorbox}[colback=white, colframe=black, arc=2pt, boxrule=1pt, left=2pt, right=2pt, top=2pt, bottom=2pt]
     
         \centering % centers all content inside the box
-        \textbf{Cite this article: }\VAR{citation | latex_escape | safe}
+        \BLOCK{ set parts = author.split(" ") }
+        % Extract last name
+        \BLOCK{ set last = parts[-1] }
+        
+        % Extract initials for all but last name
+        \BLOCK{ set initials = parts[0][0:1] }
+
+        \textbf{Cite this article: } \VAR{last} \VAR{initials}. \VAR{title | latex_escape | safe}. \VAR{shortJournalName | latex_escape | safe}. \VAR{volume}:\VAR{pdfNo}. DOI: \VAR{doi | latex_escape | safe}
         \end{tcolorbox}
         \begin{flushright}
             \textbf{\thepage}
@@ -84,18 +91,30 @@
 
 % --- Header and Footer for all subsequent pages ---
 \fancypagestyle{subsequent}{
-    \fancyhf{}
+    \fancyhf{} % clear header/footer
+    \fancyheadoffset[L]{0pt}
+    \fancyheadoffset[R]{0pt}
+    \renewcommand{\headrulewidth}{0pt}
+    
+    % Main header row
+    \fancyhead[L]{%
+        \selectfont\color{Black}\textbf{\VAR{journalName | latex_escape | safe}: Open Access \VAR{year}, \VAR{volume}, \VAR{issues}, \VAR{pdfNo}.}
+    }
+    \fancyhead[R]{%
+        \selectfont\color{Black}\VAR{last} \VAR{initials}
+    }
 
     % Footer
     \fancyfoot[C]{
         \begin{tcolorbox}[colback=white, colframe=black, arc=2pt, boxrule=1pt, left=2pt, right=2pt, top=2pt, bottom=2pt]
     
         \centering % centers all content inside the box
-        \textbf{Cite this article: }\VAR{citation | latex_escape | safe}
+        \textbf{Cite this article: } \VAR{last} \VAR{initials}. \VAR{title | latex_escape | safe}. \VAR{shortJournalName | latex_escape | safe}. \VAR{volume}:\VAR{pdfNo}. DOI: \VAR{doi | latex_escape | safe}
         \end{tcolorbox}
-    }
-    \fancyfoot[R]{
-        \textbf{\thepage}
+
+        \begin{flushright}
+            \textbf{\thepage}
+        \end{flushright}
     }
 }
 
@@ -147,40 +166,40 @@ and source are credited.
 \rule{\linewidth}{1pt}
 \end{flushleft}
 
-
+\vspace{-0.5cm}
 \section*{Introduction}
 \vspace{-0.5cm}
 \begin{otherlanguage}{\VAR{lang_name}}
 \VAR{introduction | latex_escape | safe}
 \end{otherlanguage}
 
-
+\vspace{-1cm}
 \section*{Description}
 \vspace{-0.5cm}
 \begin{otherlanguage}{\VAR{lang_name}}
 \VAR{description | latex_escape | safe}
 \end{otherlanguage}
 
-
+\vspace{-0.5cm}
 \section*{Conclusion}
 \vspace{-0.5cm}
 \begin{otherlanguage}{\VAR{lang_name}}
 \VAR{conclusion | latex_escape | safe}
 \end{otherlanguage}
 
-
+\vspace{-0.5cm}
 \section*{References}
+\vspace{-0.4cm}
 \fontsize{8}{9.6}\selectfont
 \begin{enumerate}
 \BLOCK{ if content|length == 0 }
     \item No references generated.
 \BLOCK{ else }
 \BLOCK{ for key, item in content.items() }
-    \item \href{\VAR{item.url | latex_escape | safe}}{%
-        \VAR{item.authors_short | latex_escape | safe} \VAR{item.title | latex_escape | safe}.
+    \item %
+        \VAR{item.authors_short | latex_escape | safe} \href{\VAR{item.url | latex_escape | safe}}{\VAR{item.title | latex_escape | safe}}.
         \textit{\VAR{item.journalShortName | latex_escape | safe}}.
         \VAR{item.published};\VAR{item.volume}:\VAR{item.pageRangeOrNumber}.
-    }
 \BLOCK{ endfor }
 \BLOCK{ endif }
 \end{enumerate}

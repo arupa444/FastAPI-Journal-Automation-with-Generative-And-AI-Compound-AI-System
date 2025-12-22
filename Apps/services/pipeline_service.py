@@ -162,7 +162,6 @@ class PipelineService:
 
             except json.JSONDecodeError as e:
                 attempt += 1
-                print(gem_response)
                 print(f"JSON parsing failed (attempt {attempt}/{retries}): {e}")
                 if attempt >= retries:
                     raise HTTPException(
