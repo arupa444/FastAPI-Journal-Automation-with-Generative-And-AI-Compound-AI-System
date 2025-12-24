@@ -108,7 +108,7 @@ class PipelineService:
             "journalShortName": "...",
             "authors": ["...", "...", "..."], #only three authors name (full name)
             "published": "...",
-            "pageRangeOrNumber": "...", #the page range or the page number
+            "pageRangeOrNumber": "...", #the page range or the page number, that is it.
             "volume": "...",
             "issues": "...",
             "DOI": "...",
