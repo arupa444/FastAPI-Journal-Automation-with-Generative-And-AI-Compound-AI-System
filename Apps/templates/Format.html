@@ -78,6 +78,7 @@
             <strong>E-mail:</strong> <a href="mailto:{{ email }}">{{ email }}</a>
         </dd>
     </dl>
+    {% if brandName != "iomc.tex" %}
     <p><strong>Received</strong> : {{received}}, Manuscript No. {{manuscriptNo}}; <strong>Editor assigned</strong> :
         {{editorAssigned}},
         PreQC No. {{preQCNo}}(PQ); <strong>Reviewed</strong> : {{reviewed}}, QC No {{QCNo}};
@@ -85,7 +86,15 @@
         {{published}}
         {% if doi != "" %}, DOI : <a href="https://doi.org/{{ doi }}" target="_blank">{{ doi }}</a>{% endif %}
     </p>
+
     <p><strong>Citation</strong>: <i>{{ citation }}</i></p>
+    {% else %}
+
+    <p><strong>Received</strong> : {{received}}; <strong>Accepted</strong> : {{published}}; <strong>Published</strong>
+        : {{published}}</p>
+
+        <p><strong>Citation</strong>: <i>{{ citation }}</i> {% if doi != "" %}, DOI : <a href="https://doi.org/{{ doi }}" target="_blank">{{ doi }}</a>{% endif %}</p>
+    {% endif %}
     <br />
     <br />
     {% for i,j in storeBody.items() %}
