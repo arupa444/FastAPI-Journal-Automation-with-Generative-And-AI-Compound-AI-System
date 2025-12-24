@@ -354,7 +354,7 @@ class PipelineService:
                 "journalName": journal.journalName,
                 "shortJournalName": journal.shortJournalName,
                 "type": journal.type,
-                "author": journal.author.sprit(),
+                "author": journal.author,
                 "email": journal.email,
                 "brandName": journal.brandName,
                 "authorsDepartment": journal.authorsDepartment,
