@@ -409,14 +409,12 @@ class PipelineService:
         }
         return output
 
+
     @staticmethod
     def _generate_html_and_pdf(journal, output_data):
         """Move all your LaTeX + HTML rendering logic here."""
         # --- Centralized Directory Setup ---
         
-        output_data[journal.id]["introduction"] = output_data[journal.id]["introduction"].replace(r"\\n", r"\n")
-        output_data[journal.id]["description"] = output_data[journal.id]["description"].replace(r"\\n", r"\n")
-        output_data[journal.id]["discussion"] = output_data[journal.id]["discussion"].replace(r"\\n", r"\n")
         # Create a single directory for all of this journal's pdf, .html, .tex files.
         output_base_dir = pathOfPathLib("Apps/DB/PDFStorePulsus")
         journal_folder = output_base_dir / journal.id
@@ -460,6 +458,18 @@ class PipelineService:
                     forHtml["introduction"] = forHtml["introduction"].replace(
                         f"[{i}].", f"[<a href='#{i}' title='{i}'>{i}</a>].</p><p>"
                     )
+                    forHtml["description"] = forHtml["description"].replace(
+                        f"[{i}].", f"[<a href='#{i}' title='{i}'>{i}</a>].</p><p>"
+                    )
+                    forHtml["discussion"] = forHtml["discussion"].replace(
+                        f"[{i}].", f"[<a href='#{i}' title='{i}'>{i}</a>].</p><p>"
+                    )
+                    forHtml["abstract"] = forHtml["abstract"].replace(
+                        f"[{i}].", f"[<a href='#{i}' title='{i}'>{i}</a>].</p><p>"
+                    )
+                    forHtml["conclusion"] = forHtml["conclusion"].replace(
+                        f"[{i}].", f"[<a href='#{i}' title='{i}'>{i}</a>].</p><p>"
+                    )
 
             forHtml["description"] = forHtml["description"].replace(r"\n\n", "</p><p>")
             forHtml["description"] = forHtml["description"].replace(r"\n", "</p><p>")
@@ -488,7 +498,7 @@ class PipelineService:
             elif journal.brandName == "Irjesti.tex":
                 storeBody["Introduction"] = forHtml["introduction"]
                 storeBody["Description"] = forHtml["description"]
-                storeBody["discussion"] = forHtml["discussion"]
+                storeBody["Discussion"] = forHtml["discussion"]
                 storeBody["Conclusion"] = forHtml["conclusion"]
             else:
                 storeBody["Introduction"] = forHtml["introduction"]
