@@ -18,10 +18,12 @@
 \usepackage{ragged2e}
 \usepackage[most]{tcolorbox}
 \usepackage{tikz}
+\usepackage{array} % in preamble if not already loaded
 \usetikzlibrary{calc}
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{1em}
-
+\setlength{\headheight}{1cm}  % enough for multi-line header
+\setlength{\headsep}{1cm}     % space between header and tex
 
 % === COLORS ===
 \definecolor{DarkPurple}{rgb}{0.286275,0.14902,0.423529}   % Dark Purple / Indigo | color_101230
@@ -60,11 +62,19 @@
     \renewcommand{\headrulewidth}{0pt}
     
     % Main header row
-    \fancyhead[L]{%
+    \fancyhead[C]{%
+      \begin{tabular*}{\textwidth}{@{}%
+          p{0.8\textwidth}%
+          @{\extracolsep{\fill}}%
+          p{0.2\textwidth}%
+        @{}}
+        
+        \raggedright
         \selectfont\color{Black}\textbf{\VAR{journalName | latex_escape | safe}: Open Access \VAR{year}, \VAR{volume}, \VAR{issues}, \VAR{pdfNo}.}
-    }
-    \fancyhead[R]{%
+        &
+        \raggedleft
         \selectfont\color{Black}\textbf{\VAR{type | latex_escape | safe}}
+      \end{tabular*}
     }
     
     % Footer
@@ -97,11 +107,19 @@
     \renewcommand{\headrulewidth}{0pt}
     
     % Main header row
-    \fancyhead[L]{%
+    \fancyhead[C]{%
+      \begin{tabular*}{\textwidth}{@{}%
+          p{0.8\textwidth}%
+          @{\extracolsep{\fill}}%
+          p{0.2\textwidth}%
+        @{}}
+        
+        \raggedright
         \selectfont\color{Black}\textbf{\VAR{journalName | latex_escape | safe}: Open Access \VAR{year}, \VAR{volume}, \VAR{issues}, \VAR{pdfNo}.}
-    }
-    \fancyhead[R]{%
+        &
+        \raggedleft
         \selectfont\color{Black}\VAR{last} \VAR{initials}
+      \end{tabular*}
     }
 
     % Footer
