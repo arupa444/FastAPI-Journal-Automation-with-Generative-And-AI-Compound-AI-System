@@ -90,7 +90,10 @@
         % Extract initials for all but last name
         \BLOCK{ set initials = parts[0][0:1] }
 
-        \textbf{Cite this article: } \VAR{last} \VAR{initials}. \VAR{title | latex_escape | safe}. \VAR{shortJournalName | latex_escape | safe}. \VAR{volume}:\VAR{pdfNo}. DOI: \VAR{doi | latex_escape | safe}
+        \textbf{Cite this article: } \VAR{last} \VAR{initials}. \VAR{title | latex_escape | safe}. \VAR{shortJournalName | latex_escape | safe}. \VAR{volume}:\VAR{pdfNo}. 
+        \BLOCK{ if doi }
+            DOI: \href{\VAR{parentLink | latex_escape | safe}}{\VAR{doi | latex_escape | safe}}
+        \BLOCK{ endif 
         \end{tcolorbox}
         \begin{flushright}
             \textbf{\thepage}
@@ -128,7 +131,10 @@
         \begin{tcolorbox}[colback=white, colframe=black, arc=2pt, boxrule=1pt, left=2pt, right=2pt, top=2pt, bottom=2pt]
     
         \centering % centers all content inside the box
-        \textbf{Cite this article: } \VAR{last} \VAR{initials}. \VAR{title | latex_escape | safe}. \VAR{shortJournalName | latex_escape | safe}. \VAR{volume}:\VAR{pdfNo}. DOI: \VAR{doi | latex_escape | safe}
+        \textbf{Cite this article: } \VAR{last} \VAR{initials}. \VAR{title | latex_escape | safe}. \VAR{shortJournalName | latex_escape | safe}. \VAR{volume}:\VAR{pdfNo}. 
+        \BLOCK{ if doi }
+            DOI: \href{\VAR{parentLink | latex_escape | safe}}{\VAR{doi | latex_escape | safe}}
+        \BLOCK{ endif 
         \end{tcolorbox}
 
         \begin{flushright}

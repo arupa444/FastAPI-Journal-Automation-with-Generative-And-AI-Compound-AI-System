@@ -64,11 +64,13 @@
         {\footnotesize\textbf{*Correspondence to:} \VAR{author | safe}, \VAR{authorsDepartment | latex_escape | safe}.
         E-mail: \href{mailto:\VAR{email}}{\VAR{email | latex_escape | safe}}}\\[0.3em]
         {\footnotesize \textbf{Received:} \VAR{received}, Manuscript No. \VAR{manuscriptNo}; 
-        \textbf{Editor assigned:} \VAR{editorAssigned}, Pre QC No. \VAR{preQCNo} \textit{(PQ)}; 
+        \textbf{Editor assigned:} \VAR{editorAssigned}, Pre QC No. \VAR{preQCNo} \textit{(PQ)};
         \textbf{Reviewed:} \VAR{reviewed}, QC No. \VAR{QCNo}; 
         \textbf{Revised:} \VAR{revised}, Manuscript No. \VAR{RManuNo} \textit{(R)}; 
         \textbf{Published:} \VAR{published}, 
-        DOI: \href{\VAR{parentLink | latex_escape | safe}}{\VAR{doi | latex_escape | safe}}}\\[0.5em]
+        \BLOCK{ if doi }
+            DOI: \href{\VAR{parentLink | latex_escape | safe}}{\VAR{doi | latex_escape | safe}}\\[0.5em]
+        \BLOCK{ endif }
         % Citation (centered)
         \vspace{-0.35cm}
         \rule{\textwidth}{0.4pt}

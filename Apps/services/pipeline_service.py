@@ -207,7 +207,7 @@ class PipelineService:
             "content": {{
                 "introduction": "...",
                 "description": "...",
-                "summary": "...",
+                "summary": "...", # Dont add any citations here
                 "abstract": "...",
                 "discussion": "...",
                 "keywords": "..."
@@ -233,7 +233,7 @@ class PipelineService:
 
             Summary
             - Word count: 150–300.
-            - Do not include citations.
+            - Do not include citations (Strictly).
             - Focus on key points from the content in a concise manner.
 
             Abstract
