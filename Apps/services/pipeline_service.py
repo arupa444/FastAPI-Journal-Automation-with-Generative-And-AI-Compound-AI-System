@@ -133,11 +133,19 @@ class PipelineService:
         """
 
     @staticmethod
-    def _ask_gemini_with_retries(prompt: str, retries: int = 3) -> str:
+    def _ask_gemini_with_retries(prompt: str, retries: int = 10) -> str:
         for attempt in range(retries):
             try:
                 response = PipelineService.gemClient.models.generate_content(
-                    model="gemini-2.5-flash", contents=prompt
+                    model="gemini-2.5-flash-lite",
+                    contents=prompt
+                    # config={
+                    #     "tools": [
+                    #         {
+                    #             "google_search": {}
+                    #         }
+                    #     ]
+                    # }
                 )
                 return response.text
             except Exception as e:
@@ -147,7 +155,7 @@ class PipelineService:
                     raise HTTPException(status_code=500, detail=str(e))
 
     @staticmethod
-    def _parse_gemini_response(prompt: str, retries: int = 3) -> dict:
+    def _parse_gemini_response(prompt: str, retries: int = 10) -> dict:
         """
         Generate Gemini response and parse JSON.
         If parsing fails, retry up to `retries` times by regenerating Gemini output.
@@ -158,7 +166,7 @@ class PipelineService:
 
             try:
                 raw_json = IOService.extract_json_from_markdown(gem_response)
-                parsed = json.loads(raw_json)
+                return json.loads(raw_json)
 
             except json.JSONDecodeError as e:
                 attempt += 1
@@ -170,8 +178,6 @@ class PipelineService:
                     )
                 print("Retrying Gemini generation...")
                 time.sleep(2)
-                continue
-            return parsed
 
     @staticmethod
     def _normalize_content_structure(parsed_json: dict) -> dict:
@@ -409,7 +415,6 @@ class PipelineService:
         }
         return output
 
-
     @staticmethod
     def _generate_html_and_pdf(journal, output_data):
         """Move all your LaTeX + HTML rendering logic here."""
@@ -521,6 +526,9 @@ class PipelineService:
                     <p align="right"><a href="{i["url"]}" target="_blank"><u>Indexed at</u></a>, <a href="https://scholar.google.com/scholar?hl=en&as_sdt=0%2C5&q={'+'.join(i["title"].split(' '))}&btnG=" target="_blank"><u>Google Scholar</u></a>, <a href="https://doi.org/{i["DOI"]}" target="_blank"><u>Crossref</u></a></p></li>"""
                 elif journal.brandName == "hilaris.tex":
                     temp = f"""<li><a name="{count}" id="{count}"></a>{i["authors_full"]}. <a href="{i["parentLink"]}" target="_blank">"{i["title"]}"</a>.<i>{i["journalShortName"]}</i> {i["volume"]} ({i["published"]}):{i["pageRangeOrNumber"]}.
+                    <p align="right"><a href="{i["url"]}" target="_blank"><u>Indexed at</u></a>, <a href="https://scholar.google.com/scholar?hl=en&as_sdt=0%2C5&q={'+'.join(i["title"].split(' '))}&btnG=" target="_blank"><u>Google Scholar</u></a>, <a href="https://doi.org/{i["DOI"]}" target="_blank"><u>Crossref</u></a></p></li>"""
+                elif journal.brandName == "iomc.tex":
+                    temp = f"""<li><a name="{count}" id="{count}"></a>{i["authors_short"]} <a href="{i["url"]}" target="_blank">"{i["title"]}"</a>.<i>{i["journalShortName"]}</i> ({i["published"]});{i["volume"]}:{i["pageRangeOrNumber"]}.
                     <p align="right"><a href="{i["url"]}" target="_blank"><u>Indexed at</u></a>, <a href="https://scholar.google.com/scholar?hl=en&as_sdt=0%2C5&q={'+'.join(i["title"].split(' '))}&btnG=" target="_blank"><u>Google Scholar</u></a>, <a href="https://doi.org/{i["DOI"]}" target="_blank"><u>Crossref</u></a></p></li>"""
                 else:
                     temp = f"""<li><a name="{count}" id="{count}"></a>{i["authors_short"]}. <a href="{i["parentLink"]}" target="_blank">{i["title"]}</a>. {i["journalShortName"]}. {i["published"]};{i["volume"]}{i["issues"]}:{i["pageRangeOrNumber"]}.
