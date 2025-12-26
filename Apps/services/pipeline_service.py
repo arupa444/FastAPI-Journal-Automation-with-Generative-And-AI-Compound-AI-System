@@ -28,6 +28,7 @@ class PipelineService:
         IOService.INPUT_FILE.parent.mkdir(parents=True, exist_ok=True)
         data = IOService.fetchInputData()
         journal.id = journal.id.strip()
+        journal.author = journal.author.strip()
         if journal.id in data:
             raise HTTPException(status_code=400, detail="Journal ID already exists.")
         data[journal.id] = journal.model_dump(exclude=["id"])
