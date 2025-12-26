@@ -18,9 +18,12 @@
 \usepackage{ragged2e}
 \usepackage[most]{tcolorbox}
 \usepackage{tikz}
+\usepackage{array} % in preamble if not already loaded
 \usetikzlibrary{calc}
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{1em}
+\setlength{\headheight}{1cm}  % enough for multi-line header
+\setlength{\headsep}{1cm} 
 
 
 % === COLORS ===
@@ -60,11 +63,19 @@
     \renewcommand{\headrulewidth}{0pt}
     
     % Main header row
-    \fancyhead[L]{%
+    \fancyhead[C]{%
+      \begin{tabular*}{\textwidth}{@{}%
+          p{0.8\textwidth}%
+          @{\extracolsep{\fill}}%
+          p{0.2\textwidth}%
+        @{}}
+        
+        \raggedright
         \selectfont\color{Black}\textbf{\VAR{journalName | latex_escape | safe}: Open Access \VAR{year}, \VAR{volume}, \VAR{issues}, \VAR{pdfNo}.}
-    }
-    \fancyhead[R]{%
+        &
+        \raggedleft
         \selectfont\color{Black}\textbf{\VAR{type | latex_escape | safe}}
+      \end{tabular*}
     }
     
     % Footer
@@ -79,7 +90,7 @@
         % Extract initials for all but last name
         \BLOCK{ set initials = parts[0][0:1] }
 
-        \textbf{Cite this article: } \VAR{last} \VAR{initials}. \VAR{title | latex_escape | safe}. \VAR{shortJournalName | latex_escape | safe}(\VAR{year}) \VAR{volume}:\VAR{pdfNo}. DOI: \VAR{doi | latex_escape | safe}
+        \textbf{Cite this article: } \VAR{last} \VAR{initials}. \VAR{title | latex_escape | safe}. \VAR{shortJournalName | latex_escape | safe}. \VAR{volume}:\VAR{pdfNo}. DOI: \VAR{doi | latex_escape | safe}
         \end{tcolorbox}
         \begin{flushright}
             \textbf{\thepage}
@@ -97,11 +108,19 @@
     \renewcommand{\headrulewidth}{0pt}
     
     % Main header row
-    \fancyhead[L]{%
+    \fancyhead[C]{%
+      \begin{tabular*}{\textwidth}{@{}%
+          p{0.8\textwidth}%
+          @{\extracolsep{\fill}}%
+          p{0.2\textwidth}%
+        @{}}
+        
+        \raggedright
         \selectfont\color{Black}\textbf{\VAR{journalName | latex_escape | safe}: Open Access \VAR{year}, \VAR{volume}, \VAR{issues}, \VAR{pdfNo}.}
-    }
-    \fancyhead[R]{%
-        \selectfont\color{Black} \VAR{last} \VAR{initials}
+        &
+        \raggedleft
+        \selectfont\color{Black}\VAR{last} \VAR{initials}
+      \end{tabular*}
     }
 
     % Footer
@@ -109,7 +128,7 @@
         \begin{tcolorbox}[colback=white, colframe=black, arc=2pt, boxrule=1pt, left=2pt, right=2pt, top=2pt, bottom=2pt]
     
         \centering % centers all content inside the box
-        \textbf{Cite this article: } \VAR{last} \VAR{initials}. \VAR{title | latex_escape | safe}. \VAR{shortJournalName | latex_escape | safe}(\VAR{year}) \VAR{volume}:\VAR{pdfNo}. DOI: \VAR{doi | latex_escape | safe}
+        \textbf{Cite this article: } \VAR{last} \VAR{initials}. \VAR{title | latex_escape | safe}. \VAR{shortJournalName | latex_escape | safe}. \VAR{volume}:\VAR{pdfNo}. DOI: \VAR{doi | latex_escape | safe}
         \end{tcolorbox}
 
         \begin{flushright}
@@ -180,7 +199,7 @@ and source are credited.
 \VAR{description | latex_escape | safe}
 \end{otherlanguage}
 
-\vspace{-1cm}
+\vspace{-0.6cm}
 \section*{Conclusion}
 \vspace{-0.5cm}
 \begin{otherlanguage}{\VAR{lang_name}}

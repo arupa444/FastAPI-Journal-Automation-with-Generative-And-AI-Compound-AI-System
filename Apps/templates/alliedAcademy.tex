@@ -62,7 +62,7 @@
         \rule{\textwidth}{0.4pt}
         % Correspondence + received/published info
         {\footnotesize\textbf{*Correspondence to:} \VAR{author | safe}, \VAR{authorsDepartment | latex_escape | safe}.
-        E-mail: \href{mailto:\VAR{email}}{\VAR{email}}}\\[0.3em]
+        E-mail: \href{mailto:\VAR{email}}{\VAR{email | latex_escape | safe}}}\\[0.3em]
         {\footnotesize \textbf{Received:} \VAR{received}, Manuscript No. \VAR{manuscriptNo}; 
         \textbf{Editor assigned:} \VAR{editorAssigned}, Pre QC No. \VAR{preQCNo} \textit{(PQ)}; 
         \textbf{Reviewed:} \VAR{reviewed}, QC No. \VAR{QCNo}; 
@@ -157,7 +157,7 @@
 \VAR{introduction | latex_escape | safe}
 \end{otherlanguage}
 
-\vspace{-0.7cm}
+\vspace{-1cm}
 \section*{Conclusion}
 \vspace{-0.5cm}
 \begin{otherlanguage}{\VAR{lang_name}}
