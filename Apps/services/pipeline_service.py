@@ -233,7 +233,7 @@ class PipelineService:
 
             Summary
             - Word count: 150–300.
-            - Do not include citations.
+            - Do not include citations. And Reference (strict)
             - Focus on key points from the content in a concise manner.
 
             Abstract
