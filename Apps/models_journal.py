@@ -499,6 +499,7 @@ class PulsusInputStr(BaseModel):
     @field_validator("author")
     @classmethod
     def validateAuthor(cls, value):
+        value = value.sprit()
         if len(value.split(" ")) > 1:
             return value
         else:
