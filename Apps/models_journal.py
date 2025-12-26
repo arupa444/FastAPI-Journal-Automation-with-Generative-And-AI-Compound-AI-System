@@ -1312,7 +1312,7 @@ class PulsusOutputStr(BaseModel):
             return f"""{formatAuthor(self.author)} ({self.published.split("-")[-1]}) {self.title}. {self.shortJournalName} {self.volume}: {self.pdfNo}."""
 
         elif self.brandName == 'iomc.tex':
-            return f"""{formatAuthor(self.author)}, {self.title}. {self.shortJournalName}({self.published.split("-")[-1]}) {self.volume}: {self.pdfNo}. DOI: {self.doi}"""
+            return f"""{formatAuthor(self.author)}, {self.title}. {self.shortJournalName}({self.published.split("-")[-1]}) {self.volume}: {self.pdfNo}."""
 
         else:
-            return f"""{formatAuthor(self.author)},({self.published.split("-")[-1]}) {self.title}. {self.shortJournalName} {self.volume}: {self.pdfNo}. DOI: {self.doi}"""
+            return f"""{formatAuthor(self.author)},({self.published.split("-")[-1]}) {self.title}. {self.shortJournalName} {self.volume}: {self.pdfNo}."""
