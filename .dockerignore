@@ -1,0 +1,13 @@
+# Security: NEVER copy secrets into the image
+.env
+
+# Junk: Don't copy these, they bloat the image and break uv caching
+__pycache__
+pyproject.toml
+*.pyc
+.git
+.gitignore
+uv.lock
+venv/
+.venv/
+.idea/
