@@ -11,3 +11,4 @@ uv.lock
 venv/
 .venv/
 .idea/
+Apps/DB # ignoring the DB file
